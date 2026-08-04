@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ar|in — client engagement document</title>
+  <style>
+    :root {
+      --red: #D11919;
+      --dark: #62605C;
+      --mid: #84817C;
+      --subtle: #84817C;
+      --light-bg: #EAE5DC;
+      --border: #C8C4BC;
+      --green: #2D6A4F;
+      --amber: #b8750a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: var(--dark);
+      background: #C8C4BC;
+      line-height: 1.55;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: #62605C;
+      color: #EAE5DC;
+      padding: 24px 0;
+      position: relative;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo { padding: 0 20px 22px; border-bottom: 1px solid #84817C; margin-bottom: 14px; }
+    .sidebar-logo .doc-type { font-size: 10px; color: #A6A29C; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.6px; }
+
+    .nav-label { padding: 14px 20px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: #A6A29C; }
+    .nav-item { display: block; padding: 7px 20px; color: #C8C4BC; font-size: 12px; cursor: pointer; text-decoration: none; }
+    .nav-item:hover { color: #EAE5DC; }
+
+    .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #84817C; vertical-align: middle; }
+    .sdot.active { background: var(--amber); }
+    .sdot.done { background: var(--green); }
+
+    .main { flex: 1; padding: 32px 36px 64px; max-width: 960px; }
+
+    /* ── Doc header ─────────────────────────────────────────────────── */
+    .doc-header {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 22px 26px;
+      margin-bottom: 28px;
+    }
+
+    .doc-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+    .doc-title { font-size: 17px; font-weight: 700; color: var(--dark); }
+    .doc-title small { display: block; font-size: 11px; font-weight: 400; color: var(--subtle); margin-top: 3px; }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .mf label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--subtle); margin-bottom: 4px; }
+    .mf input { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 4px 0; font-size: 13px; background: transparent; outline: none; color: var(--dark); }
+    .mf input:focus { border-bottom-color: var(--red); }
+
+    /* ── Section blocks ─────────────────────────────────────────────── */
+    .section { background: #fff; border: 1px solid var(--border); margin-bottom: 20px; }
+
+    .section.locked { opacity: 0.55; pointer-events: none; }
+
+    .sec-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sec-header-left { display: flex; align-items: center; gap: 12px; }
+
+    .sec-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--dark); color: #fff;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section.locked .sec-num { background: #bbb; }
+
+    .sec-title { font-size: 14px; font-weight: 600; }
+    .sec-sub { font-size: 11px; color: var(--subtle); margin-top: 2px; }
+
+    .badge {
+      font-size: 11px; padding: 3px 10px; font-weight: 500;
+    }
+    .b-ns  { background: #f0f0f0; color: #888; }
+    .b-ip  { background: #fef3cd; color: #7d5a00; }
+    .b-so  { background: #d4edda; color: #155724; }
+    .b-lk  { background: #f0f0f0; color: #bbb; }
+
+    .sec-body { padding: 22px; }
+    .sec-body.hidden { display: none; }
+
+    .lock-notice { text-align: center; padding: 40px 20px; color: var(--subtle); }
+    .lock-notice p { font-size: 13px; }
+
+    /* ── Stage / step cards ─────────────────────────────────────────── */
+    .card { border: 1px solid var(--border); margin-bottom: 14px; }
+
+    .card-header {
+      padding: 11px 15px;
+      background: var(--light-bg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .card-num { font-size: 11px; font-weight: 600; color: var(--subtle); min-width: 22px; }
+
+    .name-input {
+      border: none; background: transparent;
+      font-size: 13px; font-weight: 500;
+      color: var(--dark); outline: none; flex: 1;
+    }
+    .name-input::placeholder { color: #c0c0c0; font-weight: 400; font-style: italic; }
+
+    .stage-fixed-name {
+      font-size: 13px; font-weight: 600;
+      color: var(--dark); flex: 1;
+      letter-spacing: -0.1px;
+    }
+
+    .card-body { padding: 15px; border-top: 1px solid var(--border); }
+    .card-body.hidden { display: none; }
+
+    /* ── Fields ─────────────────────────────────────────────────────── */
+    .fr { margin-bottom: 13px; }
+
+    .fl {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      color: var(--subtle); margin-bottom: 4px;
+    }
+    .fl .fh { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; color: #bbb; }
+
+    textarea.fi, input.fi {
+      width: 100%;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--dark);
+      background: #fafafa;
+      outline: none;
+      resize: vertical;
+      min-height: 62px;
+      line-height: 1.5;
+    }
+    textarea.fi:focus, input.fi:focus { border-color: var(--red); background: #fff; }
+    textarea.fi::placeholder, input.fi::placeholder { color: #ccc; font-style: italic; }
+    textarea.fi.sl { min-height: unset; height: 36px; resize: none; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    /* ── Attachments ─────────────────────────────────────────────────── */
+    .attach-area {
+      border: 1px dashed var(--border);
+      padding: 9px 12px;
+      display: flex; align-items: center; gap: 10px;
+      background: #fafafa;
+    }
+    .attach-area label { font-size: 11px; color: var(--red); cursor: pointer; font-weight: 600; }
+    .attach-area input[type=file] { display: none; }
+    .attach-list { font-size: 11px; color: var(--subtle); }
+
+    /* ── Sign-off ────────────────────────────────────────────────────── */
+    .signoff {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--dark);
+      padding: 16px; margin-top: 14px;
+      background: #fafafa;
+    }
+    .signoff h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--subtle); margin-bottom: 11px; }
+    .signoff-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .sp { flex: 1; min-width: 120px; }
+    .sp label { display: block; font-size: 10px; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+    .sp input { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 4px 0; font-size: 12px; background: transparent; outline: none; }
+    .sp input:focus { border-bottom-color: var(--red); }
+
+    .btn {
+      padding: 8px 18px;
+      background: var(--dark); color: #fff;
+      border: none; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .btn:hover { background: var(--red); }
+    .btn.signed { background: var(--green); cursor: default; }
+    .btn.signed:hover { background: var(--green); }
+
+    /* ── Section sign-off strip ─────────────────────────────────────── */
+    .sec-signoff { background: var(--light-bg); border-top: 1px solid var(--border); padding: 18px 22px; }
+    .sec-signoff h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--subtle); margin-bottom: 12px; }
+
+    /* ── Add / remove ────────────────────────────────────────────────── */
+    .add-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border: 1px dashed var(--border);
+      color: var(--subtle); font-size: 12px;
+      cursor: pointer; background: transparent;
+      font-family: inherit; margin-top: 6px;
+    }
+    .add-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .rm-btn {
+      padding: 2px 8px; border: none;
+      background: transparent; color: #ccc;
+      font-size: 18px; cursor: pointer; line-height: 1; flex-shrink: 0;
+    }
+    .rm-btn:hover { color: var(--red); }
+
+    /* ── Phase tabs ──────────────────────────────────────────────────── */
+    .phase-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 14px; }
+    .ptab { padding: 8px 16px; font-size: 12px; cursor: pointer; color: var(--subtle); border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .ptab.active { color: var(--dark); border-bottom-color: var(--red); font-weight: 600; }
+
+    .phase { display: none; }
+    .phase.active { display: block; }
+
+    /* ── Step type tags ──────────────────────────────────────────────── */
+    .type-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .ttag {
+      padding: 4px 11px; font-size: 11px;
+      border: 1px solid var(--border);
+      cursor: pointer; color: var(--mid); background: #fafafa;
+    }
+    .ttag.t-auto      { background: #e8f5e9; border-color: var(--green); color: var(--green); }
+    .ttag.t-human     { background: #e3f2fd; border-color: #1565c0; color: #1565c0; }
+    .ttag.t-decision  { background: #fff8e1; border-color: var(--amber); color: var(--amber); }
+    .ttag.t-gap       { background: #fce4ec; border-color: var(--red); color: var(--red); }
+
+    /* ── Traffic light rating ───────────────────────────────────────────── */
+    .tl-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+
+    .tl-btn {
+      padding: 6px 13px; font-size: 11.5px; font-family: inherit;
+      border: 1px solid var(--border); background: var(--light-bg);
+      color: var(--subtle); cursor: pointer; white-space: nowrap;
+    }
+    .tl-btn:hover { border-color: var(--mid); color: var(--dark); }
+    .tl-green  { background: #d4edda; border-color: #2D6A4F; color: #2D6A4F; font-weight: 600; }
+    .tl-yellow { background: #fff8dc; border-color: #b8750a; color: #7d5a00; font-weight: 600; }
+    .tl-orange { background: #ffe9cc; border-color: #c96a00; color: #a05200; font-weight: 600; }
+    .tl-red    { background: #f8d7da; border-color: #D11919; color: #9b1111; font-weight: 600; }
+
+    .tl-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .tl-dot-green  { background: #2D6A4F; }
+    .tl-dot-yellow { background: #b8750a; }
+    .tl-dot-orange { background: #c96a00; }
+    .tl-dot-red    { background: #D11919; }
+
+    /* ── Department inventory ────────────────────────────────────────── */
+    .inv-panel { border: 1px solid var(--border); margin-bottom: 10px; }
+    .inv-dept-hdr {
+      padding: 11px 16px; background: var(--light-bg);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .inv-dept-title { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .inv-dept-count {
+      font-size: 10px; color: var(--subtle); background: #fff;
+      border: 1px solid var(--border); padding: 2px 8px;
+    }
+    .inv-list { padding: 4px 16px 12px; }
+    .inv-row {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 5px 0; border-bottom: 1px solid #f0ede8;
+    }
+    .inv-row:last-child { border-bottom: none; }
+    .inv-check { margin-top: 2px; cursor: pointer; accent-color: var(--red); flex-shrink: 0; }
+    .inv-row-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .inv-name { font-size: 12px; color: var(--dark); cursor: pointer; line-height: 1.4; }
+    .inv-name.sel { font-weight: 600; }
+    .inv-controls { display: flex; gap: 5px; flex-wrap: wrap; }
+    .inv-controls.hidden { display: none; }
+    .inv-stat {
+      padding: 3px 9px; font-size: 10.5px; font-family: inherit;
+      border: 1px solid var(--border); background: #fff;
+      color: var(--subtle); cursor: pointer; white-space: nowrap;
+    }
+    .inv-stat:hover { border-color: var(--mid); color: var(--dark); }
+    .s-doc  { background: #d4edda; border-color: #2D6A4F; color: #2D6A4F; font-weight: 600; }
+    .s-ndoc { background: #ffe9cc; border-color: #c96a00; color: #a05200; font-weight: 600; }
+    .s-no   { background: #f8d7da; border-color: #D11919; color: #9b1111; font-weight: 600; }
+
+    select.sel {
+      border: 1px solid var(--border); padding: 6px 10px;
+      font-size: 12px; font-family: inherit;
+      background: #fafafa; outline: none; color: var(--dark); width: 100%;
+    }
+
+    /* ── System card ─────────────────────────────────────────────────── */
+    .sys-card { border: 1px solid var(--border); margin-bottom: 18px; }
+    .sys-header {
+      padding: 13px 17px; background: var(--light-bg);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .sys-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1; }
+    .sys-id { font-size: 10px; color: var(--subtle); font-family: monospace; background: #eee; padding: 2px 6px; }
+    .sys-name-input {
+      border: none; background: transparent;
+      font-size: 13px; font-weight: 600;
+      outline: none; min-width: 200px; flex: 1;
+    }
+    .sys-name-input::placeholder { color: #bbb; font-weight: 400; font-style: italic; }
+    select.sel-sm { width: auto; padding: 4px 8px; font-size: 11px; }
+    .sys-body { padding: 18px; }
+    .sys-body.hidden { display: none; }
+
+    /* ── Analysis trigger ───────────────────────────────────────────── */
+    .analysis-panel {
+      margin: 0 24px 20px;
+      border: 1px solid var(--border);
+      background: var(--light-bg);
+      padding: 16px 20px;
+    }
+    .analysis-panel-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .analysis-panel-title { font-size: 12px; font-weight: 700; color: var(--dark); }
+    .analysis-status { font-size: 11px; color: var(--subtle); }
+    .analysis-status.ok  { color: var(--green); font-weight: 600; }
+    .analysis-status.err { color: var(--red);   font-weight: 600; }
+    .analysis-desc { font-size: 12px; color: var(--subtle); margin-bottom: 12px; }
+    .btn-analysis {
+      background: var(--dark); color: #EAE5DC;
+      border: none; padding: 8px 18px; font-size: 12px;
+      font-family: inherit; cursor: pointer; letter-spacing: 0.3px;
+    }
+    .btn-analysis:hover { background: var(--mid); }
+    .btn-analysis:disabled { opacity: 0.45; cursor: default; }
+
+    /* ── Agreement history ───────────────────────────────────────────── */
+    .hist-section { background: #fff; border: 1px solid var(--border); margin-bottom: 20px; }
+    .hist-row {
+      display: grid;
+      grid-template-columns: 130px 150px 1fr;
+      gap: 12px; padding: 9px 20px;
+      border-bottom: 1px solid #f2f2f2;
+      font-size: 12px;
+    }
+    .hist-row:last-child { border-bottom: none; }
+    .hist-row.hdr { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--subtle); padding: 11px 20px 7px; }
+    .hist-date { color: var(--subtle); }
+    .hist-actor { color: var(--mid); }
+
+    hr.div { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    .biztype-row { display:flex; gap:6px; margin-top:4px; }
+    .biztype-btn { padding:4px 10px; font-size:11px; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--mid); cursor:pointer; font-family:inherit; transition:background 0.15s,color 0.15s,border-color 0.15s; }
+    .biztype-btn.active { background:var(--dark); color:#fff; border-color:var(--dark); }
+    .biztype-btn:hover:not(.active) { border-color:var(--mid); color:var(--dark); }
+
+    /* ── Subcategory selector ───────────────────────────────────────── */
+    .subcat-row { margin-top: 8px; }
+
+    /* ── 4-state inventory status ───────────────────────────────────── */
+    .s-notyet { background: #f8d7da; border-color: #D11919; color: #9b1111; font-weight: 600; }
+    .s-na     { background: #f0f0f0; border-color: #bbb;    color: #999;    font-weight: 600; }
+
+    .inv-stat-na {
+      padding: 3px 9px; font-size: 9.5px; font-family: inherit;
+      border: 1px dashed var(--border); background: transparent;
+      color: #ccc; cursor: pointer; white-space: nowrap; line-height: 1;
+    }
+    .inv-stat-na:hover { border-color: #aaa; color: #777; }
+    .inv-stat-na.s-na { background: #f0f0f0; border: 1px solid #bbb; color: #888; font-weight: 600; }
+
+    .inv-name.addressed { font-weight: 600; }
+    .inv-name.na-name   { color: var(--border); font-style: italic; text-decoration: line-through; }
+
+    /* ── Brief output cards ─────────────────────────────────────────── */
+    .brief-stage { border: 1px solid var(--border); margin-bottom: 14px; background: #fff; }
+
+    .brief-stage-hdr {
+      padding: 11px 16px; background: var(--light-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .brief-stage-num { font-size: 9.5px; font-weight: 700; color: #D11919; text-transform: uppercase; letter-spacing: 0.5px; }
+    .brief-stage-q   { font-size: 13px; font-weight: 600; flex: 1; min-width: 160px; }
+
+    .rbadge { font-size: 10px; padding: 3px 9px; font-weight: 600; white-space: nowrap; }
+    .rbadge-green  { background: #d4edda; color: var(--green); border: 1px solid var(--green); }
+    .rbadge-yellow { background: #fff8dc; color: #7d5a00;      border: 1px solid #b8750a; }
+    .rbadge-orange { background: #ffe9cc; color: #a05200;      border: 1px solid #c96a00; }
+    .rbadge-red    { background: #f8d7da; color: #9b1111;      border: 1px solid var(--red); }
+    .rbadge-none   { background: #f0f0f0; color: #999; }
+
+    .brief-block { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .brief-block:last-child { border-bottom: none; }
+    .brief-block-label     { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--subtle); margin-bottom: 7px; }
+    .brief-block-text      { font-size: 12px; color: var(--dark); line-height: 1.7; }
+    .brief-block-challenge { font-size: 11.5px; color: var(--mid); margin-top: 6px; font-style: italic; }
+    .brief-pending         { color: #bbb; font-style: italic; }
+
+    .brief-sys-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    .brief-sys-table td { padding: 5px 0; border-bottom: 1px solid #f2f0ec; vertical-align: middle; }
+    .brief-sys-table td:last-child { text-align: right; }
+    .brief-sys-table tr:last-child td { border-bottom: none; }
+    .brief-sys-table .sys-expected        { color: var(--subtle); font-style: italic; }
+    .brief-sys-table .sys-expected-status { color: #ccc; font-style: italic; font-size: 10.5px; }
+
+    .brief-q-list { list-style: none; padding: 0; margin: 0; }
+    .brief-q-list li { font-size: 12px; color: var(--dark); line-height: 1.65; padding: 4px 0 4px 18px; position: relative; }
+    .brief-q-list li::before { content: '—'; position: absolute; left: 0; color: var(--subtle); }
+
+    @media print {
+      .sidebar, .add-btn, .rm-btn, .btn { display: none !important; }
+      .main { padding: 12px; }
+      .section.locked { opacity: 1; }
+    }
+  
+    /* ── Engagement progress bar ─────────────────────────────────────────── */
+    .progress-bar { display:flex; align-items:center; gap:0; padding:12px 26px; background:#fff; border:1px solid var(--border); border-left:3px solid var(--red); margin-bottom:22px; }
+    .prog-step { font-size:10.5px; font-weight:600; text-transform:lowercase; letter-spacing:0.3px; padding:4px 14px; color:var(--border); }
+    .prog-step.active { color:#D11919; font-weight:700; border-bottom:2px solid #D11919; padding-bottom:2px; }
+    .prog-step.done { color:var(--dark); }
+    .prog-arrow { color:var(--border); font-size:10px; padding:0 4px; }
+    /* ── Section stage label ────────────────────────────────────────────── */
+    .sec-stage { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#D11919; margin-bottom:3px; }
+    /* ── Owner input in dept header ─────────────────────────────────────── */
+    .owner-input { font-size:10.5px; padding:3px 8px; border:1px solid var(--border); background:transparent; color:var(--mid); font-family:inherit; width:130px; margin-left:auto; margin-right:12px; }
+    .owner-input:focus { outline:none; border-color:var(--mid); }
+    .owner-input::placeholder { color:var(--border); }
+    /* ── Eval / Strengthen / Run ────────────────────────────────────────── */
+    .eval-field { margin-bottom:16px; }
+    .eval-field label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--subtle); margin-bottom:6px; }
+    .run-entry { display:grid; grid-template-columns:110px 1fr; gap:14px; padding:10px 0; border-bottom:1px solid var(--border); font-size:12px; }
+    .run-entry:last-child { border-bottom:none; }
+    .run-date { color:var(--subtle); }
+    /* ── Consultation guide card ────────────────────────────────────────── */
+    .brief-guide { border:1px solid #D11919; border-left:3px solid #D11919; background:#fff8f8; margin-top:10px; }
+    .brief-guide .brief-stage-hdr { background:#fff0f0; }
+  
+    .assign-table { width:100%; border-collapse:collapse; font-size:11.5px; margin-top:4px; }
+    .assign-table th { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--subtle); padding:6px 8px 6px 0; border-bottom:1px solid var(--border); text-align:left; }
+    .assign-table td { padding:7px 8px 7px 0; border-bottom:1px solid #f2f0ec; vertical-align:middle; }
+    .assign-table tr:last-child td { border-bottom:none; }
+    .assign-input { font-size:11px; padding:4px 7px; border:1px solid var(--border); width:100%; font-family:inherit; background:#fff; }
+    .assign-input:focus { outline:none; border-color:var(--mid); }
+    .owner-fields { display:flex; gap:6px; margin-left:auto; margin-right:12px; }
+    .inv-status-lock { font-size:9.5px; padding:2px 7px; font-weight:600; text-transform:lowercase; white-space:nowrap; }
+  
+    .dept-assign-group { margin-bottom:20px; }
+    .dept-assign-hdr { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--subtle); padding:8px 0 6px; border-bottom:2px solid var(--border); }
+    .mapping-summary { font-size:11.5px; color:var(--mid); margin-top:10px; font-weight:600; }
+    .pipeline-row { display:flex; align-items:flex-start; gap:12px; padding:13px 10px; border-bottom:1px solid #f2f0ec; margin:0 -10px; border-radius:3px; }
+    .pipeline-row:last-child { border-bottom:none; }
+    .pipeline-row.agreed { background:#f7fdf8; }
+    .pipeline-cb { width:15px; height:15px; margin-top:2px; accent-color:var(--red); flex-shrink:0; cursor:pointer; }
+    .pipeline-num { font-size:10px; font-weight:700; color:var(--subtle); min-width:16px; margin-top:3px; flex-shrink:0; }
+    .pipeline-body { flex:1; min-width:0; }
+    .pipeline-label { font-size:12px; font-weight:600; color:var(--dark); }
+    .pipeline-desc { font-size:11px; color:var(--subtle); margin-top:3px; line-height:1.5; }
+    .pipeline-fields { display:flex; align-items:center; gap:5px; flex-shrink:0; margin-top:1px; }
+    .pipeline-date { font-size:11px; padding:4px 6px; border:1px solid var(--border); font-family:inherit; background:#fff; }
+    .pipeline-day { font-size:11px; padding:4px 6px; border:1px solid var(--border); font-family:inherit; background:#fff; width:90px; }
+    .pipeline-time { font-size:11px; padding:4px 6px; border:1px solid var(--border); font-family:inherit; background:#fff; width:75px; }
+    .pipeline-field-lbl { font-size:10px; color:var(--subtle); white-space:nowrap; }
+    .pipeline-note { font-size:11px; color:var(--subtle); font-style:italic; white-space:nowrap; }
+    .pipeline-sublabel { font-size:10.5px; color:var(--mid); margin-top:4px; font-weight:500; }
+    .consult-ready-panel { background:#fafaf8; border:1px solid var(--border); padding:16px 20px; border-radius:4px; }
+    .btn-arin { background:var(--dark); color:#fff; border:none; padding:9px 18px; font-size:11px; cursor:pointer; font-family:inherit; font-weight:600; letter-spacing:0.3px; }
+    .btn-arin:hover { background:#1a1a1a; }
+    .btn-arin:disabled { opacity:0.5; cursor:default; background:var(--dark); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="90" viewBox="80 220 530 270" style="display:block;">
+        <defs>
+          <linearGradient id="sb-ar" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#62605C"/>
+            <stop offset="58%" stop-color="#8E6663"/>
+            <stop offset="100%" stop-color="#D11919"/>
+          </linearGradient>
+          <linearGradient id="sb-in" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#D11919"/>
+            <stop offset="38%" stop-color="#B65C59"/>
+            <stop offset="100%" stop-color="#62605C"/>
+          </linearGradient>
+        </defs>
+        <rect width="690" height="709" fill="#EAE5DC"/>
+        <g font-family="Roboto, Arial, sans-serif" font-weight="300" font-size="246" letter-spacing="-8">
+          <text x="111" y="438" fill="url(#sb-ar)">ar</text>
+          <text x="366" y="438" fill="url(#sb-in)">in</text>
+        </g>
+        <rect x="336" y="252" width="14" height="87" fill="#D11919"/>
+        <rect x="336" y="373" width="14" height="94" fill="#D11919"/>
+      </svg>
+      <div class="doc-type">client engagement</div>
+    </div>
+
+    <div class="nav-label">Document</div>
+    <a class="nav-item" onclick="goto('doc-header')">overview</a>
+    <a class="nav-item" onclick="goto('hist-section')">agreement history</a>
+
+    <div class="nav-label">Sections</div>
+    <a class="nav-item" onclick="goto('section-1')">
+      <span class="sdot active" id="dot1"></span>01 — critical client flow
+    </a>
+    <a class="nav-item" onclick="goto('section-2')">
+      <span class="sdot" id="dot2"></span>02 — systems inventory
+    </a>
+    <a class="nav-item" onclick="goto('section-3')">
+      <span class="sdot" id="dot3"></span>03 — consultation outcomes
+    </a>
+    <a class="nav-item" onclick="goto('section-4')">
+      <span class="sdot" id="dot4"></span>04 — system library
+    </a>
+    <a class="nav-item" onclick="goto('section-5')">
+      <span class="sdot" id="dot5"></span>05 — run
+    </a>
+
+  </nav>
+
+  <!-- ── Main ────────────────────────────────────────────────────────── -->
+  <main class="main" id="main">
+
+    <!-- Document header -->
+    <div class="doc-header" id="doc-header">
+      <div class="doc-header-top">
+        <div>
+          <div class="doc-title">
+            client engagement document
+            <small>ar|in — shared working document — pre-consultation through run phase</small>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+          <div style="font-size:11px;color:var(--subtle);text-align:right;line-height:1.8;">
+            v<span id="ver-display">0.1</span><br>
+            <span id="date-display"></span>
+          </div>
+          <button onclick="resetDocument()" style="font-size:10px;padding:3px 10px;border:1px solid var(--border);background:transparent;color:var(--subtle);cursor:pointer;font-family:inherit;" title="clear all data and start a new engagement">new engagement</button>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div class="mf"><label>client name</label><input id="m-client" type="text" placeholder="client organisation" oninput="save()"></div>
+        <div class="mf"><label>engagement start</label><input id="m-start" type="date" oninput="save()"></div>
+        <div class="mf"><label>document version</label><input id="m-version" type="text" placeholder="0.1" oninput="save();setVer(this.value)"></div>
+        <div class="mf"><label>ar|in lead</label><input id="m-arin" type="text" placeholder="ar|in team member" oninput="save()"></div>
+        <div class="mf"><label>client lead</label><input id="m-client-lead" type="text" placeholder="client contact" oninput="save()"></div>
+        <div class="mf"><label>client email</label><input id="m-email" type="email" placeholder="client@company.com" oninput="save()"></div>
+        <div class="mf">
+          <label>business model</label>
+          <div class="biztype-row">
+            <button class="biztype-btn" id="bm-service" onclick="selectBizModel('service')">service</button>
+            <button class="biztype-btn" id="bm-product" onclick="selectBizModel('product')">product</button>
+            <button class="biztype-btn" id="bm-mixed" onclick="selectBizModel('mixed')">mixed</button>
+          </div>
+        </div>
+        <div class="mf">
+          <label>industry / sector</label>
+          <input id="m-industry" type="text" placeholder="e.g. management consulting, healthcare, furniture retail" oninput="save()">
+        </div>
+        <div class="mf"><label>systems signed off</label><input id="m-sys-count" type="text" readonly placeholder="0 / 0" style="color:var(--subtle)"></div>
+      </div>
+    </div>
+
+    <!-- ── Section 1: CCF ────────────────────────────────────────────── -->
+    <!-- ── Engagement progress bar ─────────────────────────────────────── -->
+    <div class="progress-bar" id="progress-bar">
+      <span class="prog-step active" id="prog-map">map</span>
+      <span class="prog-arrow">→</span>
+      <span class="prog-step" id="prog-evaluate">evaluate</span>
+      <span class="prog-arrow">→</span>
+      <span class="prog-step" id="prog-strengthen">strengthen</span>
+      <span class="prog-arrow">→</span>
+      <span class="prog-step" id="prog-build">build</span>
+      <span class="prog-arrow">→</span>
+      <span class="prog-step" id="prog-run">run</span>
+    </div>
+
+    <div class="section" id="section-1">
+      <div class="sec-header" onclick="toggle('s1b')">
+        <div class="sec-header-left">
+          <div class="sec-num">1</div>
+          <div>
+            <div class="sec-stage">map</div>
+            <div class="sec-title">critical client flow</div>
+            <div class="sec-sub">how the business currently delivers its core product or service — stage by stage from first contact to ongoing service</div>
+          </div>
+        </div>
+        <span class="badge b-ns" id="badge1">not started</span>
+      </div>
+
+      <div id="s1b">
+        <div class="sec-body">
+          <p style="font-size:12px;color:var(--subtle);margin-bottom:18px;">the ccf maps how this business currently goes from attracting a client to delivering and keeping them. the seven stages are fixed — fill in how this specific business operates at each stage. the goal is a high-level picture: who it serves, what it provides, and how it flows end to end.</p>
+          <div class="grid2" style="margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+            <div class="fr">
+              <div class="fl">who is your target client?</div>
+              <textarea class="fi" id="ccf-target" placeholder="e.g. small and mid-sized business owners, property developers, independent professionals" oninput="save()"  style="min-height:54px;"></textarea>
+            </div>
+            <div class="fr">
+              <div class="fl">what is the main product or solution you provide them?</div>
+              <textarea class="fi" id="ccf-product" placeholder="e.g. automation systems, property management, hair and beauty services" oninput="save()" style="min-height:54px;"></textarea>
+            </div>
+          </div>
+          <div id="ccf-container"></div>
+        </div>
+
+        <div class="sec-signoff">
+          <h3>section 1 sign-off — critical client flow</h3>
+          <p style="font-size:12px;color:var(--subtle);margin-bottom:13px;">client confirms this accurately reflects how the business currently operates at the top level. the systems inventory in section 2 will be based on this view.</p>
+          <div class="signoff-row">
+            <div class="sp"><label>confirmed by</label><input id="s1-client" type="text" placeholder="your name" oninput="save()"></div>
+            <div class="sp"><label>date</label><input id="s1-date" type="date" oninput="save()"></div>
+            <button class="btn" id="s1-btn" onclick="signSection(1)">sign off section 1</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Systems Inventory ─────────────────────────────── -->
+    <div class="section locked" id="section-2">
+      <div class="sec-header" onclick="toggle('s2b')">
+        <div class="sec-header-left">
+          <div class="sec-num">2</div>
+          <div>
+            <div class="sec-stage">map</div>
+            <div class="sec-title">systems inventory</div>
+            <div class="sec-sub">which systems exist across the six departments — and whether they are documented</div>
+          </div>
+        </div>
+        <span class="badge b-lk" id="badge2">locked — sign off section 1 first</span>
+      </div>
+
+      <div id="s2b">
+        <div id="s2-lock" class="lock-notice"><p>section 2 unlocks after section 1 is signed off by the client.</p></div>
+        <div id="s2-content" style="display:none;">
+          <div class="sec-body">
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:16px;">for every system below, indicate its current status. mark as documented, not documented, or not yet implemented. use not applicable for systems that clearly do not apply to this business. leave a system unaddressed if you are unsure — the analysis will flag which unaddressed systems may be important based on the ccf and business type.</p>
+            <div id="inv-container"></div>
+          </div>
+          <div class="analysis-panel">
+            <div class="analysis-panel-hdr">
+              <span class="analysis-panel-title">pre-consultation brief</span>
+              <span class="analysis-status" id="analysis-status"></span>
+            </div>
+            <p style="font-size:11px;color:var(--subtle);margin:0 0 10px;">generates a stage-by-stage pre-consultation brief from the ccf and systems inventory. each stage shows what the client told us, the systems behind it, and the questions to explore.</p>
+            <button class="btn-analysis" id="analysis-btn" onclick="sendToAnalysis()">generate pre-consultation brief →</button>
+            <div id="analysis-result" style="display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+              <div style="font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">pre-consultation brief</div>
+              <div id="analysis-text" style="font-size:12px;color:var(--dark);line-height:1.75;"></div>
+            </div>
+          </div>
+
+          <div class="sec-signoff">
+            <h3>section 2 sign-off — systems inventory</h3>
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:13px;">client confirms this represents an agreed view of the systems that exist across the business and their current documentation status. signing off notifies ar|in that pre-consultation preparation is complete.</p>
+            <div class="signoff-row">
+              <div class="sp"><label>confirmed by</label><input id="s2-client" type="text" placeholder="your name" oninput="save()"></div>
+              <div class="sp"><label>date</label><input id="s2-date" type="date" oninput="save()"></div>
+              <button class="btn" id="s2-btn" onclick="signSection(2)">sign off section 2</button>
+            </div>
+          </div>
+          <div id="s2-consult-block" style="display:none; padding:16px 22px 20px;">
+            <div class="consult-ready-panel">
+              <p style="font-size:12px;color:var(--mid);margin-bottom:12px;">the client has completed their pre-consultation preparation. run the consultation, then mark it as complete to open section 3.</p>
+              <button class="btn-arin" id="consult-ready-btn" onclick="markConsultationComplete()">consultation completed — open section 3 →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 3: Consultation Outcomes ────────────────────────────── -->
+    <div class="section locked" id="section-3">
+      <div class="sec-header" onclick="toggle('s3b')">
+        <div class="sec-header-left">
+          <div class="sec-num">3</div>
+          <div>
+            <div class="sec-stage">evaluate</div>
+            <div class="sec-title">consultation outcomes</div>
+            <div class="sec-sub">decisions recorded at the end of the consultation — ownership assignments, agreed tasks, and engagement sign-off before section 4 opens</div>
+          </div>
+        </div>
+        <span class="badge b-lk" id="badge3">locked — consultation not yet marked complete</span>
+      </div>
+      <div id="s3b">
+        <div id="s3-lock" class="lock-notice"><p>section 3 unlocks after ar|in marks the consultation as complete.</p></div>
+        <div id="s3-content" style="display:none;">
+          <div class="sec-body">
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:20px;">completed during the consultation. records who owns and executes each identified system, sets mapping deadlines, and captures the evaluate-to-build pipeline both parties are committing to. client sign-off opens the system library.</p>
+            <div style="margin-bottom:28px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--subtle);margin-bottom:8px;">system ownership and mapping timeline</div>
+              <p style="font-size:11.5px;color:var(--subtle);margin-bottom:14px;">for each system, record who owns it and who executes it best. set a mapping deadline — the date by which the system document must be complete. the deadlines define the evaluate phase timeline and determine which systems are prioritised.</p>
+              <div id="consult-assignments"></div>
+              <div id="mapping-summary" class="mapping-summary"></div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--subtle);margin-bottom:8px;">agreed evaluate-to-build pipeline</div>
+              <p style="font-size:11.5px;color:var(--subtle);margin-bottom:14px;">tick each step to confirm it is agreed. set target dates for dated steps and cadence for recurring ones.</p>
+              <div id="pipeline-steps"></div>
+            </div>
+          </div>
+          <div class="sec-signoff">
+            <h3>section 3 sign-off — consultation outcomes</h3>
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:13px;">client confirms the system ownership assignments, mapping timeline, and evaluate-to-build pipeline. signing off pre-fills the system library with all identified systems.</p>
+            <div class="signoff-row">
+              <div class="sp"><label>confirmed by</label><input id="s3-client" type="text" placeholder="your name" oninput="save()"></div>
+              <div class="sp"><label>date</label><input id="s3-date" type="date" oninput="save()"></div>
+              <button class="btn" id="s3-btn" onclick="signSection(3)">sign off section 3</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: System Library ─────────────────────────────────── -->
+    <div class="section locked" id="section-4">
+      <div class="sec-header" onclick="toggle('s4b')">
+        <div class="sec-header-left">
+          <div class="sec-num">4</div>
+          <div>
+            <div class="sec-stage">evaluate</div>
+            <div class="sec-title">system library</div>
+            <div class="sec-sub">client-owned system documents — pre-populated from the consultation outcomes. each system is documented in phase 1 (original process, signed off before build) and annotated in phase 2 (automated system + s.p.a. mapping, signed off post-deployment)</div>
+          </div>
+        </div>
+        <span class="badge b-lk" id="badge4">locked — sign off section 3 first</span>
+      </div>
+
+      <div id="s4b">
+        <div id="s4-lock" class="lock-notice"><p>section 4 unlocks after section 3 is signed off. systems are pre-populated from the consultation ownership and timeline table.</p></div>
+        <div id="s4-content" style="display:none;">
+          <div class="sec-body">
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:16px;">each system is documented in two phases. phase 1 is the original process as it currently runs — captured, validated using the teach-it test, and signed off before automation is built. phase 2 is the same process after deployment — annotated to show which steps are automated, which stay human, and which become s.p.a. decision points for the owner. phase 2 is signed off separately.</p>
+            <div id="sys-container"></div>
+            <button class="add-btn" onclick="addSystem()">+ add system</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Section 6: Run ────────────────────────────────────────────── -->
+    <div class="section locked" id="section-5">
+      <div class="sec-header" onclick="toggle('s5b')">
+        <div class="sec-header-left">
+          <div class="sec-num">5</div>
+          <div>
+            <div class="sec-stage">run</div>
+            <div class="sec-title">run</div>
+            <div class="sec-sub">monitoring notes, quarterly reviews, and expansion decisions — the ongoing engagement record</div>
+          </div>
+        </div>
+        <span class="badge b-lk" id="badge5">locked — first system must be live</span>
+      </div>
+      <div id="s5b">
+        <div id="s5-lock" class="lock-notice"><p>section 5 unlocks after the first system is deployed and phase 2 is signed off.</p></div>
+        <div id="s5-content" style="display:none;">
+          <div class="sec-body">
+            <p style="font-size:12px;color:var(--subtle);margin-bottom:16px;">ar|in logs monitoring notes, quarterly review findings, and expansion decisions here. the client retains full visibility and control through s.p.a. this section grows throughout the engagement — it is never complete.</p>
+            <div class="eval-field">
+              <label>add entry</label>
+              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:14px;">
+                <textarea class="fi" id="run-entry-text" placeholder="monitoring note, quarterly review finding, expansion decision, or system change..." style="min-height:60px;flex:1;margin-bottom:0;"></textarea>
+                <button class="btn" onclick="addRunEntry()" style="margin-top:0;white-space:nowrap;flex-shrink:0;">add entry</button>
+              </div>
+            </div>
+            <div id="run-log"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Agreement History ──────────────────────────────────────────── -->
+    <div class="hist-section" id="hist-section">
+      <div class="sec-header" style="cursor:default;">
+        <div class="sec-header-left">
+          <div>
+            <div class="sec-title">agreement history</div>
+            <div class="sec-sub">longitudinal log — every sign-off, update, and change recorded automatically</div>
+          </div>
+        </div>
+      </div>
+      <div class="hist-row hdr"><div>date</div><div>actor</div><div>event</div></div>
+      <div id="hist-log"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════════════════════════ */
+const KEY = 'arin-ced-v5';
+
+let S = {
+  meta: {},
+  ccfTarget: '',  // preamble: target client
+  ccfProduct: '', // preamble: main product/solution
+  ccf: [],        // CCF stages
+  inventory: {},  // dept systems inventory: key = 'dept-idx', val = { selected, status }
+  systems: [],    // system library
+  history: [],    // agreement history entries
+  owners: {},
+  assignments: {},
+  pipeline: {},
+  consultReady: false,
+  runLog: [],
+  signed: { s1: false, s2: false, s3: false }
+};
+
+/* ══════════════════════════════════════════════════════════════════════
+   BOOT
+   ══════════════════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  load();
+  document.getElementById('date-display').textContent =
+    new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
+  initCCFStages();
+
+  render();
+  loadFromURL();
+  gates();
+});
+
+/* ══════════════════════════════════════════════════════════════════════
+   URL PARAM PRE-FILL
+   reads ?client=&lead=&email=&date= and pre-fills header fields
+   only fills empty fields — never overwrites saved localStorage data
+   ══════════════════════════════════════════════════════════════════════ */
+function loadFromURL() {
+  const p = new URLSearchParams(window.location.search);
+  const map = {
+    client: 'm-client',
+    lead:   'm-client-lead',
+    email:  'm-email',
+    date:   'm-start'
+  };
+  let changed = false;
+  Object.entries(map).forEach(([param, id]) => {
+    const val = p.get(param);
+    const el  = document.getElementById(id);
+    if (val && el && !el.value.trim()) {
+      el.value = val;
+      changed = true;
+    }
+  });
+  if (changed) {
+    save();
+    // update page title to include client name
+    const client = p.get('client');
+    if (client) document.title = 'ar|in — ' + client + ' — engagement document';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PERSISTENCE
+   ══════════════════════════════════════════════════════════════════════ */
+function save() {
+  collectMeta();
+  collectCCF();
+  collectSystems();
+  collectPipeline();
+  collectAssignments();
+  localStorage.setItem(KEY, JSON.stringify(S));
+}
+
+function collectPipeline() {
+  if (!S.pipeline) S.pipeline = {};
+  document.querySelectorAll('[data-pipe-key]').forEach(el => {
+    const k = el.dataset.pipeKey;
+    const field = el.dataset.pipeField;
+    if (!S.pipeline[k]) S.pipeline[k] = {};
+    S.pipeline[k][field] = (el.type === 'checkbox') ? el.checked : el.value;
+  });
+}
+
+function collectAssignments() {
+  document.querySelectorAll('[data-assign-key]').forEach(el => {
+    const k = el.dataset.assignKey;
+    const field = el.dataset.assignField;
+    if (!S.assignments[k]) S.assignments[k] = { owner:'', worker:'' };
+    S.assignments[k][field] = el.value;
+  });
+}
+
+function load() {
+  try {
+    const d = localStorage.getItem(KEY);
+    if (d) S = JSON.parse(d);
+  } catch(e) {}
+  // migrate missing fields from older saved documents
+  if (!S.owners)      S.owners      = {};
+  if (!S.assignments) S.assignments = {};
+  if (!S.pipeline)    S.pipeline    = {};
+  if (S.consultReady === undefined) S.consultReady = false;
+  if (!S.runLog)      S.runLog      = [];
+  if (S.signed.s3 === undefined) S.signed.s3 = false;
+  delete S.signed.s4;
+}
+
+function resetDocument() {
+  if (!confirm('clear all data and start a new engagement?')) return;
+  localStorage.removeItem(KEY);
+  location.reload();
+}
+
+function collectMeta() {
+  S.meta = {
+    client:      g('m-client'),
+    start:       g('m-start'),
+    version:     g('m-version') || '0.1',
+    arin:        g('m-arin'),
+    clientLead:  g('m-client-lead'),
+    email:       g('m-email'),
+    bizModel:  S.meta.bizModel || S.meta.bizType || 'service',
+    industry:  S.meta.industry || '',
+
+    s1Client:    g('s1-client'),
+    s1Date:      g('s1-date'),
+    s2Client:    g('s2-client'),
+    s2Date:      g('s2-date'),
+    s3Client:    g('s3-client'),
+    s3Date:      g('s3-date')
+  };
+  S.ccfTarget  = g('ccf-target');
+  S.ccfProduct = g('ccf-product');
+}
+
+function collectCCF() {
+  document.querySelectorAll('[data-ccf]').forEach(el => {
+    const id = el.dataset.ccf;
+    const field = el.dataset.field;
+    const stage = S.ccf.find(s => s.id === id);
+    if (stage && field) stage[field] = el.value;
+  });
+}
+
+function collectSystems() {
+  document.querySelectorAll('[data-sys]').forEach(el => {
+    const id = el.dataset.sys;
+    const field = el.dataset.field;
+    const phase = el.dataset.phase;
+    const stepId = el.dataset.step;
+    const sys = S.systems.find(s => s.id === id);
+    if (!sys) return;
+    if (stepId) {
+      const steps = phase === '2' ? sys.p2 : sys.p1;
+      const step = steps.find(s => s.id === stepId);
+      if (step && field) step[field] = el.value;
+    } else if (field) {
+      sys[field] = el.value;
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RENDER ALL
+   ══════════════════════════════════════════════════════════════════════ */
+function render() {
+  // Meta fields
+  const m = S.meta;
+  sv('m-client',      m.client);
+  sv('m-start',       m.start);
+  sv('m-version',     m.version || '0.1');
+  sv('m-arin',        m.arin);
+  sv('m-client-lead', m.clientLead);
+  sv('m-email',       m.email);
+
+  // Restore business model + industry
+  const _bm = m.bizModel || m.bizType || 'service';
+  ['service','product','mixed'].forEach(t => {
+    const btn = document.getElementById('bm-' + t);
+    if (btn) btn.className = 'biztype-btn' + (_bm === t ? ' active' : '');
+  });
+  sv('m-industry', m.industry);
+
+  sv('s1-client',     m.s1Client);
+  sv('s1-date',       m.s1Date);
+  sv('s2-client',     m.s2Client);
+  sv('s2-date',       m.s2Date);
+  setVer(m.version || '0.1');
+
+  // CCF preamble
+  sv('ccf-target',  S.ccfTarget);
+  sv('ccf-product', S.ccfProduct);
+
+  renderCCF();
+  renderInventory();
+  renderSystems();
+  renderHistory();
+  updateSysCount();
+
+  sv('s3-client', m.s3Client);
+  sv('s3-date',   m.s3Date);
+
+  if (S.signed.s1) setBtn('s1-btn', true);
+  if (S.signed.s2) {
+    setBtn('s2-btn', true);
+    const _cb = document.getElementById('s2-consult-block');
+    if (_cb) _cb.style.display = 'block';
+  }
+  if (S.signed.s3) setBtn('s3-btn', true);
+  if (S.consultReady) {
+    const _crb = document.getElementById('consult-ready-btn');
+    if (_crb) { _crb.disabled = true; _crb.textContent = 'consultation completed ✓'; }
+  }
+
+  renderConsultationOutcomes();
+  renderPipeline();
+  renderRunLog();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CCF
+   ══════════════════════════════════════════════════════════════════════ */
+// Seven Systemology CCF stages — fixed structure, client fills in their own answers
+const CCF_STAGES = [
+  { id: 'ccf-s1', q: 'How do you attract new clients?',
+    hint: 'e.g. advertising, expos, referrals, LinkedIn content, speaking events, Google Ads' },
+  { id: 'ccf-s2', q: 'How do clients first reach out?',
+    hint: 'e.g. consultation booking, walk-in, phone call, contact form' },
+  { id: 'ccf-s3', q: 'How do you turn them into paying clients?',
+    hint: 'e.g. discovery call, emailed proposal, contract signature' },
+  { id: 'ccf-s4', q: 'How do you get paid?',
+    hint: 'e.g. invoice, subscription, checkout counter, deposit + final payment' },
+  { id: 'ccf-s5', q: 'How do you onboard a new client?',
+    hint: 'e.g. welcome call, system access granted, project kickoff, not applicable' },
+  { id: 'ccf-s6', q: 'What do you deliver for them?',
+    hint: 'e.g. build website, find rental property, cut hair' },
+  { id: 'ccf-s7', q: 'How do you keep them coming back?',
+    hint: 'e.g. campaigns, subscription, mailing lists, specials' }
+];
+
+function initCCFStages() {
+  const existing = {};
+  S.ccf.forEach(s => { existing[s.id] = s; });
+
+  S.ccf = CCF_STAGES.map(def => ({
+    id:        def.id,
+    q:         def.q,
+    flow:      existing[def.id]?.flow      || '',
+    rating:    existing[def.id]?.rating    || '',
+    challenge: existing[def.id]?.challenge || ''
+  }));
+}
+
+function renderCCF() {
+  const c = document.getElementById('ccf-container');
+  c.innerHTML = '';
+  const ratings = [
+    { val: 'green',  label: '🟢 works well' },
+    { val: 'yellow', label: '🟡 minor friction' },
+    { val: 'orange', label: '🟠 significant issues' },
+    { val: 'red',    label: '🔴 broken or missing' }
+  ];
+  S.ccf.forEach((stage, i) => {
+    const dotClass = stage.rating ? ` tl-dot tl-dot-${stage.rating}` : 'tl-dot';
+    const dotStyle = stage.rating ? '' : ' style="display:none;"';
+    const tlBtns = ratings.map(r => {
+      const sel = stage.rating === r.val ? ` tl-${r.val}` : '';
+      return `<button class="tl-btn${sel}" id="rt-${stage.id}-${r.val}" onclick="setRating('${stage.id}','${r.val}')">${r.label}</button>`;
+    }).join('');
+    c.innerHTML += `
+<div class="card" id="ccf-${stage.id}">
+  <div class="card-header" onclick="toggleCard('ccf-b-${stage.id}')">
+    <span class="card-num">${pad(i+1)}</span>
+    <span class="stage-fixed-name">${x(stage.q)}</span>
+    <span class="${dotClass}" id="rtd-${stage.id}"${dotStyle}></span>
+  </div>
+  <div class="card-body hidden" id="ccf-b-${stage.id}">
+    <div class="fr">
+      <div class="fl">how it works for this business <span class="fh">— the main mechanism, not all the steps</span></div>
+      <textarea class="fi" placeholder="${x(CCF_STAGES[i].hint)}" data-ccf="${stage.id}" data-field="flow" oninput="onSave(this)" style="min-height:72px;">${x(stage.flow)}</textarea>
+    </div>
+    <div class="fr">
+      <div class="fl">how well does this stage currently work?</div>
+      <div class="tl-row">${tlBtns}</div>
+    </div>
+    <div class="fr">
+      <div class="fl">main challenge</div>
+      <textarea class="fi" placeholder="" data-ccf="${stage.id}" data-field="challenge" oninput="onSave(this)" style="min-height:48px;">${x(stage.challenge)}</textarea>
+    </div>
+  </div>
+</div>`;
+  });
+}
+
+function setRating(stageId, val) {
+  const stage = S.ccf.find(s => s.id === stageId);
+  if (stage) stage.rating = (stage.rating === val) ? '' : val; // toggle off if clicking same
+  const current = stage?.rating || '';
+  ['green','yellow','orange','red'].forEach(r => {
+    const btn = document.getElementById('rt-' + stageId + '-' + r);
+    if (btn) btn.className = 'tl-btn' + (r === current ? ' tl-' + r : '');
+  });
+  const dot = document.getElementById('rtd-' + stageId);
+  if (dot) {
+    dot.className = current ? 'tl-dot tl-dot-' + current : 'tl-dot';
+    dot.style.display = current ? '' : 'none';
+  }
+  save();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SYSTEMS DATA
+   ══════════════════════════════════════════════════════════════════════ */
+// Each system has a stages[] array linking it to CCF stages (1–7).
+// Keys: mkt-0…mkt-10, sls-0…sls-9, ops-0…ops-10,
+//       fin-0…fin-9, hr-0…hr-8, mgmt-0…mgmt-9
+const DEPT_SYSTEMS = [
+  { key:'mkt', label:'Marketing', systems:[
+    { label:'lead generation',                    stages:[1] },
+    { label:'content creation and publishing',    stages:[1,7] },
+    { label:'social media management',            stages:[1,7] },
+    { label:'email marketing and newsletters',    stages:[1,7] },
+    { label:'advertising and paid media',         stages:[1] },
+    { label:'SEO and website management',         stages:[1,2] },
+    { label:'brand and messaging',                stages:[1,7] },
+    { label:'referral and partnership programme', stages:[1,7] },
+    { label:'PR and media relations',             stages:[1] },
+    { label:'events and webinars',                stages:[1] },
+    { label:'customer reviews and testimonials',  stages:[1,7] }
+  ]},
+  { key:'sls', label:'Sales', systems:[
+    { label:'lead qualification',                 stages:[2] },
+    { label:'sales calls and discovery',          stages:[2,3] },
+    { label:'proposal and quote creation',        stages:[3] },
+    { label:'follow-up and nurture',              stages:[2,7] },
+    { label:'contract and agreement',             stages:[3] },
+    { label:'CRM management',                     stages:[2,3] },
+    { label:'sales reporting',                    stages:[3] },
+    { label:'account management',                 stages:[7] },
+    { label:'upselling and cross-selling',        stages:[7] },
+    { label:'lost deal analysis',                 stages:[3] }
+  ]},
+  { key:'ops', label:'Operations', systems:[
+    { label:'client onboarding',                  stages:[5] },
+    { label:'project or job management',          stages:[6] },
+    { label:'service delivery',                   stages:[6] },
+    { label:'quality control and review',         stages:[6] },
+    { label:'supplier and vendor management',     stages:[6] },
+    { label:'inventory and stock management',     stages:[6] },
+    { label:'client communication and updates',   stages:[5,6,7] },
+    { label:'facilities and equipment management',stages:[6] },
+    { label:'IT and technology management',       stages:[6] },
+    { label:'health and safety compliance',       stages:[6] },
+    { label:'knowledge management',               stages:[6] }
+  ]},
+  { key:'fin', label:'Finance', systems:[
+    { label:'invoicing and billing',              stages:[4] },
+    { label:'accounts receivable and collections',stages:[4] },
+    { label:'accounts payable and payments',      stages:[4] },
+    { label:'expense tracking and approvals',     stages:[4] },
+    { label:'payroll',                            stages:[4] },
+    { label:'cash flow forecasting',              stages:[4] },
+    { label:'financial reporting',                stages:[4] },
+    { label:'budget planning',                    stages:[4] },
+    { label:'banking and treasury management',    stages:[4] },
+    { label:'tax and compliance',                 stages:[4] }
+  ]},
+  { key:'hr', label:'HR', systems:[
+    { label:'recruitment',                        stages:[5,6] },
+    { label:'onboarding new team members',        stages:[5] },
+    { label:'performance management',             stages:[6] },
+    { label:'training and development',           stages:[5,6] },
+    { label:'compensation and benefits',          stages:[4,6] },
+    { label:'team culture and engagement',        stages:[7] },
+    { label:'workforce planning',                 stages:[6] },
+    { label:'offboarding',                        stages:[6] },
+    { label:'HR records and compliance',          stages:[6] }
+  ]},
+  { key:'mgmt', label:'Management', systems:[
+    { label:'business planning and goal setting', stages:[1,7] },
+    { label:'KPI and metrics reporting',          stages:[3,7] },
+    { label:'team meetings and communication',    stages:[6] },
+    { label:'decision making and approvals',      stages:[6] },
+    { label:'risk and issues management',         stages:[6] },
+    { label:'external relationships (partners, accountants, lawyers)', stages:[1,6] },
+    { label:'legal and compliance oversight',     stages:[3,6] },
+    { label:'systems review and improvement',     stages:[6,7] },
+    { label:'technology and tools management',    stages:[6] },
+    { label:'strategic planning and review',      stages:[1,7] }
+  ]}
+];
+
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   SYSTEMS INVENTORY
+   ══════════════════════════════════════════════════════════════════════ */
+function renderInventory() {
+  const c = document.getElementById('inv-container');
+  if (!c) return;
+  c.innerHTML = '';
+  if (!S.inventory) S.inventory = {};
+  migrateInventory();
+
+  DEPT_SYSTEMS.forEach(dept => {
+    const identified = dept.systems.filter((_,i) => {
+      const st = (S.inventory[dept.key+'-'+i]||{}).status||'';
+      return st && st !== 'na';
+    }).length;
+
+    const rows = dept.systems.map((sys,i) => {
+      const k = dept.key+'-'+i;
+      const status = (S.inventory[k]||{}).status||'';
+      const sc  = v => statusCls(v, status===v);
+      const scna = statusCls('na', status==='na');
+      const nameClass = 'inv-name'+(status&&status!=='na'?' addressed':'')+(status==='na'?' na-name':'');
+      return `
+<div class="inv-row" id="inv-row-${k}">
+  <div class="${nameClass}" id="inv-name-${k}">${x(sys.label)}</div>
+  <div class="inv-controls">
+    <button class="inv-stat ${sc('doc')}"    data-sval="doc"    data-base="inv-stat"    onclick="setSystemStatus('${k}','doc')">documented</button>
+    <button class="inv-stat ${sc('ndoc')}"   data-sval="ndoc"   data-base="inv-stat"    onclick="setSystemStatus('${k}','ndoc')">not documented</button>
+    <button class="inv-stat ${sc('notyet')}" data-sval="notyet" data-base="inv-stat"    onclick="setSystemStatus('${k}','notyet')">not yet implemented</button>
+    <button class="inv-stat-na ${scna}"      data-sval="na"     data-base="inv-stat-na" onclick="setSystemStatus('${k}','na')">not applicable</button>
+  </div>
+</div>`;
+    }).join('');
+
+    const ownerObj  = (S.owners||{})[dept.key] || {};
+    const ownerName = typeof ownerObj==='string' ? ownerObj : (ownerObj.name||'');
+    const ownerRole = typeof ownerObj==='object'  ? (ownerObj.role||'') : '';
+    c.innerHTML += `
+<div class="inv-panel">
+  <div class="inv-dept-hdr" onclick="toggleCard('inv-list-${dept.key}')">
+    <span class="inv-dept-title">${dept.label}</span>
+    <div class="owner-fields" onclick="event.stopPropagation()">
+      <input class="owner-input" type="text" placeholder="functional owner" value="${x(ownerName)}" oninput="setOwner('${dept.key}','name',this.value)" title="who owns this department's systems">
+      <input class="owner-input" type="text" placeholder="role / title" value="${x(ownerRole)}" oninput="setOwner('${dept.key}','role',this.value)" title="their role or title">
+    </div>
+    <span class="inv-dept-count" id="inv-count-${dept.key}">${identified} identified</span>
+  </div>
+  <div class="inv-list hidden" id="inv-list-${dept.key}">${rows}</div>
+</div>`;
+  });
+}
+
+function statusCls(val, active) {
+  if (!active) return '';
+  const map = { doc:'s-doc', ndoc:'s-ndoc', notyet:'s-notyet', na:'s-na' };
+  return map[val] || '';
+}
+
+function setSystemStatus(k, val) {
+  if (!S.inventory[k]) S.inventory[k] = { status:'' };
+  S.inventory[k].status = (S.inventory[k].status===val) ? '' : val;
+  const status = S.inventory[k].status;
+
+  const row = document.getElementById('inv-row-'+k);
+  if (row) {
+    const nameEl = document.getElementById('inv-name-'+k);
+    if (nameEl) {
+      nameEl.className = 'inv-name'+(status&&status!=='na'?' addressed':'')+(status==='na'?' na-name':'');
+    }
+    row.querySelectorAll('[data-sval]').forEach(btn => {
+      const v    = btn.dataset.sval;
+      const base = btn.dataset.base;
+      btn.className = base + (status===v ? ' '+statusCls(v,true) : '');
+    });
+  }
+
+  const deptKey = k.split('-')[0];
+  updateDeptCount(deptKey);
+  save();
+}
+
+function updateDeptCount(deptKey) {
+  const dept = DEPT_SYSTEMS.find(d => d.key===deptKey);
+  if (!dept) return;
+  const n = dept.systems.filter((_,i) => {
+    const st = (S.inventory[deptKey+'-'+i]||{}).status||'';
+    return st && st!=='na';
+  }).length;
+  const el = document.getElementById('inv-count-'+deptKey);
+  if (el) el.textContent = n+' identified';
+}
+
+// Migrate old { selected, status:'doc'|'ndoc'|'' } → { status:'doc'|'ndoc'|'notyet'|'na'|'' }
+function migrateInventory() {
+  Object.keys(S.inventory).forEach(k => {
+    const e = S.inventory[k];
+    if (e && typeof e.selected !== 'undefined') {
+      if (!e.selected) S.inventory[k] = { status:'' };
+      else if (e.status==='doc')  S.inventory[k] = { status:'doc' };
+      else S.inventory[k] = { status:'ndoc' };
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BUSINESS MODEL PICKER
+   ══════════════════════════════════════════════════════════════════════ */
+function selectBizModel(model) {
+  S.meta.bizModel = model;
+  ['service','product','mixed'].forEach(t => {
+    const btn = document.getElementById('bm-'+t);
+    if (btn) btn.className = 'biztype-btn'+(model===t?' active':'');
+  });
+  save();
+}
+
+function setOwner(deptKey, field, val) {
+  if (!S.owners) S.owners = {};
+  if (!S.owners[deptKey] || typeof S.owners[deptKey] === 'string') {
+    const n = typeof S.owners[deptKey] === 'string' ? S.owners[deptKey] : '';
+    S.owners[deptKey] = { name: n, role: '' };
+  }
+  S.owners[deptKey][field] = val;
+  save();
+}
+
+function renderConsultationOutcomes() {
+  const cont = document.getElementById('consult-assignments');
+  if (!cont) return;
+  const SL = { doc:'documented', ndoc:'not documented', notyet:'not yet implemented' };
+  const SC = { doc:'s-doc', ndoc:'s-ndoc', notyet:'s-notyet' };
+  const asgns = S.assignments || {};
+  let html = '';
+  let hasAny = false;
+
+  DEPT_SYSTEMS.forEach(dept => {
+    const deptRows = dept.systems.map((sys, j) => {
+      const k = dept.key + '-' + j;
+      const st = (S.inventory[k]||{}).status||'';
+      if (!st || st==='na') return null;
+      return { k, label:sys.label, st };
+    }).filter(Boolean);
+    if (!deptRows.length) return;
+    hasAny = true;
+    html += `<div class="dept-assign-group">
+  <div class="dept-assign-hdr">${dept.label}</div>
+  <table class="assign-table">
+    <thead><tr>
+      <th>system</th><th>map status</th><th>system owner</th><th>knowledgeable worker</th><th>mapping deadline</th>
+    </tr></thead><tbody>`;
+    deptRows.forEach(({ k, label, st }) => {
+      const a = asgns[k] || { owner:'', worker:'', deadline:'' };
+      html += `<tr>
+      <td>${x(label)}</td>
+      <td><span class="${SC[st]||''}" style="font-size:10.5px;padding:2px 6px;">${SL[st]||st}</span></td>
+      <td><input type="text" class="assign-input" value="${x(a.owner||'')}" placeholder="name" data-assign-key="${k}" data-assign-field="owner" oninput="collectAssignments();save()"></td>
+      <td><input type="text" class="assign-input" value="${x(a.worker||'')}" placeholder="name" data-assign-key="${k}" data-assign-field="worker" oninput="collectAssignments();save()"></td>
+      <td><input type="date" class="assign-input" value="${x(a.deadline||'')}" data-assign-key="${k}" data-assign-field="deadline" oninput="collectAssignments();updateMappingSummary();save()"></td>
+    </tr>`;
+    });
+    html += '</tbody></table></div>';
+  });
+
+  if (!hasAny) {
+    cont.innerHTML = '<p style="font-size:11.5px;color:var(--subtle);font-style:italic;">no systems identified in the inventory yet — complete and sign off section 2 first.</p>';
+  } else {
+    cont.innerHTML = html;
+  }
+  updateMappingSummary();
+}
+
+const PIPELINE_STEPS = [
+  { key:'p1', num:1,
+    label:'system mapping, owners and timeline',
+    desc:'all systems assigned, ownership confirmed, and mapping deadlines agreed',
+    type:'auto' },
+  { key:'p2', num:2,
+    label:'weekly library update completion',
+    desc:'client team completes system documentation and submits for review each week',
+    type:'sub', subLabel:'per system ownership and mapping timeline' },
+  { key:'p3', num:3,
+    label:'weekly joint review and sign-off',
+    desc:'ar|in and client review all systems updated that week together in one meeting',
+    type:'recurring' },
+  { key:'p4', num:4,
+    label:'full system library sign-off',
+    desc:'all system documents reviewed, agreed, and signed off by both parties',
+    type:'sub', subLabel:'same day as last weekly joint review' },
+  { key:'p5', num:5,
+    label:'s.p.a. design assessment',
+    desc:'ar|in assesses and designs the s.p.a. architecture based on the signed-off system library',
+    type:'date', dLabel:'assessment complete by', subLabel:'two weeks after full library sign-off' },
+  { key:'p6', num:6,
+    label:'ar|in design proposal',
+    desc:'ar|in delivers the automation and s.p.a. design proposal to the client',
+    type:'note', note:'on s.p.a. design assessment completion' },
+  { key:'p7', num:7,
+    label:'client sign-off on proposal',
+    desc:'client reviews and confirms the ar|in design proposal',
+    type:'note', note:'on proposal delivery' },
+  { key:'p8', num:8,
+    label:'partial payment',
+    desc:'initial engagement fee confirmed and paid — triggers the build phase',
+    type:'note', note:'on proposal sign-off' },
+  { key:'p9', num:9,
+    label:'build begins',
+    desc:'ar|in begins building and running automation systems around the documented operating system',
+    type:'note', note:'follows payment confirmation' },
+];
+
+function getLatestMappingDate() {
+  let latest = '';
+  Object.values(S.assignments || {}).forEach(a => {
+    if (a && a.deadline && (!latest || a.deadline > latest)) latest = a.deadline;
+  });
+  if (!latest) return '';
+  const d = new Date(latest + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+}
+
+function renderPipeline() {
+  const cont = document.getElementById('pipeline-steps');
+  if (!cont) return;
+  const p = S.pipeline || {};
+  const latestDate = getLatestMappingDate();
+  let html = '<div style="padding:0 0 4px;">';
+  PIPELINE_STEPS.forEach(step => {
+    const ps = p[step.key] || {};
+    const isAgreed = !!ps.checked;
+    let fields = '';
+    let subLabelHtml = '';
+
+    if (step.type === 'auto') {
+      const autoTxt = latestDate ? 'mapping complete by ' + latestDate : 'set mapping deadlines in the table above';
+      const autoCol = latestDate ? 'var(--mid)' : 'var(--border)';
+      subLabelHtml = `<div id="pipe-sublabel-${step.key}" class="pipeline-sublabel" style="color:${autoCol};">${autoTxt}</div>`;
+    } else if (step.type === 'sub') {
+      subLabelHtml = `<div id="pipe-sublabel-${step.key}" class="pipeline-sublabel">${step.subLabel}</div>`;
+    } else if (step.type === 'date' && step.subLabel) {
+      subLabelHtml = `<div id="pipe-sublabel-${step.key}" class="pipeline-sublabel">${step.subLabel}</div>`;
+    }
+
+    if (step.type === 'date') {
+      fields = `<label class="pipeline-field-lbl">${step.dLabel}</label>
+        <input type="date" class="pipeline-date" value="${x(ps.date||'')}"
+          data-pipe-key="${step.key}" data-pipe-field="date"
+          oninput="savePipeline('${step.key}','date',this.value)">`;
+    } else if (step.type === 'recurring') {
+      fields = `<label class="pipeline-field-lbl">every</label>
+        <input type="text" class="pipeline-day" placeholder="tuesday" value="${x(ps.day||'')}"
+          data-pipe-key="${step.key}" data-pipe-field="day"
+          oninput="savePipeline('${step.key}','day',this.value)">
+        <label class="pipeline-field-lbl">at</label>
+        <input type="time" class="pipeline-time" value="${x(ps.time||'')}"
+          data-pipe-key="${step.key}" data-pipe-field="time"
+          oninput="savePipeline('${step.key}','time',this.value)">`;
+    } else if (step.type === 'note') {
+      fields = `<span class="pipeline-note">${step.note}</span>`;
+    }
+
+    html += `<div class="pipeline-row${isAgreed?' agreed':''}" id="pipe-row-${step.key}">
+      <input type="checkbox" class="pipeline-cb" ${isAgreed?'checked':''}
+        data-pipe-key="${step.key}" data-pipe-field="checked"
+        onchange="savePipeline('${step.key}','checked',this.checked)">
+      <div class="pipeline-num">${step.num}</div>
+      <div class="pipeline-body">
+        <div class="pipeline-label">${step.label}</div>
+        <div class="pipeline-desc">${step.desc}</div>
+        ${subLabelHtml}
+      </div>
+      ${fields ? `<div class="pipeline-fields">${fields}</div>` : ''}
+    </div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function savePipeline(key, field, val) {
+  if (!S.pipeline) S.pipeline = {};
+  if (!S.pipeline[key]) S.pipeline[key] = {};
+  S.pipeline[key][field] = val;
+  const row = document.getElementById('pipe-row-' + key);
+  if (row && field === 'checked') row.className = 'pipeline-row' + (val ? ' agreed' : '');
+  save();
+}
+
+function updateMappingSummary() {
+  let count = 0, latest = '';
+  Object.values(S.assignments || {}).forEach(a => {
+    if (a && a.deadline) { count++; if (!latest || a.deadline > latest) latest = a.deadline; }
+  });
+  // mapping summary line below the table
+  const elS = document.getElementById('mapping-summary');
+  if (elS) {
+    if (!count) { elS.textContent = ''; }
+    else {
+      const d = new Date(latest + 'T12:00:00');
+      const fmt = d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+      elS.textContent = count + ' system' + (count===1?'':'s') + ' scheduled — mapping complete by ' + fmt;
+    }
+  }
+  // step 1 sublabel in pipeline (live update without full re-render)
+  const p1sub = document.getElementById('pipe-sublabel-p1');
+  if (p1sub) {
+    const ld = getLatestMappingDate();
+    p1sub.textContent = ld ? 'mapping complete by ' + ld : 'set mapping deadlines in the table above';
+    p1sub.style.color   = ld ? 'var(--mid)' : 'var(--border)';
+  }
+}
+
+function markConsultationComplete() {
+  S.consultReady = true;
+  hist('ar|in', 'consultation marked complete — section 3 opened');
+  save();
+  gates();
+  const btn = document.getElementById('consult-ready-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'consultation completed ✓'; }
+  renderConsultationOutcomes();
+  renderPipeline();
+  const _payload = { type:'consultation-complete', client:(S.meta||{}).client||'', email:(S.meta||{}).email||'', timestamp:new Date().toISOString() };
+  fetch(ANALYSIS_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(_payload) }).catch(()=>{});
+}
+
+function autoPopulateSystems() {
+  let counter = S.systems.length;
+  DEPT_SYSTEMS.forEach(dept => {
+    dept.systems.forEach((sys, j) => {
+      const k = dept.key + '-' + j;
+      const st = (S.inventory[k]||{}).status||'';
+      if (!st || st==='na') return;
+      if (S.systems.some(s => s.inventoryKey===k)) return;
+      counter++;
+      sysCounter = Math.max(sysCounter, counter);
+      const a = (S.assignments||{})[k] || { owner:'', worker:'' };
+      const ns = {
+        id: uid(), code: 'SYS-' + String(counter).padStart(3,'0'),
+        name: sys.label, dept: dept.label, deptKey: dept.key,
+        kWorker: a.worker, sOwner: a.owner,
+        status: 'draft', autoStatus: 'not started',
+        fromInventory: true, inventoryKey: k, inventoryStatus: st,
+        p1:[], p2:[],
+        p1Arin:'', p1Client:'', p1Date:'', p1Signed: false,
+        p2Arin:'', p2Client:'', p2Date:'', p2Signed: false,
+        _phase: 1
+      };
+      ns.p1.push(newStep());
+      S.systems.push(ns);
+    });
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   PRE-CONSULTATION BRIEF
+   ══════════════════════════════════════════════════════════════════════ */
+const ANALYSIS_WEBHOOK = 'https://arinautomate.app.n8n.cloud/webhook/arin-analysis';
+
+async function sendToAnalysis() {
+  save();
+  const btn       = document.getElementById('analysis-btn');
+  const resultDiv = document.getElementById('analysis-result');
+  const textDiv   = document.getElementById('analysis-text');
+
+  btn.disabled = true;
+  setAnalysisStatus('', 'building brief…');
+
+  const bizModel = S.meta.bizModel || S.meta.bizType || 'service';
+  const industry = S.meta.industry || '';
+
+  // Build per-stage breakdown
+  const stageData = S.ccf.map((stage, i) => {
+    const num = i+1;
+    const addressed = [];
+
+    DEPT_SYSTEMS.forEach(dept => {
+      dept.systems.forEach((sys, j) => {
+        if (!sys.stages.includes(num)) return;
+        const k  = dept.key+'-'+j;
+        const st = (S.inventory[k]||{}).status||'';
+        if (st && st!=='na') {
+          addressed.push({ key:k, label:sys.label, status:st });
+        }
+      });
+    });
+
+    return {
+      id: stage.id, number: num, question: stage.q,
+      flow: stage.flow||'', rating: stage.rating||'',
+      challenge: stage.challenge||'',
+      systems_addressed: addressed
+    };
+  });
+
+  // Summary counts
+  let nDoc=0, nNdoc=0, nNotyet=0, nNa=0, nUnaddr=0;
+  DEPT_SYSTEMS.forEach(dept => dept.systems.forEach((_,i) => {
+    const st = (S.inventory[dept.key+'-'+i]||{}).status||'';
+    if      (st==='doc')    nDoc++;
+    else if (st==='ndoc')   nNdoc++;
+    else if (st==='notyet') nNotyet++;
+    else if (st==='na')     nNa++;
+    else                    nUnaddr++;
+  }));
+
+  const payload = {
+    client:    S.meta.client||'',
+    biz_model: bizModel,
+    industry:  industry,
+    arin_lead:         S.meta.arin||'',
+    client_lead:       S.meta.clientLead||'',
+    ccf_target:        S.ccfTarget||'',
+    ccf_product:       S.ccfProduct||'',
+    generated_at:      new Date().toISOString(),
+    stages:            stageData,
+    summary: {
+      stages_rated:           S.ccf.filter(s=>s.rating).length,
+      stages_with_issues:     S.ccf.filter(s=>s.rating==='orange'||s.rating==='red').length,
+      systems_documented:     nDoc,
+      systems_undocumented:   nNdoc,
+      systems_not_yet:        nNotyet,
+      systems_not_applicable: nNa,
+      systems_unaddressed:    nUnaddr
+    }
+  };
+
+  // Call n8n for LLM stage interpretations
+  let stageInterps = {};
+  const webhook = ANALYSIS_WEBHOOK.trim();
+  if (webhook) {
+    setAnalysisStatus('', 'processing…');
+    try {
+      const resp = await fetch(webhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (Array.isArray(data.stage_interpretations)) {
+        data.stage_interpretations.forEach(si => { stageInterps[si.id] = si.text; });
+      }
+      hist('ar|in', `pre-consultation brief generated — ${nDoc+nNdoc+nNotyet} systems addressed across ${S.ccf.filter(s=>s.rating).length} rated stages`);
+    } catch(e) {
+      setAnalysisStatus('err', 'n8n connection failed — brief shown without stage interpretations');
+    }
+  }
+
+  save();
+  textDiv.innerHTML = renderBrief(stageData, stageInterps);
+  resultDiv.style.display = 'block';
+
+  const ts = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  setAnalysisStatus('ok', 'generated at '+ts);
+  btn.disabled = false;
+}
+
+function renderBrief(stageData, interps) {
+  const RATING_LABEL = {
+    green:'🟢 works well', yellow:'🟡 minor friction',
+    orange:'🟠 significant issues', red:'🔴 broken or missing'
+  };
+  const RATING_BADGE = {
+    green:'rbadge-green', yellow:'rbadge-yellow',
+    orange:'rbadge-orange', red:'rbadge-red'
+  };
+  const STATUS_LABEL = {
+    doc:'documented', ndoc:'exists but undocumented', notyet:'not yet implemented'
+  };
+  const STATUS_CLS = { doc:'s-doc', ndoc:'s-ndoc', notyet:'s-notyet' };
+
+  let html = '';
+
+  stageData.forEach(stage => {
+    const hasContent = stage.flow || stage.challenge
+      || stage.systems_addressed.length;
+    if (!hasContent && !stage.rating) return;
+
+
+
+    html += `<div class="brief-stage">`;
+
+    // Header
+    html += `<div class="brief-stage-hdr">`;
+    html += `<span class="brief-stage-num">stage ${stage.number}</span>`;
+    html += `<span class="brief-stage-q">${x(stage.question)}</span>`;
+    if (stage.rating) {
+      const badgeCls = RATING_BADGE[stage.rating]||'rbadge-none';
+      html += `<span class="rbadge ${badgeCls}">${RATING_LABEL[stage.rating]||stage.rating}</span>`;
+    }
+    html += `</div>`;
+
+    // What you told us
+    if (stage.flow || stage.challenge) {
+      html += `<div class="brief-block">`;
+      html += `<div class="brief-block-label">what you told us</div>`;
+      if (stage.flow)      html += `<div class="brief-block-text">${x(stage.flow)}</div>`;
+      if (stage.challenge) html += `<div class="brief-block-challenge">main challenge: ${x(stage.challenge)}</div>`;
+      html += `</div>`;
+    }
+
+    // Systems table
+    if (stage.systems_addressed.length) {
+      html += `<div class="brief-block">`;
+      html += `<div class="brief-block-label">systems supporting this stage</div>`;
+      html += `<table class="brief-sys-table"><tbody>`;
+      stage.systems_addressed.forEach(sys => {
+        const lbl = STATUS_LABEL[sys.status]||sys.status;
+        const cls = STATUS_CLS[sys.status]||'';
+        html += `<tr><td>${x(sys.label)}</td><td class="${cls}">${lbl}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  // Consultation guide — shown once at the end of the brief
+  if (stageData.some(s => s.flow || s.rating || s.systems_addressed.length)) {
+    html += `
+<div class="brief-stage brief-guide">
+  <div class="brief-stage-hdr">
+    <span class="brief-stage-num">consultation guide</span>
+    <span class="brief-stage-q">for every stage — explore these four questions</span>
+  </div>
+  <div class="brief-block">
+    <ul class="brief-q-list">
+      <li>for each system — who owns it, and who is the strongest at executing it day to day?</li>
+      <li>if those people were unavailable, which systems would break first?</li>
+      <li>for the systems you have documented — are they consistently followed across the team, or does execution depend on who is doing it?</li>
+      <li>if both the system owner and the strongest operator were on leave, which of your systems could still deliver consistently — and which couldn't?</li>
+    </ul>
+  </div>
+</div>`;
+  }
+
+  return html || '<p style="color:var(--subtle);font-size:12px;">complete the ccf ratings and systems inventory to generate the brief.</p>';
+}
+
+function getStageQuestions(stage) {
+  const qs        = [];
+  const r         = stage.rating;
+  const addressed = new Set(stage.systems_addressed.map(s=>s.key));
+  const ndoc      = new Set(stage.systems_addressed.filter(s=>s.status==='ndoc').map(s=>s.key));
+
+  const add = (...items) => items.forEach(q => { if (!qs.includes(q)) qs.push(q); });
+
+  const Q = {
+    1:{
+      base: 'how are you currently measuring whether your approach to attracting clients is working?',
+      yellow: ['what is creating friction in how you attract new clients at the moment?'],
+      hot: [
+        'what channels are you currently investing most time in?',
+        'what do you think is stopping more of the right clients from finding you?'
+      ],
+      cond:{
+        'mkt-0_miss': 'where do new enquiries tend to come from at the moment?',
+        'mkt-0_ndoc': 'how is lead generation currently being done — and who owns that process?',
+        'sls-0_miss': 'how do you currently decide whether a new enquiry is worth pursuing?'
+      }
+    },
+    2:{
+      base: 'what happens between a client first reaching out and your first conversation with them?',
+      yellow: ['where does friction typically appear when a client first contacts you?'],
+      hot: [
+        'how long does it typically take from first contact to a first conversation?',
+        "what happens to enquiries that don't convert to a meeting?"
+      ],
+      cond:{
+        'sls-5_miss': 'how do you currently track incoming enquiries?',
+        'sls-5_ndoc': 'how do you currently track incoming enquiries?',
+        'sls-0_miss': 'how do you decide which new enquiries are worth pursuing?'
+      }
+    },
+    3:{
+      base: 'what do you think is working well in how you close new business?',
+      yellow: ['what tends to slow things down between a promising conversation and a signed client?'],
+      hot: [
+        'what typically happens after a proposal or quote goes out?',
+        'what is your current close rate on qualified leads?'
+      ],
+      cond:{
+        'sls-9_miss': 'do you have a sense of how often clients choose not to proceed — and why?',
+        'sls-2_miss': 'how do clients currently receive your pricing and scope of work?',
+        'sls-4_miss': 'how is the agreement to work together currently formalised?'
+      }
+    },
+    4:{
+      base: 'how quickly are you typically paid after work is delivered?',
+      yellow: ['what typically causes a payment to be delayed?'],
+      hot: [
+        'how are payment terms currently set and communicated?',
+        'what happens when a payment is overdue?'
+      ],
+      cond:{
+        'fin-1_miss': 'how do you currently track which invoices are outstanding?',
+        'fin-1_ndoc': 'how do you currently track which invoices are outstanding?',
+        'fin-5_miss': 'how do you currently anticipate cash needs over the next 30 to 90 days?'
+      }
+    },
+    5:{
+      base: 'what do you want a new client to know or have access to in their first week?',
+      yellow: ['what tends to cause friction in the early stages of a new client relationship?'],
+      hot: [
+        'how consistent is the onboarding experience across different clients?',
+        'what is the first thing that goes wrong when onboarding is rushed?'
+      ],
+      cond:{
+        'ops-0_miss': 'is there a consistent process for how new clients are introduced to your service?',
+        'ops-0_ndoc': 'is there a documented onboarding process that a new team member could follow?'
+      }
+    },
+    6:{
+      base: 'how do you currently ensure consistent quality across different clients or projects?',
+      yellow: ['where does delivery most often fall short of what you intended?'],
+      hot: [
+        'what parts of your delivery currently depend most on specific individuals?',
+        'when delivery goes wrong, what typically causes it?'
+      ],
+      cond:{
+        'ops-3_miss': "how do you currently check that what you've delivered meets the standard you intended?",
+        'ops-3_ndoc': 'how is quality checked — and is that process consistent across the team?',
+        'ops-10_miss': 'where does knowledge about how things work currently live?'
+      }
+    },
+    7:{
+      base: 'what do you think drives clients to come back or renew?',
+      yellow: ['what tends to reduce client engagement between purchases or projects?'],
+      hot: [
+        'how do you currently stay in contact with existing clients between engagements?',
+        'do you have a sense of how long clients typically stay with you?',
+        'what tends to cause clients to leave or not return?'
+      ],
+      cond:{
+        'sls-7_miss': 'how do you manage relationships with your most important clients?',
+        'sls-8_miss': 'do you actively try to expand what you do for existing clients?'
+      }
+    }
+  };
+
+  const q = Q[stage.number];
+  if (!q) return [];
+
+  add(q.base);
+  if (r==='yellow' && q.yellow) add(...q.yellow);
+  if ((r==='orange'||r==='red') && q.hot) add(...q.hot);
+
+  if (q.cond) {
+    Object.entries(q.cond).forEach(([cond, text]) => {
+      const [key, state] = cond.split('_');
+      if      (state==='miss' && !addressed.has(key)) add(text);
+      else if (state==='ndoc' &&  ndoc.has(key))      add(text);
+    });
+  }
+
+  return qs.slice(0, 5);
+}
+
+function setAnalysisStatus(type, msg) {
+  const el = document.getElementById('analysis-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'analysis-status' + (type ? ' ' + type : '');
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   SYSTEM LIBRARY
+   ══════════════════════════════════════════════════════════════════════ */
+let sysCounter = 0;
+
+function newStep() {
+  return {
+    id: uid(), name: '',
+    trigger:'', inputs:'', action:'', output:'', routing:'', comms:'',
+    attachments:[],
+    // phase 2 fields
+    stepType:'human',
+    autoAction:'', integration:'', errorCond:'',
+    spaContext:'', spaOptions:'', spaExec:''
+  };
+}
+
+function addSystem() {
+  sysCounter++;
+  const sys = {
+    id: uid(),
+    code: 'SYS-' + String(sysCounter).padStart(3,'0'),
+    name:'', kWorker:'', sOwner:'',
+    status:'draft', autoStatus:'not started',
+    p1:[], p2:[],
+    p1Arin:'', p1Client:'', p1Date:'', p1Signed: false,
+    p2Arin:'', p2Client:'', p2Date:'', p2Signed: false,
+    _phase: 1
+  };
+  sys.p1.push(newStep());
+  S.systems.push(sys);
+  renderSystems();
+  save();
+  updateSysCount();
+}
+
+function removeSystem(id) {
+  S.systems = S.systems.filter(s => s.id !== id);
+  renderSystems();
+  save();
+  updateSysCount();
+}
+
+function addSysStep(sysId, phase) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+  (phase===1 ? sys.p1 : sys.p2).push(newStep());
+  renderSystems();
+  save();
+}
+
+function removeStep(sysId, phase, stepId) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+  if (phase===1) sys.p1 = sys.p1.filter(s => s.id !== stepId);
+  else sys.p2 = sys.p2.filter(s => s.id !== stepId);
+  renderSystems();
+  save();
+}
+
+function switchPhase(sysId, phase) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+
+  // Auto-copy p1 steps to p2 on first switch
+  if (phase === 2 && sys.p2.length === 0 && sys.p1.length > 0) {
+    sys.p2 = sys.p1.map(s => ({
+      ...newStep(),
+      id: 'p2-' + uid(),
+      name: s.name,
+      stepType: 'human'
+    }));
+  }
+
+  sys._phase = phase;
+  renderSystems();
+  save();
+}
+
+function setStepType(sysId, stepId, type) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+  const step = sys.p2.find(s => s.id === stepId);
+  if (step) step.stepType = type;
+  renderSystems();
+  save();
+  // Re-open that step
+  const body = document.getElementById('pb-' + stepId);
+  if (body) body.classList.remove('hidden');
+}
+
+function renderSystems() {
+  const c = document.getElementById('sys-container');
+  if (!c) return;
+  c.innerHTML = '';
+
+  const statuses = ['draft','captured','documented','reviewed','signed off','live','needs revision'];
+  const autoStatuses = ['not started','in design','built','deployed'];
+
+  S.systems.forEach((sys) => {
+    const stOpts = statuses.map(o => `<option ${sys.status===o?'selected':''}>${o}</option>`).join('');
+    const asOpts = autoStatuses.map(o => `<option ${sys.autoStatus===o?'selected':''}>${o}</option>`).join('');
+    const phase = sys._phase || 1;
+
+    const div = document.createElement('div');
+    div.className = 'sys-card';
+    div.id = 'sys-' + sys.id;
+    div.innerHTML = `
+<div class="sys-header">
+  <div class="sys-meta">
+    <span class="sys-id">${sys.code}</span>
+    ${sys.fromInventory ? `<span class="inv-status-lock ${{ doc:'s-doc', ndoc:'s-ndoc', notyet:'s-notyet' }[sys.inventoryStatus]||''}">${{ doc:'documented', ndoc:'not documented', notyet:'not yet implemented' }[sys.inventoryStatus]||''}</span>` : ''}
+    <input class="sys-name-input" type="text" placeholder="system name — result-first (e.g. 'confirmed supplier order')"
+      value="${x(sys.name)}" data-sys="${sys.id}" data-field="name" oninput="onSave(this)">
+    <select class="sel sel-sm" data-sys="${sys.id}" data-field="status" onchange="onSave(this)" title="document status">${stOpts}</select>
+    <select class="sel sel-sm" data-sys="${sys.id}" data-field="autoStatus" onchange="onSave(this)" title="automation status">${asOpts}</select>
+  </div>
+  <button class="rm-btn" onclick="removeSystem('${sys.id}')">×</button>
+</div>
+<div class="sys-body" id="sb-${sys.id}">
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="fr">
+      <div class="fl">knowledgeable worker</div>
+      <textarea class="fi sl" placeholder="who best produces this result — primary extraction target during map phase" data-sys="${sys.id}" data-field="kWorker" oninput="onSave(this)">${x(sys.kWorker)}</textarea>
+    </div>
+    <div class="fr">
+      <div class="fl">system owner</div>
+      <textarea class="fi sl" placeholder="who is accountable for this system's accuracy and ongoing maintenance" data-sys="${sys.id}" data-field="sOwner" oninput="onSave(this)">${x(sys.sOwner)}</textarea>
+    </div>
+  </div>
+
+  <div class="phase-tabs">
+    <div class="ptab ${phase===1?'active':''}" onclick="switchPhase('${sys.id}',1)">phase 1 — original process</div>
+    <div class="ptab ${phase===2?'active':''}" onclick="switchPhase('${sys.id}',2)">phase 2 — automated system + s.p.a. mapping</div>
+  </div>
+
+  <div class="phase ${phase===1?'active':''}" id="ph1-${sys.id}">
+    <p style="font-size:11px;color:var(--subtle);margin-bottom:13px;">document each step of this system as it currently runs. captured from direct observation or video recording. the teach-it test must pass before sign-off: a person who has never done this task should be able to follow the document cold and complete it without questions.</p>
+    <div id="p1s-${sys.id}"></div>
+    <button class="add-btn" onclick="addSysStep('${sys.id}',1)">+ add step</button>
+    <div class="signoff">
+      <h4>phase 1 sign-off — original process</h4>
+      <p style="font-size:11px;color:var(--subtle);margin-bottom:11px;">both parties confirm this accurately reflects how this system currently runs. no automation will be built until this is signed off. teach-it test must have passed.</p>
+      <div class="signoff-row">
+        <div class="sp"><label>ar|in</label><input type="text" placeholder="name" value="${x(sys.p1Arin)}" data-sys="${sys.id}" data-field="p1Arin" oninput="onSave(this)"></div>
+        <div class="sp"><label>client</label><input type="text" placeholder="name" value="${x(sys.p1Client)}" data-sys="${sys.id}" data-field="p1Client" oninput="onSave(this)"></div>
+        <div class="sp"><label>date</label><input type="date" value="${x(sys.p1Date)}" data-sys="${sys.id}" data-field="p1Date" oninput="onSave(this)"></div>
+        <button class="btn ${sys.p1Signed?'signed':''}" id="p1btn-${sys.id}" onclick="signSystem('${sys.id}',1)">${sys.p1Signed?'signed off ✓':'sign off phase 1'}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase ${phase===2?'active':''}" id="ph2-${sys.id}">
+    <p style="font-size:11px;color:var(--subtle);margin-bottom:13px;">the automated version of this system — showing which steps are automated, which stay human, and which become s.p.a. decision points for the owner. steps are copied from phase 1 — set the type for each and fill in the automation or s.p.a. details. signed off separately after deployment.</p>
+    <div id="p2s-${sys.id}"></div>
+    <button class="add-btn" onclick="addSysStep('${sys.id}',2)">+ add step</button>
+    <div class="signoff">
+      <h4>phase 2 sign-off — automated system + s.p.a. mapping</h4>
+      <p style="font-size:11px;color:var(--subtle);margin-bottom:11px;">both parties confirm the automated system accurately reflects the agreed process and that the s.p.a. decision points match the owner's actual decision responsibilities in live operation.</p>
+      <div class="signoff-row">
+        <div class="sp"><label>ar|in</label><input type="text" placeholder="name" value="${x(sys.p2Arin)}" data-sys="${sys.id}" data-field="p2Arin" oninput="onSave(this)"></div>
+        <div class="sp"><label>client</label><input type="text" placeholder="name" value="${x(sys.p2Client)}" data-sys="${sys.id}" data-field="p2Client" oninput="onSave(this)"></div>
+        <div class="sp"><label>date</label><input type="date" value="${x(sys.p2Date)}" data-sys="${sys.id}" data-field="p2Date" oninput="onSave(this)"></div>
+        <button class="btn ${sys.p2Signed?'signed':''}" id="p2btn-${sys.id}" onclick="signSystem('${sys.id}',2)">${sys.p2Signed?'signed off ✓':'sign off phase 2'}</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+    c.appendChild(div);
+
+    renderSteps(sys, 1);
+    renderSteps(sys, 2);
+  });
+  updateSysCount();
+}
+
+function renderSteps(sys, phase) {
+  const container = document.getElementById(`p${phase}s-${sys.id}`);
+  if (!container) return;
+  container.innerHTML = '';
+
+  const steps = phase === 1 ? sys.p1 : sys.p2;
+  steps.forEach((step, i) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = phase === 1 ? buildP1Step(sys.id, step, i) : buildP2Step(sys.id, step, i);
+    container.appendChild(div);
+  });
+}
+
+function buildP1Step(sysId, step, i) {
+  return `
+<div class="card-header" onclick="toggleCard('pb-${step.id}')">
+  <span class="card-num">step ${pad(i+1)}</span>
+  <input class="name-input" type="text" placeholder="step name — the result this step produces"
+    value="${x(step.name)}" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="name"
+    oninput="onSave(this)" onclick="event.stopPropagation()">
+  <button class="rm-btn" onclick="event.stopPropagation();removeStep('${sysId}',1,'${step.id}')">×</button>
+</div>
+<div class="card-body hidden" id="pb-${step.id}">
+  <div class="fr">
+    <div class="fl">trigger <span class="fh">— what initiates this specific step</span></div>
+    <textarea class="fi" placeholder="the event, action, or condition that starts this step. example: 'payment confirmed in Zoho / previous step output received / date reached on calendar'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="trigger" oninput="onSave(this)">${x(step.trigger)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">required inputs <span class="fh">— what must be present for this step to execute</span></div>
+    <textarea class="fi" placeholder="information or materials needed. if any are missing, this step cannot complete. example: 'client name / session date / payment confirmation number / signed agreement'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="inputs" oninput="onSave(this)">${x(step.inputs)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">action <span class="fh">— who does what, using which tool</span></div>
+    <textarea class="fi" placeholder="exact actions: who / what they do / which tool / in what order. new team member test: can they execute this without asking a single question? example: 'receptionist logs into HubSpot / opens contact record / selects send confirmation template / adds session date and time / clicks send / marks deal as confirmed'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="action" oninput="onSave(this)">${x(step.action)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">output <span class="fh">— what this step produces when complete</span></div>
+    <textarea class="fi" placeholder="the specific result: a record, communication, status change, or deliverable. example: 'confirmation email sent and logged in HubSpot / contact status updated to confirmed / calendar invite created in both calendars'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="output" oninput="onSave(this)">${x(step.output)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">routing <span class="fh">— where the output goes and what it triggers next</span></div>
+    <textarea class="fi" placeholder="where the output goes, who receives it, and what it triggers. example: 'email goes to client inbox / deal moves to confirmed in HubSpot / triggers next step automatically / copy routed to operations calendar'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="routing" oninput="onSave(this)">${x(step.routing)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">communication template <span class="fh">— exact text if this step sends a message</span></div>
+    <textarea class="fi" placeholder="if this step includes a communication — write the exact text here. leave blank if no message is sent. include subject line if email. example — subject: your booking is confirmed / body: hi [name], your [service] session is confirmed for [date] at [time]. here is what happens next..." data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="comms" oninput="onSave(this)">${x(step.comms)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">attachments <span class="fh">— recordings, checklists, screenshots, process videos</span></div>
+    <div class="attach-area">
+      <label for="p1f-${step.id}">+ attach file</label>
+      <input type="file" id="p1f-${step.id}" multiple onchange="showAttach(this,'p1al-${step.id}')">
+      <span class="attach-list" id="p1al-${step.id}">${step.attachments?.length ? step.attachments.join(', ') : 'no files attached'}</span>
+    </div>
+  </div>
+</div>`;
+}
+
+function buildP2Step(sysId, step, i) {
+  const types = ['automatable','human','decision','gap'];
+  const tags = types.map(t => {
+    const cls = step.stepType===t ? (t==='automatable'?'t-auto':`t-${t}`) : '';
+    return `<span class="ttag ${cls}" onclick="setStepType('${sysId}','${step.id}','${t}')">${t}</span>`;
+  }).join('');
+
+  const isAuto = step.stepType === 'automatable';
+  const isDec  = step.stepType === 'decision';
+  const isGap  = step.stepType === 'gap';
+  const isHuman = !isAuto && !isDec && !isGap;
+
+  return `
+<div class="card-header" onclick="toggleCard('pb-${step.id}')">
+  <span class="card-num">step ${pad(i+1)}</span>
+  <input class="name-input" type="text" placeholder="step name — matches phase 1 or new automated step"
+    value="${x(step.name)}" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="name"
+    oninput="onSave(this)" onclick="event.stopPropagation()">
+  <button class="rm-btn" onclick="event.stopPropagation();removeStep('${sysId}',2,'${step.id}')">×</button>
+</div>
+<div class="card-body hidden" id="pb-${step.id}">
+  <div class="fr">
+    <div class="fl">step type</div>
+    <div class="type-row">${tags}</div>
+  </div>
+  ${isAuto ? `
+  <div class="fr">
+    <div class="fl">automation action <span class="fh">— what the automation does, in plain language</span></div>
+    <textarea class="fi" placeholder="what the automation does end-to-end for this step. write for the client — no technical jargon. example: 'automation detects the payment confirmation in Zoho, creates the client record in HubSpot, sends the booking confirmation email, and updates the project board in Asana — all within 60 seconds of payment received'" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="autoAction" oninput="onSave(this)">${x(step.autoAction)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">integration target <span class="fh">— which tools are connected in this step</span></div>
+    <textarea class="fi sl" placeholder="tools this automation connects. example: 'Zoho → n8n → HubSpot → Gmail / Calendly → n8n → Asana → Slack'" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="integration" oninput="onSave(this)">${x(step.integration)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">error condition <span class="fh">— what happens if this automated step fails</span></div>
+    <textarea class="fi sl" placeholder="what triggers a failure state and what the fallback is. example: 'if Zoho webhook fails → owner alerted in s.p.a. / fallback: receptionist receives manual task in Asana within 5 minutes'" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="errorCond" oninput="onSave(this)">${x(step.errorCond)}</textarea>
+  </div>` : ''}
+  ${isDec ? `
+  <div class="fr">
+    <div class="fl">what the owner sees in s.p.a. <span class="fh">— the context and data surfaced for the decision</span></div>
+    <textarea class="fi" placeholder="exactly what information the owner sees in s.p.a. when this decision point is surfaced. include the data that makes the decision possible. example: 'supplier: [name] / order: [ref] / original lead time: 14 days / current lead time: 38 days / clients affected: [list] / revenue at risk: [£amount] / backup supplier available: yes at +20% cost'" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="spaContext" oninput="onSave(this)">${x(step.spaContext)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">owner options <span class="fh">— the specific choices available to the owner in s.p.a.</span></div>
+    <textarea class="fi" placeholder="list the exact options the owner can select. each option must lead to a defined automation response. example — option a: switch to backup supplier (+20% cost) / option b: notify clients and extend timelines / option c: pause new orders pending resolution / option d: escalate to me directly" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="spaOptions" oninput="onSave(this)">${x(step.spaOptions)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">automation after decision <span class="fh">— what executes for each option the owner chooses</span></div>
+    <textarea class="fi" placeholder="what automation runs immediately after each owner decision. example — if option a: automation places order with backup supplier / updates project timelines / sends status update to all affected clients using template. if option b: automation sends client delay notifications / adjusts project board dates / logs the decision and outcome in the audit trail" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="spaExec" oninput="onSave(this)">${x(step.spaExec)}</textarea>
+  </div>` : ''}
+  ${isGap ? `
+  <div class="fr">
+    <div class="fl">gap description <span class="fh">— what is missing before this step can be automated</span></div>
+    <textarea class="fi" placeholder="describe exactly what is missing. is it data, process clarity, tool capability, ownership, or something else? example: 'no consistent record of which clients are linked to which suppliers — this connection is not captured in any current system. required before supplier delay automation can identify affected clients automatically'" data-sys="${sysId}" data-phase="2" data-step="${step.id}" data-field="autoAction" oninput="onSave(this)">${x(step.autoAction)}</textarea>
+  </div>` : ''}
+  ${isHuman ? `<p style="font-size:11px;color:var(--subtle);padding:6px 0;font-style:italic;">this step remains human — no automation applied. the owner or team member executes it as documented in phase 1.</p>` : ''}
+</div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SIGN-OFFS
+   ══════════════════════════════════════════════════════════════════════ */
+function signSection(n) {
+  const aEl = document.getElementById(`s${n}-arin`);
+  const cEl = document.getElementById(`s${n}-client`);
+  const dEl = document.getElementById(`s${n}-date`);
+
+  const needsArin = !!aEl;
+  if (needsArin && !aEl.value.trim()) {
+    alert('please enter the ar|in name before signing off.');
+    return;
+  }
+  if (!cEl.value.trim()) {
+    alert('please enter your name before signing off.');
+    return;
+  }
+  if (!dEl.value) dEl.value = today();
+
+  const key = 's' + n;
+  S.signed[key] = true;
+
+  collectMeta();
+  if (needsArin) S.meta[`s${n}Arin`] = aEl.value;
+  S.meta[`s${n}Client`] = cEl.value;
+  S.meta[`s${n}Date`]   = dEl.value;
+
+  setBtn(`s${n}-btn`, true);
+
+  const labels = {1:'critical client flow', 2:'systems inventory', 3:'consultation outcomes'};
+  const who = needsArin ? aEl.value + ' & ' + cEl.value : cEl.value;
+  hist(who, `section ${n} signed off — ${labels[n]}`);
+
+  save();
+  gates();
+  if (n === 2) {
+    const _p2 = { type:'pre-consult-complete', client:(S.meta||{}).client||'', email:(S.meta||{}).email||'', timestamp:new Date().toISOString() };
+    fetch(ANALYSIS_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(_p2) }).catch(()=>{});
+  }
+  if (n === 3) {
+    autoPopulateSystems();
+    const nc = S.systems.filter(s => s.fromInventory).length;
+    hist(who, 'system library pre-filled — ' + nc + ' system' + (nc===1?'':'s') + ' created from inventory');
+    save();
+    renderSystems();
+    updateSysCount();
+  }
+}
+
+function signSystem(sysId, phase) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+
+  const aVal = sys[`p${phase}Arin`];
+  const cVal = sys[`p${phase}Client`];
+
+  if (!aVal?.trim() || !cVal?.trim()) {
+    alert('please enter both ar|in and client names before signing off.');
+    return;
+  }
+  if (!sys[`p${phase}Date`]) sys[`p${phase}Date`] = today();
+
+  sys[`p${phase}Signed`] = true;
+  setBtn(`p${phase}btn-${sysId}`, true);
+
+  hist(aVal + ' & ' + cVal, `${sys.code} — "${sys.name || 'unnamed system'}" — phase ${phase} signed off`);
+  save();
+  updateSysCount();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   GATE ENFORCEMENT
+   ══════════════════════════════════════════════════════════════════════ */
+function gates() {
+  if (S.signed.s1) {
+    unlock(2);
+    setBadge(1, 'signed off', 'b-so');
+    el('dot1').className = 'sdot done';
+  }
+  if (S.signed.s2) {
+    setBadge(2, 'signed off', 'b-so');
+    el('dot2').className = 'sdot done';
+    const ab = document.getElementById('analysis-btn');
+    if (ab) { ab.disabled = true; ab.textContent = 'brief locked — section 2 signed off'; }
+  }
+  if (S.signed.s2) {
+    const _g2cb = document.getElementById('s2-consult-block');
+    if (_g2cb) _g2cb.style.display = 'block';
+  }
+  if (S.consultReady) { unlock(3); }
+  if (S.signed.s3) {
+    unlock(4);
+    setBadge(3, 'signed off', 'b-so');
+    const d3 = el('dot3'); if (d3) d3.className = 'sdot done';
+    renderConsultationOutcomes();
+    renderPipeline();
+  }
+  if (S.systems.some(s => s.p1Signed)) {
+    const d4 = el('dot4'); if (d4) d4.className = 'sdot active';
+  }
+  if (S.systems.some(s => s.p2Signed)) {
+    unlock(5);
+    const d5 = el('dot5'); if (d5) d5.className = 'sdot active';
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const order = ['map','evaluate','strengthen','build','run'];
+  let idx = 0;
+  if (S.signed.s1 && S.signed.s2)                                   idx = 1; // evaluate — map signed off
+  if ((S.pipeline||{}).p5?.checked)                                  idx = 2; // strengthen — s.p.a. assessment started
+  if ((S.pipeline||{}).p8?.checked || (S.pipeline||{}).p9?.checked) idx = 3; // build — payment confirmed
+  if (S.systems.some(s=>s.p2Signed))                                 idx = 4; // run — first system deployed
+  order.forEach((stage, i) => {
+    const dot = document.getElementById('prog-' + stage);
+    if (!dot) return;
+    if (i < idx)      dot.className = 'prog-step done';
+    else if (i === idx) dot.className = 'prog-step active';
+    else               dot.className = 'prog-step';
+  });
+}
+
+function unlock(n) {
+  const sec = document.getElementById('section-' + n);
+  if (!sec) return;
+  sec.classList.remove('locked');
+
+  const lock = document.getElementById(`s${n}-lock`);
+  const content = document.getElementById(`s${n}-content`);
+  if (lock) lock.style.display = 'none';
+  if (content) content.style.display = 'block';
+
+  const badge = document.getElementById('badge' + n);
+  if (badge) { badge.textContent = 'in progress'; badge.className = 'badge b-ip'; }
+
+  const dot = document.getElementById('dot' + n);
+  if (dot) dot.className = 'sdot active';
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RUN LOG
+   ══════════════════════════════════════════════════════════════════════ */
+function addRunEntry() {
+  const input = document.getElementById('run-entry-text');
+  if (!input || !input.value.trim()) return;
+  if (!S.runLog) S.runLog = [];
+  S.runLog.push({ date: todayStr(), text: input.value.trim(), actor: S.meta.arin || 'ar|in' });
+  input.value = '';
+  renderRunLog();
+  save();
+}
+
+function renderRunLog() {
+  const log = document.getElementById('run-log');
+  if (!log) return;
+  if (!S.runLog || !S.runLog.length) {
+    log.innerHTML = '<p style="font-size:12px;color:var(--subtle);font-style:italic;">no entries yet.</p>';
+    return;
+  }
+  log.innerHTML = [...S.runLog].reverse().map(e => `
+<div class="run-entry">
+  <div class="run-date">${e.date}<br><span style="font-size:10px;">${x(e.actor||'')}</span></div>
+  <div>${x(e.text)}</div>
+</div>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   AGREEMENT HISTORY
+   ══════════════════════════════════════════════════════════════════════ */
+function hist(actor, event) {
+  S.history.push({ date: todayStr(), actor, event });
+  renderHistory();
+}
+
+function renderHistory() {
+  const log = document.getElementById('hist-log');
+  if (!log) return;
+
+  if (!S.history.length) {
+    log.innerHTML = `<div class="hist-row" style="color:var(--subtle);font-style:italic;"><div>no events recorded yet</div><div></div><div></div></div>`;
+    return;
+  }
+
+  log.innerHTML = [...S.history].reverse().map(h =>
+    `<div class="hist-row">
+      <div class="hist-date">${h.date}</div>
+      <div class="hist-actor">${x(h.actor)}</div>
+      <div>${x(h.event)}</div>
+    </div>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════════════════════════ */
+function toggle(id) {
+  const e = document.getElementById(id);
+  if (e) e.classList.toggle('hidden');
+}
+
+function toggleCard(id) {
+  const e = document.getElementById(id);
+  if (e) e.classList.toggle('hidden');
+}
+
+function goto(id) {
+  const e = document.getElementById(id);
+  if (e) e.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function x(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function g(id) { const e = document.getElementById(id); return e ? e.value : ''; }
+function sv(id, v) { const e = document.getElementById(id); if (e && v !== undefined && v !== null) e.value = v; }
+function el(id) { return document.getElementById(id); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function pad(n) { return String(n).padStart(2,'0'); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function todayStr() { return new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}); }
+
+function setVer(v) { const e = el('ver-display'); if (e) e.textContent = v || '0.1'; }
+
+function setBadge(n, text, cls) {
+  const b = el('badge' + n);
+  if (!b) return;
+  b.textContent = text;
+  b.className = 'badge ' + cls;
+}
+
+function setBtn(id, signed) {
+  const btn = el(id);
+  if (!btn) return;
+  if (signed) { btn.textContent = 'signed off ✓'; btn.classList.add('signed'); }
+}
+
+function showAttach(input, listId) {
+  const files = Array.from(input.files).map(f => f.name);
+  const el = document.getElementById(listId);
+  if (el) el.textContent = files.length ? files.join(', ') : 'no files attached';
+}
+
+function onSave(el) {
+  // Immediate save on any input change
+  save();
+}
+
+function updateSysCount() {
+  const total = S.systems.length;
+  const signed = S.systems.filter(s => s.p1Signed).length;
+  const e = document.getElementById('m-sys-count');
+  if (e) e.value = total ? `${signed} / ${total}  (phase 1 signed off)` : '0 / 0';
+}
+</script>
+</body>
+</html>
