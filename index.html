@@ -49,6 +49,16 @@
     .nav-item { display: block; padding: 7px 20px; color: #C8C4BC; font-size: 12px; cursor: pointer; text-decoration: none; }
     .nav-item:hover { color: #EAE5DC; }
 
+    /* ── Client list ─────────────────────────────────────────────────── */
+    .client-item { display: flex; align-items: center; padding: 5px 10px 5px 20px; }
+    .client-name { flex: 1; color: #C8C4BC; font-size: 12px; text-decoration: none; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+    .client-name:hover { color: #EAE5DC; }
+    .client-current .client-name { color: #EAE5DC; font-weight: 600; }
+    .client-del { background: none; border: none; color: #62605C; cursor: pointer; font-size: 15px; padding: 0 4px; line-height: 1; flex-shrink: 0; }
+    .client-del:hover { color: #D11919; }
+    .new-eng-btn { display: block; padding: 6px 20px; color: #84817C; font-size: 11px; cursor: pointer; background: none; border: none; text-align: left; width: 100%; }
+    .new-eng-btn:hover { color: #C8C4BC; }
+
     .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #84817C; vertical-align: middle; }
     .sdot.active { background: var(--amber); }
     .sdot.done { background: var(--green); }
@@ -542,6 +552,10 @@
       <span class="sdot" id="dot5"></span>05 — run
     </a>
 
+    <div class="nav-label" style="margin-top:12px;">engagements</div>
+    <div id="client-list"></div>
+    <button class="new-eng-btn" onclick="showNewEngagement()">+ new engagement</button>
+
   </nav>
 
   <!-- ── Main ────────────────────────────────────────────────────────── -->
@@ -817,7 +831,11 @@
 /* ══════════════════════════════════════════════════════════════════════
    STATE
    ══════════════════════════════════════════════════════════════════════ */
-const KEY = 'arin-ced-v5';
+const _clientSlug = (() => {
+  const c = new URLSearchParams(location.search).get('client');
+  return c ? c.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : '';
+})();
+const KEY = 'arin-ced-v5' + (_clientSlug ? '-' + _clientSlug : '');
 
 let S = {
   meta: {},
@@ -848,6 +866,7 @@ window.addEventListener('DOMContentLoaded', () => {
   render();
   loadFromURL();
   gates();
+  renderClientList();
 });
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -930,6 +949,67 @@ function resetDocument() {
   if (!confirm('clear all data and start a new engagement?')) return;
   localStorage.removeItem(KEY);
   location.reload();
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MULTI-CLIENT MANAGEMENT
+   each client is stored under arin-ced-v5-{slug}
+   the sidebar lists all saved engagements with links and delete option
+   ══════════════════════════════════════════════════════════════════════ */
+function renderClientList() {
+  const listEl = document.getElementById('client-list');
+  if (!listEl) return;
+  const PREFIX = 'arin-ced-v5-';
+  const clients = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(PREFIX)) {
+      try {
+        const data = JSON.parse(localStorage.getItem(k));
+        const clientName = data?.meta?.client || k.replace(PREFIX, '').replace(/-/g, ' ');
+        const slug = k.replace(PREFIX, '');
+        // reconstruct URL from saved meta fields
+        const params = new URLSearchParams();
+        if (data?.meta?.client)     params.set('client', data.meta.client);
+        if (data?.meta?.clientLead) params.set('lead',   data.meta.clientLead);
+        if (data?.meta?.email)      params.set('email',  data.meta.email);
+        if (data?.meta?.start)      params.set('date',   data.meta.start);
+        const url = location.pathname + '?' + params.toString();
+        clients.push({ name: clientName, slug, url, isCurrent: (_clientSlug === slug) });
+      } catch(e) {}
+    }
+  }
+  if (clients.length === 0) {
+    listEl.innerHTML = '<div style="padding:4px 20px;font-size:11px;color:#84817C;">no engagements yet</div>';
+    return;
+  }
+  listEl.innerHTML = clients.map(c => `
+    <div class="client-item${c.isCurrent ? ' client-current' : ''}">
+      <a href="${c.url}" class="client-name" title="${c.name}">${c.name}</a>
+      <button class="client-del" onclick="deleteClient('${c.slug}',event)" title="remove">×</button>
+    </div>
+  `).join('');
+}
+
+function deleteClient(slug, evt) {
+  evt.preventDefault();
+  evt.stopPropagation();
+  const label = slug.replace(/-/g, ' ');
+  if (!confirm('remove "' + label + '" from the list? this cannot be undone.')) return;
+  localStorage.removeItem('arin-ced-v5-' + slug);
+  if (_clientSlug === slug) {
+    // deleted current — go to base URL
+    location.href = location.pathname;
+  } else {
+    renderClientList();
+  }
+}
+
+function showNewEngagement() {
+  const name = prompt('enter the client business name:');
+  if (!name || !name.trim()) return;
+  const params = new URLSearchParams({ client: name.trim() });
+  location.href = location.pathname + '?' + params.toString();
 }
 
 function collectMeta() {
