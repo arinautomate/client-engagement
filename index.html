@@ -59,6 +59,13 @@
     .new-eng-btn { display: block; padding: 6px 20px; color: #84817C; font-size: 11px; cursor: pointer; background: none; border: none; text-align: left; width: 100%; }
     .new-eng-btn:hover { color: #C8C4BC; }
 
+    /* ── Software dropdown in system inventory ──────────────────────── */
+    .inv-software-wrap { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+    .inv-software { font-size: 11px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 2px; background: #fff; color: var(--dark); font-family: inherit; cursor: pointer; }
+    .inv-software:focus { outline: none; border-color: var(--red); }
+    .inv-software-other { font-size: 11px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 2px; background: #fff; color: var(--dark); font-family: inherit; width: 140px; }
+    .inv-software-other:focus { outline: none; border-bottom-color: var(--red); }
+
     .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #84817C; vertical-align: middle; }
     .sdot.active { background: var(--amber); }
     .sdot.done { background: var(--green); }
@@ -573,7 +580,8 @@
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
           <div style="font-size:11px;color:var(--subtle);text-align:right;line-height:1.8;">
             v<span id="ver-display">0.1</span><br>
-            <span id="date-display"></span>
+            <span id="date-display"></span><br>
+            <span id="save-indicator" style="font-size:10px;color:#aaa;"></span>
           </div>
           <button onclick="resetDocument()" style="font-size:10px;padding:3px 10px;border:1px solid var(--border);background:transparent;color:var(--subtle);cursor:pointer;font-family:inherit;" title="clear all data and start a new engagement">new engagement</button>
         </div>
@@ -835,7 +843,16 @@ const _clientSlug = (() => {
   const c = new URLSearchParams(location.search).get('client');
   return c ? c.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : '';
 })();
-const KEY = 'arin-ced-v5' + (_clientSlug ? '-' + _clientSlug : '');
+const _savedBy = (() => {
+  const email = new URLSearchParams(location.search).get('email') || '';
+  return email === 'lamine.kane@arinautomate.ai' ? 'arin' : 'client';
+})();
+
+// n8n webhook endpoints — update N8N_BASE to your n8n instance URL
+const N8N_BASE    = 'https://arinautomate.app.n8n.cloud';
+const CED_LOAD    = N8N_BASE + '/webhook/ced-001a';
+const CED_SAVE    = N8N_BASE + '/webhook/ced-001b';
+const SIDEBAR_KEY = 'arin-ced-index'; // localStorage: [{slug, name, url}] index only
 
 let S = {
   meta: {},
@@ -856,8 +873,9 @@ let S = {
 /* ══════════════════════════════════════════════════════════════════════
    BOOT
    ══════════════════════════════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  load();
+window.addEventListener('DOMContentLoaded', async () => {
+  await load();
+  updateSidebarIndex();
   document.getElementById('date-display').textContent =
     new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 
@@ -867,6 +885,11 @@ window.addEventListener('DOMContentLoaded', () => {
   loadFromURL();
   gates();
   renderClientList();
+
+  // auto-save on any field blur
+  document.addEventListener('blur', e => {
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) save();
+  }, true);
 });
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -902,13 +925,36 @@ function loadFromURL() {
 /* ══════════════════════════════════════════════════════════════════════
    PERSISTENCE
    ══════════════════════════════════════════════════════════════════════ */
+let _saveTimer = null;
 function save() {
   collectMeta();
   collectCCF();
   collectSystems();
   collectPipeline();
   collectAssignments();
-  localStorage.setItem(KEY, JSON.stringify(S));
+  if (!_clientSlug) return;
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(CED_SAVE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: _clientSlug, data: S, saved_by: _savedBy })
+      });
+      if (r.ok) {
+        const res = await r.json();
+        updateVersionIndicator(res.version_number, res.saved_by, res.saved_at);
+        updateSidebarIndex();
+      }
+    } catch(e) { console.warn('ced save failed:', e); }
+  }, 600);
+}
+
+function updateVersionIndicator(vn, by, at) {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  const d = at ? new Date(at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '';
+  el.textContent = 'v' + (vn || '—') + ' · saved by ' + (by || '—') + (d ? ' · ' + d : '');
 }
 
 function collectPipeline() {
@@ -930,25 +976,38 @@ function collectAssignments() {
   });
 }
 
-function load() {
-  try {
-    const d = localStorage.getItem(KEY);
-    if (d) S = JSON.parse(d);
-  } catch(e) {}
+async function load() {
+  if (_clientSlug) {
+    try {
+      const r = await fetch(CED_LOAD + '?slug=' + encodeURIComponent(_clientSlug));
+      if (r.ok) {
+        const res = await r.json();
+        if (res.found && res.data) {
+          S = res.data;
+          updateVersionIndicator(res.version_number, res.saved_by, res.saved_at);
+        }
+      }
+    } catch(e) { console.warn('ced load failed, starting fresh:', e); }
+  }
   // migrate missing fields from older saved documents
   if (!S.owners)      S.owners      = {};
   if (!S.assignments) S.assignments = {};
   if (!S.pipeline)    S.pipeline    = {};
   if (S.consultReady === undefined) S.consultReady = false;
   if (!S.runLog)      S.runLog      = [];
+  if (!S.signed)      S.signed      = {};
   if (S.signed.s3 === undefined) S.signed.s3 = false;
   delete S.signed.s4;
 }
 
 function resetDocument() {
   if (!confirm('clear all data and start a new engagement?')) return;
-  localStorage.removeItem(KEY);
-  location.reload();
+  try {
+    let idx = JSON.parse(localStorage.getItem(SIDEBAR_KEY) || '[]');
+    idx = idx.filter(c => c.slug !== _clientSlug);
+    localStorage.setItem(SIDEBAR_KEY, JSON.stringify(idx));
+  } catch(e) {}
+  location.href = location.pathname;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -956,35 +1015,35 @@ function resetDocument() {
    each client is stored under arin-ced-v5-{slug}
    the sidebar lists all saved engagements with links and delete option
    ══════════════════════════════════════════════════════════════════════ */
+function updateSidebarIndex() {
+  if (!_clientSlug) return;
+  const name = S.meta?.client || _clientSlug.replace(/-/g, ' ');
+  const p = new URLSearchParams();
+  if (S.meta?.client)     p.set('client', S.meta.client);
+  if (S.meta?.clientLead) p.set('lead',   S.meta.clientLead);
+  if (S.meta?.email)      p.set('email',  S.meta.email);
+  if (S.meta?.start)      p.set('date',   S.meta.start);
+  const url = location.pathname + '?' + p.toString();
+  let idx = [];
+  try { idx = JSON.parse(localStorage.getItem(SIDEBAR_KEY) || '[]'); } catch(e) {}
+  const ei = idx.findIndex(c => c.slug === _clientSlug);
+  const entry = { slug: _clientSlug, name, url };
+  if (ei >= 0) idx[ei] = entry; else idx.unshift(entry);
+  localStorage.setItem(SIDEBAR_KEY, JSON.stringify(idx));
+  renderClientList();
+}
+
 function renderClientList() {
   const listEl = document.getElementById('client-list');
   if (!listEl) return;
-  const PREFIX = 'arin-ced-v5-';
-  const clients = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith(PREFIX)) {
-      try {
-        const data = JSON.parse(localStorage.getItem(k));
-        const clientName = data?.meta?.client || k.replace(PREFIX, '').replace(/-/g, ' ');
-        const slug = k.replace(PREFIX, '');
-        // reconstruct URL from saved meta fields
-        const params = new URLSearchParams();
-        if (data?.meta?.client)     params.set('client', data.meta.client);
-        if (data?.meta?.clientLead) params.set('lead',   data.meta.clientLead);
-        if (data?.meta?.email)      params.set('email',  data.meta.email);
-        if (data?.meta?.start)      params.set('date',   data.meta.start);
-        const url = location.pathname + '?' + params.toString();
-        clients.push({ name: clientName, slug, url, isCurrent: (_clientSlug === slug) });
-      } catch(e) {}
-    }
-  }
-  if (clients.length === 0) {
+  let idx = [];
+  try { idx = JSON.parse(localStorage.getItem(SIDEBAR_KEY) || '[]'); } catch(e) {}
+  if (idx.length === 0) {
     listEl.innerHTML = '<div style="padding:4px 20px;font-size:11px;color:#84817C;">no engagements yet</div>';
     return;
   }
-  listEl.innerHTML = clients.map(c => `
-    <div class="client-item${c.isCurrent ? ' client-current' : ''}">
+  listEl.innerHTML = idx.map(c => `
+    <div class="client-item${c.slug === _clientSlug ? ' client-current' : ''}">
       <a href="${c.url}" class="client-name" title="${c.name}">${c.name}</a>
       <button class="client-del" onclick="deleteClient('${c.slug}',event)" title="remove">×</button>
     </div>
@@ -995,8 +1054,11 @@ function deleteClient(slug, evt) {
   evt.preventDefault();
   evt.stopPropagation();
   const label = slug.replace(/-/g, ' ');
-  if (!confirm('remove "' + label + '" from the list? this cannot be undone.')) return;
-  localStorage.removeItem('arin-ced-v5-' + slug);
+  if (!confirm('remove "' + label + '" from the list? the data stays in the database.')) return;
+  let idx = [];
+  try { idx = JSON.parse(localStorage.getItem(SIDEBAR_KEY) || '[]'); } catch(e) {}
+  idx = idx.filter(c => c.slug !== slug);
+  localStorage.setItem(SIDEBAR_KEY, JSON.stringify(idx));
   if (_clientSlug === slug) {
     // deleted current — go to base URL
     location.href = location.pathname;
@@ -1315,6 +1377,33 @@ function renderInventory() {
       const sc  = v => statusCls(v, status===v);
       const scna = statusCls('na', status==='na');
       const nameClass = 'inv-name'+(status&&status!=='na'?' addressed':'')+(status==='na'?' na-name':'');
+      const software = (S.inventory[k]||{}).software || '';
+      const softwareOther = (S.inventory[k]||{}).softwareOther || '';
+      const SOFTWARE_OPTIONS = [
+        ['','— software / tool —'],
+        ['none','none'],
+        ['excel-sheets','Excel / Google Sheets'],
+        ['email','Email (Outlook / Gmail)'],
+        ['whatsapp','WhatsApp'],
+        ['slack','Slack'],
+        ['teams','Microsoft Teams'],
+        ['notion','Notion'],
+        ['asana','Asana'],
+        ['trello','Trello'],
+        ['clickup','ClickUp'],
+        ['monday','Monday.com'],
+        ['hubspot','HubSpot'],
+        ['salesforce','Salesforce'],
+        ['pipedrive','Pipedrive'],
+        ['quickbooks','QuickBooks'],
+        ['xero','Xero'],
+        ['zoho','Zoho'],
+        ['stripe','Stripe'],
+        ['other','Other (specify)']
+      ];
+      const softwareOpts = SOFTWARE_OPTIONS.map(([v,l]) =>
+        `<option value="${v}"${software===v?' selected':''}>${l}</option>`
+      ).join('');
       return `
 <div class="inv-row" id="inv-row-${k}">
   <div class="${nameClass}" id="inv-name-${k}">${x(sys.label)}</div>
@@ -1323,6 +1412,10 @@ function renderInventory() {
     <button class="inv-stat ${sc('ndoc')}"   data-sval="ndoc"   data-base="inv-stat"    onclick="setSystemStatus('${k}','ndoc')">not documented</button>
     <button class="inv-stat ${sc('notyet')}" data-sval="notyet" data-base="inv-stat"    onclick="setSystemStatus('${k}','notyet')">not yet implemented</button>
     <button class="inv-stat-na ${scna}"      data-sval="na"     data-base="inv-stat-na" onclick="setSystemStatus('${k}','na')">not applicable</button>
+  </div>
+  <div class="inv-software-wrap">
+    <select class="inv-software" id="inv-sw-${k}" onchange="setSoftware('${k}',this.value)">${softwareOpts}</select>
+    <input type="text" class="inv-software-other" id="inv-sw-other-${k}" placeholder="specify..." value="${x(softwareOther)}" style="display:${software==='other'?'':'none'}" onblur="setSoftwareOther('${k}',this.value)">
   </div>
 </div>`;
     }).join('');
@@ -1371,6 +1464,20 @@ function setSystemStatus(k, val) {
 
   const deptKey = k.split('-')[0];
   updateDeptCount(deptKey);
+  save();
+}
+
+function setSoftware(k, val) {
+  if (!S.inventory[k]) S.inventory[k] = { status: '' };
+  S.inventory[k].software = val;
+  const otherEl = document.getElementById('inv-sw-other-' + k);
+  if (otherEl) otherEl.style.display = val === 'other' ? '' : 'none';
+  save();
+}
+
+function setSoftwareOther(k, val) {
+  if (!S.inventory[k]) S.inventory[k] = { status: '' };
+  S.inventory[k].softwareOther = val;
   save();
 }
 
