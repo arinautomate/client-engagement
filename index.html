@@ -71,6 +71,11 @@
     .sw-other-input:focus { outline: none; background: #f0ede8; }
   .step-sw-list { max-height: none; border: 1px solid var(--border); border-radius: 2px; background: #fff; }
   .step-sw-empty { font-size: 11px; color: var(--subtle); font-style: italic; padding: 6px 10px; }
+  .sw-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; min-height: 18px; }
+  .sw-tag { display: inline-flex; align-items: center; gap: 3px; background: #e8e4de; border-radius: 2px; padding: 2px 6px; font-size: 11px; color: var(--dark); }
+  .sw-tag-x { cursor: pointer; color: var(--subtle); font-size: 12px; line-height: 1; padding: 0 2px; }
+  .sw-tag-x:hover { color: var(--red); }
+  .sw-tags-none { font-size: 11px; color: var(--subtle); font-style: italic; }
 
     .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #84817C; vertical-align: middle; }
     .sdot.active { background: var(--amber); }
@@ -1367,7 +1372,7 @@ const SW_FALLBACK = [
   'Notion','Airtable','ClickUp','Monday.com','Asana','Trello',
   'Gmail','Outlook','Slack','Microsoft Teams','Zoom','WhatsApp Business',
   'HubSpot','Salesforce','Zoho CRM','QuickBooks','Xero','Sage',
-  'n8n','Zapier','Make','ChatGPT','Claude'
+  'n8n','Zapier','Make','Apify','Supabase','Telegram','ChatGPT','Claude'
 ];
 
 const SW_MAP = {
@@ -1377,7 +1382,7 @@ const SW_MAP = {
     'LinkedIn','LinkedIn Sales Navigator','Meta Business Suite','Google Ads','Microsoft Ads',
     'Mailchimp','ActiveCampaign','Klaviyo',
     'WordPress','Framer','Webflow','Wix','Squarespace','Shopify',
-    'Google Business Profile','Excel','Google Sheets'
+    'Google Business Profile','Excel','Google Sheets','Apify'
   ],
   'content creation and publishing': [
     'Canva','Adobe Creative Cloud','Figma',
@@ -1435,7 +1440,7 @@ const SW_MAP = {
   'lead qualification': [
     'HubSpot','Salesforce','Zoho CRM','Pipedrive','Monday CRM','Copper','Freshsales',
     'Calendly','Typeform','Google Forms','Jotform',
-    'Notion','Excel','Google Sheets','n8n','Zapier','Make'
+    'Notion','Excel','Google Sheets','n8n','Zapier','Make','Apify','Supabase'
   ],
   'sales calls and discovery': [
     'Calendly','HubSpot','Salesforce','Zoho CRM','Pipedrive',
@@ -1450,7 +1455,7 @@ const SW_MAP = {
   'follow-up and nurture': [
     'HubSpot','Salesforce','Zoho CRM','Pipedrive',
     'ActiveCampaign','Mailchimp','Klaviyo','Brevo','Customer.io','Keap',
-    'Gmail','Outlook','WhatsApp Business','Intercom','n8n','Zapier','Make'
+    'Gmail','Outlook','WhatsApp Business','Intercom','n8n','Zapier','Make','Twilio'
   ],
   'contract and agreement': [
     'DocuSign','Adobe Acrobat Sign','Dropbox Sign','PandaDoc',
@@ -1459,7 +1464,7 @@ const SW_MAP = {
   'CRM management': [
     'HubSpot','Salesforce','Zoho CRM','Pipedrive','Microsoft Dynamics 365',
     'Monday CRM','Copper','Freshsales','Insightly','Nimble','Capsule CRM',
-    'Airtable','Notion','Excel','Google Sheets'
+    'Airtable','Notion','Excel','Google Sheets','Supabase'
   ],
   'sales reporting': [
     'HubSpot','Salesforce','Zoho CRM',
@@ -1486,7 +1491,7 @@ const SW_MAP = {
   // ── OPERATIONS ────────────────────────────────────────────────────────
   'client onboarding': [
     'HubSpot','Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
-    'Google Docs','Microsoft Word','Gmail','Outlook','DocuSign','Calendly','n8n'
+    'Google Docs','Microsoft Word','Gmail','Outlook','DocuSign','Calendly','Loom','n8n'
   ],
   'project or job management': [
     'ClickUp','Monday.com','Asana','Trello','Notion','Jira','Basecamp',
@@ -1495,11 +1500,11 @@ const SW_MAP = {
   'service delivery': [
     'Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
     'Google Workspace','Microsoft 365',
-    'Slack','Microsoft Teams','Zoom','WhatsApp Business'
+    'Slack','Microsoft Teams','Zoom','WhatsApp Business','Loom'
   ],
   'quality control and review': [
     'Notion','ClickUp','Monday.com','Asana','Trello','Jira',
-    'Airtable','Excel','Google Sheets','Google Forms','Microsoft Forms'
+    'Airtable','Excel','Google Sheets','Google Forms','Microsoft Forms','Typeform','Loom'
   ],
   'supplier and vendor management': [
     'Excel','Google Sheets','Airtable','Notion',
@@ -1513,7 +1518,7 @@ const SW_MAP = {
   'client communication and updates': [
     'Gmail','Outlook','HubSpot','Salesforce','Zoho CRM',
     'WhatsApp Business','Slack','Microsoft Teams','Zoom','Google Meet',
-    'Intercom','Zendesk','Help Scout','Front'
+    'Intercom','Zendesk','Help Scout','Front','Twilio','Telegram'
   ],
   'facilities and equipment management': [
     'Excel','Google Sheets','Airtable','Notion',
@@ -1542,11 +1547,11 @@ const SW_MAP = {
   ],
   'accounts receivable and collections': [
     'Xero','QuickBooks','Sage','Zoho Books','FreshBooks',
-    'Stripe','HubSpot','Chaser','Kolleno','Excel','Google Sheets'
+    'Stripe','HubSpot','Chaser','Kolleno','GoCardless','Excel','Google Sheets'
   ],
   'accounts payable and payments': [
     'Xero','QuickBooks','Sage','Zoho Books','SAP','Oracle NetSuite',
-    'PayPal','Wise','Stripe','Excel','Google Sheets'
+    'PayPal','Wise','Stripe','GoCardless','Revolut','Excel','Google Sheets'
   ],
   'expense tracking and approvals': [
     'Expensify','Dext','Hubdoc','Xero','QuickBooks','Zoho Expense',
@@ -1571,7 +1576,7 @@ const SW_MAP = {
   ],
   'banking and treasury management': [
     'Xero','QuickBooks','Sage','Zoho Books',
-    'Wise','PayPal','Notion','Excel','Google Sheets'
+    'Wise','PayPal','Revolut','Notion','Excel','Google Sheets'
   ],
   'tax and compliance': [
     'Xero','QuickBooks','Sage','Zoho Books',
@@ -1663,6 +1668,18 @@ const SW_MAP = {
     'Power BI','Tableau','Looker Studio','Airtable','Excel','Google Sheets'
   ]
 };
+const UNIVERSAL_TOOLS = ['n8n','Zapier','Make','Slack','Telegram','WhatsApp Business','Gmail','Outlook'];
+
+function buildSwTagsHtml(arr, deselectTpl, otherText) {
+  if (!arr || arr.length === 0) return '<span class="sw-tags-none">none selected</span>';
+  return arr.map(function(opt) {
+    const display = (opt === 'Other' && otherText) ? otherText : opt;
+    const safe = opt.replace(/'/g, "\\'");
+    const call = deselectTpl.replace('__OPT__', safe);
+    return '<span class="sw-tag">' + display + '<span class="sw-tag-x" onclick="' + call + '">\u00d7</span></span>';
+  }).join('');
+}
+
 
 
 
@@ -1690,7 +1707,8 @@ function renderInventory() {
       const nameClass = 'inv-name'+(status&&status!=='na'?' addressed':'')+(status==='na'?' na-name':'');
       const swArr = Array.isArray((S.inventory[k]||{}).software) ? (S.inventory[k]||{}).software : [];
       const softwareOther = (S.inventory[k]||{}).softwareOther || '';
-      const swOpts = SW_MAP[sys.label] || SW_FALLBACK;
+      const swBase = SW_MAP[sys.label] || SW_FALLBACK;
+const swOpts = [...swBase, ...UNIVERSAL_TOOLS.filter(t => !swBase.includes(t))];
       const hasNone = swArr.includes('no software / paper-based');
       const hasOther = swArr.includes('Other');
       const swItemsHtml =
@@ -1708,6 +1726,7 @@ function renderInventory() {
   </div>
   <div class="sw-wrap" id="sw-wrap-${k}">
     <div class="sw-list" id="sw-list-${k}">${swItemsHtml}</div>
+    <div class="sw-tags" id="inv-sw-tags-${k}">${buildSwTagsHtml(swArr, "toggleSoftware('" + k + "','__OPT__',false)", x(softwareOther))}</div>
   </div>
 </div>`;
     }).join('');
@@ -1776,12 +1795,16 @@ function toggleSoftware(k, opt, checked) {
   // show/hide free-text input when Other is checked
   const otherEl = document.getElementById('inv-sw-other-' + k);
   if (otherEl) otherEl.style.display = arr.includes('Other') ? 'block' : 'none';
+  const invTagsEl = document.getElementById('inv-sw-tags-' + k);
+  if (invTagsEl) invTagsEl.innerHTML = buildSwTagsHtml(arr, "toggleSoftware('" + k + "','__OPT__',false)", x((S.inventory[k]||{}).softwareOther||''));
   save();
 }
 
 function setSoftwareOther(k, val) {
   if (!S.inventory[k]) S.inventory[k] = { status: '' };
   S.inventory[k].softwareOther = val;
+  const invTagsEl = document.getElementById('inv-sw-tags-' + k);
+  if (invTagsEl) invTagsEl.innerHTML = buildSwTagsHtml(S.inventory[k].software||[], "toggleSoftware('" + k + "','__OPT__',false)", x(val));
   save();
 }
 
@@ -2577,11 +2600,11 @@ function buildStepSwList(sysId, step) {
   const selOther = step.stepSoftwareOther || '';
   const hasNone = sel.includes('no software / paper-based');
   const hasOther = sel.includes('Other');
-  if (opts.length === 0) {
-    return '<span class="step-sw-empty">no tools selected for this system yet \u2014 add software in the systems inventory above to pre-fill this list</span>';
-  }
+  const allOpts = opts.length > 0
+    ? [...opts, ...UNIVERSAL_TOOLS.filter(t => !opts.includes(t))]
+    : UNIVERSAL_TOOLS;
   const noneItem = `<label class="sw-item${hasNone ? ' sw-checked' : ''}"><input type="checkbox" ${hasNone ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','no software / paper-based',this.checked)">no software / paper-based</label>`;
-  const optItems = opts.map(opt => `<label class="sw-item${sel.includes(opt) ? ' sw-checked' : ''}"><input type="checkbox" ${sel.includes(opt) ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','${opt.replace(/'/g, "\\'")}',this.checked)">${opt}</label>`).join('');
+  const optItems = allOpts.map(opt => `<label class="sw-item${sel.includes(opt) ? ' sw-checked' : ''}"><input type="checkbox" ${sel.includes(opt) ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','${opt.replace(/'/g, "\\'")}',this.checked)">${opt}</label>`).join('');
   const otherItem = `<hr class="sw-divider"><label class="sw-item${hasOther ? ' sw-checked' : ''}"><input type="checkbox" ${hasOther ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','Other',this.checked)">other (specify)</label><input type="text" class="sw-other-input" id="step-sw-other-${step.id}" placeholder="specify..." value="${x(selOther)}" style="display:${hasOther ? 'block' : 'none'}" onblur="setStepSoftwareOther('${sysId}','${step.id}',this.value)">`;
   return noneItem + '<hr class="sw-divider">' + optItems + otherItem;
 }
@@ -2611,6 +2634,7 @@ function buildP1Step(sysId, step, i) {
   <div class="fr">
     <div class="fl">tools used <span class="fh">— software or tools used in this step</span></div>
     <div class="step-sw-list" id="step-sw-${step.id}">${buildStepSwList(sysId, step)}</div>
+    <div class="sw-tags" id="step-sw-tags-${step.id}">${buildSwTagsHtml(step.stepSoftware||[], "toggleStepSoftware('" + sysId + "','" + step.id + "','__OPT__',false)", x(step.stepSoftwareOther||''))}</div>
   </div>
   <div class="fr">
     <div class="fl">output <span class="fh">— what this step produces when complete</span></div>
@@ -2958,6 +2982,8 @@ function toggleStepSoftware(sysId, stepId, opt, checked) {
     const otherEl = document.getElementById('step-sw-other-' + stepId);
     if (otherEl) otherEl.style.display = arr.includes('Other') ? 'block' : 'none';
   }
+  const stepTagsEl = document.getElementById('step-sw-tags-' + stepId);
+  if (stepTagsEl) stepTagsEl.innerHTML = buildSwTagsHtml(arr, "toggleStepSoftware('" + sysId + "','" + stepId + "','__OPT__',false)", x(step ? step.stepSoftwareOther||'' : ''));
   save();
 }
 
@@ -2967,6 +2993,8 @@ function setStepSoftwareOther(sysId, stepId, val) {
   let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
   if (!step) return;
   step.stepSoftwareOther = val;
+  const stepTagsEl = document.getElementById('step-sw-tags-' + stepId);
+  if (stepTagsEl) stepTagsEl.innerHTML = buildSwTagsHtml(step.stepSoftware||[], "toggleStepSoftware('" + sysId + "','" + stepId + "','__OPT__',false)", x(val));
   save();
 }
 
