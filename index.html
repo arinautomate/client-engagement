@@ -69,6 +69,8 @@
     .sw-divider { border: none; border-top: 1px solid var(--border); margin: 2px 0; }
     .sw-other-input { font-size: 11px; padding: 4px 8px; border: none; border-top: 1px solid var(--border); background: #f7f5f2; color: var(--dark); font-family: inherit; width: 100%; box-sizing: border-box; display: block; }
     .sw-other-input:focus { outline: none; background: #f0ede8; }
+  .step-sw-list { max-height: none; border: 1px solid var(--border); border-radius: 2px; background: #fff; }
+  .step-sw-empty { font-size: 11px; color: var(--subtle); font-style: italic; padding: 6px 10px; }
 
     .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; background: #84817C; vertical-align: middle; }
     .sdot.active { background: var(--amber); }
@@ -2388,7 +2390,9 @@ function newStep() {
     // phase 2 fields
     stepType:'human',
     autoAction:'', integration:'', errorCond:'',
-    spaContext:'', spaOptions:'', spaExec:''
+    spaContext:'', spaOptions:'', spaExec:'',
+    // step-level software used
+    stepSoftware:[], stepSoftwareOther:''
   };
 }
 
@@ -2565,6 +2569,23 @@ function renderSteps(sys, phase) {
   });
 }
 
+function buildStepSwList(sysId, step) {
+  const sys = S.systems.find(s => s.id === sysId);
+  const invKey = sys && sys.inventoryKey;
+  const opts = invKey ? ((S.inventory[invKey] || {}).software || []) : [];
+  const sel = Array.isArray(step.stepSoftware) ? step.stepSoftware : [];
+  const selOther = step.stepSoftwareOther || '';
+  const hasNone = sel.includes('no software / paper-based');
+  const hasOther = sel.includes('Other');
+  if (opts.length === 0) {
+    return '<span class="step-sw-empty">no tools selected for this system yet \u2014 add software in the systems inventory above to pre-fill this list</span>';
+  }
+  const noneItem = `<label class="sw-item${hasNone ? ' sw-checked' : ''}"><input type="checkbox" ${hasNone ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','no software / paper-based',this.checked)">no software / paper-based</label>`;
+  const optItems = opts.map(opt => `<label class="sw-item${sel.includes(opt) ? ' sw-checked' : ''}"><input type="checkbox" ${sel.includes(opt) ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','${opt.replace(/'/g, "\\'")}',this.checked)">${opt}</label>`).join('');
+  const otherItem = `<hr class="sw-divider"><label class="sw-item${hasOther ? ' sw-checked' : ''}"><input type="checkbox" ${hasOther ? 'checked' : ''} onchange="toggleStepSoftware('${sysId}','${step.id}','Other',this.checked)">other (specify)</label><input type="text" class="sw-other-input" id="step-sw-other-${step.id}" placeholder="specify..." value="${x(selOther)}" style="display:${hasOther ? 'block' : 'none'}" onblur="setStepSoftwareOther('${sysId}','${step.id}',this.value)">`;
+  return noneItem + '<hr class="sw-divider">' + optItems + otherItem;
+}
+
 function buildP1Step(sysId, step, i) {
   return `
 <div class="card-header" onclick="toggleCard('pb-${step.id}')">
@@ -2586,6 +2607,10 @@ function buildP1Step(sysId, step, i) {
   <div class="fr">
     <div class="fl">action <span class="fh">— who does what, using which tool</span></div>
     <textarea class="fi" placeholder="exact actions: who / what they do / which tool / in what order. new team member test: can they execute this without asking a single question? example: 'receptionist logs into HubSpot / opens contact record / selects send confirmation template / adds session date and time / clicks send / marks deal as confirmed'" data-sys="${sysId}" data-phase="1" data-step="${step.id}" data-field="action" oninput="onSave(this)">${x(step.action)}</textarea>
+  </div>
+  <div class="fr">
+    <div class="fl">tools used <span class="fh">— software or tools used in this step</span></div>
+    <div class="step-sw-list" id="step-sw-${step.id}">${buildStepSwList(sysId, step)}</div>
   </div>
   <div class="fr">
     <div class="fl">output <span class="fh">— what this step produces when complete</span></div>
@@ -2913,6 +2938,36 @@ function showAttach(input, listId) {
   const files = Array.from(input.files).map(f => f.name);
   const el = document.getElementById(listId);
   if (el) el.textContent = files.length ? files.join(', ') : 'no files attached';
+}
+
+function toggleStepSoftware(sysId, stepId, opt, checked) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+  let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
+  if (!step) return;
+  let arr = Array.isArray(step.stepSoftware) ? [...step.stepSoftware] : [];
+  if (checked) { if (!arr.includes(opt)) arr.push(opt); }
+  else { arr = arr.filter(v => v !== opt); }
+  step.stepSoftware = arr;
+  const list = document.getElementById('step-sw-' + stepId);
+  if (list) {
+    list.querySelectorAll('.sw-item').forEach(el => {
+      const cb = el.querySelector('input[type=checkbox]');
+      if (cb) el.classList.toggle('sw-checked', cb.checked);
+    });
+    const otherEl = document.getElementById('step-sw-other-' + stepId);
+    if (otherEl) otherEl.style.display = arr.includes('Other') ? 'block' : 'none';
+  }
+  save();
+}
+
+function setStepSoftwareOther(sysId, stepId, val) {
+  const sys = S.systems.find(s => s.id === sysId);
+  if (!sys) return;
+  let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
+  if (!step) return;
+  step.stepSoftwareOther = val;
+  save();
 }
 
 function onSave(el) {
