@@ -14,6 +14,7 @@
       --border: #C8C4BC;
       --green: #2D6A4F;
       --amber: #b8750a;
+      --bg: #f7f7f5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -399,7 +400,7 @@
 
     hr.div { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
-    .biztype-row { display:flex; gap:6px; margin-top:4px; }
+    .biztype-row { display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
     .biztype-btn { padding:4px 10px; font-size:11px; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--mid); cursor:pointer; font-family:inherit; transition:background 0.15s,color 0.15s,border-color 0.15s; }
     .biztype-btn.active { background:var(--dark); color:#fff; border-color:var(--dark); }
     .biztype-btn:hover:not(.active) { border-color:var(--mid); color:var(--dark); }
@@ -1001,6 +1002,7 @@ async function load() {
     } catch(e) { console.warn('ced load failed, starting fresh:', e); }
   }
   // migrate missing fields from older saved documents
+  if (!S.meta)        S.meta        = {};
   if (!S.owners)      S.owners      = {};
   if (!S.assignments) S.assignments = {};
   if (!S.pipeline)    S.pipeline    = {};
@@ -1009,6 +1011,10 @@ async function load() {
   if (!S.signed)      S.signed      = {};
   if (S.signed.s3 === undefined) S.signed.s3 = false;
   delete S.signed.s4;
+  if (!Array.isArray(S.ccf))       S.ccf       = [];
+  if (!Array.isArray(S.inventory)) S.inventory = [];
+  if (!Array.isArray(S.systems))   S.systems   = [];
+  if (!Array.isArray(S.history))   S.history   = [];
 }
 
 function resetDocument() {
@@ -1094,7 +1100,7 @@ function collectMeta() {
     clientLead:  g('m-client-lead'),
     email:       g('m-email'),
     bizModel:  S.meta.bizModel || S.meta.bizType || 'service',
-    industry:  S.meta.industry || '',
+    industry:  g('m-industry') || S.meta.industry || '',
 
     s1Client:    g('s1-client'),
     s1Date:      g('s1-date'),
@@ -2637,7 +2643,7 @@ function buildP1Step(sysId, step, i) {
   <div class="fr">
     <div class="fl">tools used <span class="fh">— software or tools used in this step</span></div>
     <div class="step-sw-list" id="step-sw-${step.id}">${buildStepSwList(sysId, step)}</div>
-    <div class="sw-tags" id="step-sw-tags-${step.id}">${buildSwTagsHtml(step.stepSoftware||[], "toggleStepSoftware('" + sysId + "','" + step.id + "','__OPT__',false)", x(step.stepSoftwareOther||""), x(step.stepLlmText||"")))}</div>
+    <div class="sw-tags" id="step-sw-tags-${step.id}">${buildSwTagsHtml(step.stepSoftware||[], "toggleStepSoftware('" + sysId + "','" + step.id + "','__OPT__',false)", x(step.stepSoftwareOther||""), x(step.stepLlmText||""))}</div>
   </div>
   <div class="fr">
     <div class="fl">output <span class="fh">— what this step produces when complete</span></div>
@@ -2655,7 +2661,7 @@ function buildP1Step(sysId, step, i) {
     <div class="fl">attachments <span class="fh">— recordings, checklists, screenshots, process videos</span></div>
     <div class="attach-area">
       <label for="p1f-${step.id}">+ attach file</label>
-      <input type="file" id="p1f-${step.id}" multiple onchange="showAttach(this,'p1al-${step.id}')">
+      <input type="file" id="p1f-${step.id}" multiple onchange="showAttach(this,'p1al-${step.id}','${sysId}','${step.id}',1)">
       <span class="attach-list" id="p1al-${step.id}">${step.attachments?.length ? step.attachments.join(', ') : 'no files attached'}</span>
     </div>
   </div>
@@ -2961,16 +2967,28 @@ function setBtn(id, signed) {
   if (signed) { btn.textContent = 'signed off ✓'; btn.classList.add('signed'); }
 }
 
-function showAttach(input, listId) {
+function showAttach(input, listId, sysId, stepId, phase) {
   const files = Array.from(input.files).map(f => f.name);
   const el = document.getElementById(listId);
   if (el) el.textContent = files.length ? files.join(', ') : 'no files attached';
+  // persist filenames to state and save
+  if (sysId && stepId) {
+    const sys = S.systems.find(s => s.id === sysId);
+    if (sys) {
+      const arr = phase === 2 ? (sys.p2 || []) : (sys.p1 || []);
+      const step = arr.find(s => s.id === stepId);
+      if (step) {
+        step.attachments = files;
+        save();
+      }
+    }
+  }
 }
 
 function toggleStepSoftware(sysId, stepId, opt, checked) {
   const sys = S.systems.find(s => s.id === sysId);
   if (!sys) return;
-  let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
+  let step = (sys.p1 || []).find(s => s.id === stepId) || (sys.p2 || []).find(s => s.id === stepId);
   if (!step) return;
   let arr = Array.isArray(step.stepSoftware) ? [...step.stepSoftware] : [];
   if (checked) { if (!arr.includes(opt)) arr.push(opt); }
@@ -2995,7 +3013,7 @@ function toggleStepSoftware(sysId, stepId, opt, checked) {
 function setStepSoftwareOther(sysId, stepId, val) {
   const sys = S.systems.find(s => s.id === sysId);
   if (!sys) return;
-  let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
+  let step = (sys.p1 || []).find(s => s.id === stepId) || (sys.p2 || []).find(s => s.id === stepId);
   if (!step) return;
   step.stepSoftwareOther = val;
   const stepTagsEl = document.getElementById('step-sw-tags-' + stepId);
@@ -3006,7 +3024,7 @@ function setStepSoftwareOther(sysId, stepId, val) {
 function setStepLlmText(sysId, stepId, val) {
   const sys = S.systems.find(s => s.id === sysId);
   if (!sys) return;
-  let step = (sys.steps1 || []).find(s => s.id === stepId) || (sys.steps2 || []).find(s => s.id === stepId);
+  let step = (sys.p1 || []).find(s => s.id === stepId) || (sys.p2 || []).find(s => s.id === stepId);
   if (!step) return;
   step.stepLlmText = val;
   const stepTagsEl = document.getElementById('step-sw-tags-' + stepId);
