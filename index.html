@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ar|in engagement document (test)</title>
+<title>ar|in engagement document</title>
 <style>
   :root { --red:#D11919; --dark:#62605C; --mid:#84817C; --subtle:#84817C; --light-bg:#EAE5DC; --border:#C8C4BC; --green:#2D6A4F; --amber:#b8750a; --blue:#1565c0; }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -21,7 +21,6 @@
   .sdot.active { background:var(--amber); } .sdot.done { background:#7fc49b; }
   .me { padding:10px 20px; font-size:11px; color:#C8C4BC; }
   .main { flex:1; padding:28px 36px 64px; max-width:1100px; }
-  .testbar { background:#fff8dc; border:1px solid var(--amber); color:#7d5a00; font-size:11px; padding:7px 12px; margin-bottom:16px; }
   .doc-header { background:#fff; border:1px solid var(--border); border-left:3px solid var(--red); padding:20px 24px; margin-bottom:18px; }
   .doc-title { font-size:17px; font-weight:700; }
   .doc-title small { display:block; font-size:11px; font-weight:400; color:var(--subtle); margin-top:3px; }
@@ -78,7 +77,19 @@
   .muted { color:var(--subtle); font-size:11.5px; }
   .inv-dept { border:1px solid var(--border); margin-bottom:8px; }
   .inv-dept-h { padding:8px 12px; background:var(--light-bg); font-weight:700; font-size:12px; }
-  .inv-row { display:grid; grid-template-columns:1fr 170px 1fr; gap:8px; padding:4px 12px; border-bottom:1px solid #f0ede8; align-items:center; }
+  .inv-dept-h { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .dept-owner { display:inline-flex; gap:6px; }
+  .dept-owner .fi { max-width:150px; font-size:11px; padding:3px 6px; }
+  .inv-row { display:grid; grid-template-columns:1fr; gap:6px; padding:8px 12px; border-bottom:1px solid #f0ede8; align-items:start; }
+  .inv-sys { font-weight:600; font-size:12px; }
+  .inv-stats { display:flex; flex-wrap:wrap; gap:6px; }
+  .inv-stat { font-size:10.5px; padding:3px 8px; border:1px solid var(--border); background:#fff; color:var(--subtle); cursor:pointer; border-radius:3px; }
+  .inv-stat.on { background:var(--dark); color:#fff; border-color:var(--dark); }
+  .inv-stat:disabled { cursor:default; opacity:.6; }
+  .inv-sw { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:center; }
+  .sw-item { font-size:10.5px; color:var(--subtle); display:inline-flex; gap:3px; align-items:center; cursor:pointer; }
+  .sw-item.on { color:var(--dark); }
+  .sw-other { max-width:180px !important; font-size:10.5px; padding:2px 6px; }
 </style>
 </head>
 <body>
@@ -116,12 +127,387 @@ const CCF = [
   ['ccf-s5', 'how do you onboard a new client?', 'e.g. welcome call, kickoff'],
   ['ccf-s6', 'what do you deliver for them?', 'e.g. build website, cut hair'],
   ['ccf-s7', 'how do you keep them coming back?', 'e.g. campaigns, subscription, specials']];
-const DEPTS = [
-  ['marketing', ['lead generation', 'content creation and publishing', 'email marketing and newsletters', 'customer reviews and testimonials']],
-  ['sales', ['sales calls and discovery', 'proposal and quote creation', 'contract and agreement', 'CRM management']],
-  ['operations', ['client onboarding', 'service delivery', 'supplier and vendor management', 'inventory and stock management']],
-  ['finance', ['invoicing and billing', 'accounts receivable and collections', 'accounts payable and payments', 'cash flow forecasting']],
-  ['management', ['KPI and metrics reporting', 'decision making and approvals']]];
+const DEPT_SYSTEMS = [
+  { key:'mkt', label:'Marketing', systems:[
+    { label:'lead generation',                    stages:[1] },
+    { label:'content creation and publishing',    stages:[1,7] },
+    { label:'social media management',            stages:[1,7] },
+    { label:'email marketing and newsletters',    stages:[1,7] },
+    { label:'advertising and paid media',         stages:[1] },
+    { label:'SEO and website management',         stages:[1,2] },
+    { label:'brand and messaging',                stages:[1,7] },
+    { label:'referral and partnership programme', stages:[1,7] },
+    { label:'PR and media relations',             stages:[1] },
+    { label:'events and webinars',                stages:[1] },
+    { label:'customer reviews and testimonials',  stages:[1,7] }
+  ]},
+  { key:'sls', label:'Sales', systems:[
+    { label:'lead qualification',                 stages:[2] },
+    { label:'sales calls and discovery',          stages:[2,3] },
+    { label:'proposal and quote creation',        stages:[3] },
+    { label:'follow-up and nurture',              stages:[2,7] },
+    { label:'contract and agreement',             stages:[3] },
+    { label:'CRM management',                     stages:[2,3] },
+    { label:'sales reporting',                    stages:[3] },
+    { label:'account management',                 stages:[7] },
+    { label:'upselling and cross-selling',        stages:[7] },
+    { label:'lost deal analysis',                 stages:[3] }
+  ]},
+  { key:'ops', label:'Operations', systems:[
+    { label:'client onboarding',                  stages:[5] },
+    { label:'project or job management',          stages:[6] },
+    { label:'service delivery',                   stages:[6] },
+    { label:'quality control and review',         stages:[6] },
+    { label:'supplier and vendor management',     stages:[6] },
+    { label:'inventory and stock management',     stages:[6] },
+    { label:'client communication and updates',   stages:[5,6,7] },
+    { label:'facilities and equipment management',stages:[6] },
+    { label:'IT and technology management',       stages:[6] },
+    { label:'health and safety compliance',       stages:[6] },
+    { label:'knowledge management',               stages:[6] }
+  ]},
+  { key:'fin', label:'Finance', systems:[
+    { label:'invoicing and billing',              stages:[4] },
+    { label:'accounts receivable and collections',stages:[4] },
+    { label:'accounts payable and payments',      stages:[4] },
+    { label:'expense tracking and approvals',     stages:[4] },
+    { label:'payroll',                            stages:[4] },
+    { label:'cash flow forecasting',              stages:[4] },
+    { label:'financial reporting',                stages:[4] },
+    { label:'budget planning',                    stages:[4] },
+    { label:'banking and treasury management',    stages:[4] },
+    { label:'tax and compliance',                 stages:[4] }
+  ]},
+  { key:'hr', label:'HR', systems:[
+    { label:'recruitment',                        stages:[5,6] },
+    { label:'onboarding new team members',        stages:[5] },
+    { label:'performance management',             stages:[6] },
+    { label:'training and development',           stages:[5,6] },
+    { label:'compensation and benefits',          stages:[4,6] },
+    { label:'team culture and engagement',        stages:[7] },
+    { label:'workforce planning',                 stages:[6] },
+    { label:'offboarding',                        stages:[6] },
+    { label:'HR records and compliance',          stages:[6] }
+  ]},
+  { key:'mgmt', label:'Management', systems:[
+    { label:'business planning and goal setting', stages:[1,7] },
+    { label:'KPI and metrics reporting',          stages:[3,7] },
+    { label:'team meetings and communication',    stages:[6] },
+    { label:'decision making and approvals',      stages:[6] },
+    { label:'risk and issues management',         stages:[6] },
+    { label:'external relationships (partners, accountants, lawyers)', stages:[1,6] },
+    { label:'legal and compliance oversight',     stages:[3,6] },
+    { label:'systems review and improvement',     stages:[6,7] },
+    { label:'technology and tools management',    stages:[6] },
+    { label:'strategic planning and review',      stages:[1,7] }
+  ]}
+];
+
+/* ══════════════════════════════════════════════════════════════════════
+   SOFTWARE MAP — per-system options (one list per system)
+   ══════════════════════════════════════════════════════════════════════ */
+const SW_FALLBACK = [
+  'Excel','Google Sheets','Google Docs','Microsoft Word',
+  'Notion','Airtable','ClickUp','Monday.com','Asana','Trello',
+  'Gmail','Outlook','Slack','Microsoft Teams','Zoom','WhatsApp Business',
+  'HubSpot','Salesforce','Zoho CRM','QuickBooks','Xero','Sage',
+  'n8n','Zapier','Make','Apify','Supabase','Telegram','ChatGPT','Claude'
+];
+
+const SW_MAP = {
+  // ── MARKETING ─────────────────────────────────────────────────────────
+  'lead generation': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'LinkedIn','LinkedIn Sales Navigator','Meta Business Suite','Google Ads','Microsoft Ads',
+    'Mailchimp','ActiveCampaign','Klaviyo',
+    'WordPress','Framer','Webflow','Wix','Squarespace','Shopify',
+    'Google Business Profile','Excel','Google Sheets','Apify'
+  ],
+  'content creation and publishing': [
+    'Canva','Adobe Creative Cloud','Figma',
+    'ChatGPT','Claude','Gemini',
+    'Buffer','Hootsuite','Later',
+    'Meta Business Suite','WordPress','Framer','Webflow','Wix','Squarespace',
+    'Notion','Google Docs','Microsoft Word'
+  ],
+  'social media management': [
+    'Meta Business Suite','Buffer','Hootsuite','Sprout Social','Later','Metricool','Loomly',
+    'Canva','ChatGPT','Claude','Gemini'
+  ],
+  'email marketing and newsletters': [
+    'HubSpot','Mailchimp','ActiveCampaign','Klaviyo','Brevo','Constant Contact',
+    'ConvertKit','Campaign Monitor','Customer.io','Drip','Keap',
+    'Gmail','Outlook'
+  ],
+  'advertising and paid media': [
+    'Google Ads','Meta Ads Manager','LinkedIn Campaign Manager','Microsoft Ads','TikTok Ads',
+    'HubSpot','Excel','Google Sheets'
+  ],
+  'SEO and website management': [
+    'WordPress','Framer','Webflow','Wix','Squarespace','Shopify',
+    'Google Search Console','Google Analytics','SEMrush','Ahrefs',
+    'Screaming Frog','Yoast SEO','Rank Math'
+  ],
+  'brand and messaging': [
+    'Canva','Adobe Creative Cloud','Figma',
+    'Notion','Google Docs','Microsoft Word',
+    'ChatGPT','Claude','Gemini'
+  ],
+  'referral and partnership programme': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'PartnerStack','Referral Rock','Tapfiliate',
+    'Airtable','Excel','Google Sheets','Notion','Gmail','Outlook'
+  ],
+  'PR and media relations': [
+    'Muck Rack','Cision','Prowly','Presspage',
+    'Gmail','Outlook','Notion','Google Docs','Microsoft Word',
+    'Canva','Adobe Creative Cloud'
+  ],
+  'events and webinars': [
+    'Zoom','Webex','Microsoft Teams','Google Meet',
+    'Eventbrite','Hopin','Luma',
+    'Calendly','HubSpot','Mailchimp','ActiveCampaign',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets'
+  ],
+  'customer reviews and testimonials': [
+    'Google Business Profile','Trustpilot','G2','Capterra',
+    'Typeform','Google Forms','Jotform','SurveyMonkey',
+    'HubSpot','Intercom','Zendesk','Help Scout',
+    'Canva','Notion','Gmail','Outlook'
+  ],
+  // ── SALES ─────────────────────────────────────────────────────────────
+  'lead qualification': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Monday CRM','Copper','Freshsales',
+    'Calendly','Typeform','Google Forms','Jotform',
+    'Notion','Excel','Google Sheets','n8n','Zapier','Make','Apify','Supabase'
+  ],
+  'sales calls and discovery': [
+    'Calendly','HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Zoom','Microsoft Teams','Google Meet','WhatsApp Business',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets','n8n'
+  ],
+  'proposal and quote creation': [
+    'HubSpot','PandaDoc','DocuSign','Proposify','Better Proposals','Quotient','Qwilr',
+    'Google Docs','Microsoft Word','Excel','Google Sheets',
+    'Canva','Adobe Acrobat'
+  ],
+  'follow-up and nurture': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'ActiveCampaign','Mailchimp','Klaviyo','Brevo','Customer.io','Keap',
+    'Gmail','Outlook','WhatsApp Business','Intercom','n8n','Zapier','Make','Twilio'
+  ],
+  'contract and agreement': [
+    'DocuSign','Adobe Acrobat Sign','Dropbox Sign','PandaDoc',
+    'HubSpot','Google Docs','Microsoft Word','Adobe Acrobat'
+  ],
+  'CRM management': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Microsoft Dynamics 365',
+    'Monday CRM','Copper','Freshsales','Insightly','Nimble','Capsule CRM',
+    'Airtable','Notion','Excel','Google Sheets','Supabase'
+  ],
+  'sales reporting': [
+    'HubSpot','Salesforce','Zoho CRM',
+    'Power BI','Tableau','Looker Studio',
+    'Airtable','Notion','Excel','Google Sheets'
+  ],
+  'account management': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Copper','Freshsales',
+    'Notion','ClickUp','Monday.com','Asana',
+    'Gmail','Outlook','WhatsApp Business','Slack','Microsoft Teams',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'upselling and cross-selling': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Intercom','Zendesk','Help Scout','Front',
+    'Mailchimp','ActiveCampaign','Klaviyo','Customer.io',
+    'n8n','Zapier','Make','Notion','Excel','Google Sheets'
+  ],
+  'lost deal analysis': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Power BI','Tableau','Looker Studio',
+    'Airtable','Notion','Excel','Google Sheets'
+  ],
+  // ── OPERATIONS ────────────────────────────────────────────────────────
+  'client onboarding': [
+    'HubSpot','Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
+    'Google Docs','Microsoft Word','Gmail','Outlook','DocuSign','Calendly','Loom','n8n'
+  ],
+  'project or job management': [
+    'ClickUp','Monday.com','Asana','Trello','Notion','Jira','Basecamp',
+    'Airtable','Microsoft Planner','Excel','Google Sheets'
+  ],
+  'service delivery': [
+    'Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
+    'Google Workspace','Microsoft 365',
+    'Slack','Microsoft Teams','Zoom','WhatsApp Business','Loom'
+  ],
+  'quality control and review': [
+    'Notion','ClickUp','Monday.com','Asana','Trello','Jira',
+    'Airtable','Excel','Google Sheets','Google Forms','Microsoft Forms','Typeform','Loom'
+  ],
+  'supplier and vendor management': [
+    'Excel','Google Sheets','Airtable','Notion',
+    'SAP','Oracle NetSuite','Odoo','Zoho Inventory','Microsoft Dynamics 365',
+    'Gmail','Outlook'
+  ],
+  'inventory and stock management': [
+    'Shopify','Lightspeed','Cin7','Unleashed','Zoho Inventory','Odoo',
+    'SAP Business One','Oracle NetSuite','Airtable','Excel','Google Sheets'
+  ],
+  'client communication and updates': [
+    'Gmail','Outlook','HubSpot','Salesforce','Zoho CRM',
+    'WhatsApp Business','Slack','Microsoft Teams','Zoom','Google Meet',
+    'Intercom','Zendesk','Help Scout','Front','Twilio','Telegram'
+  ],
+  'facilities and equipment management': [
+    'Excel','Google Sheets','Airtable','Notion',
+    'Hippo CMMS','UpKeep','Fiix','Asset Panda',
+    'Google Workspace','Microsoft 365'
+  ],
+  'IT and technology management': [
+    'Notion','ClickUp','Jira','Airtable',
+    'Google Workspace','Microsoft 365',
+    'LastPass','1Password','Okta','JumpCloud',
+    'Excel','Google Sheets'
+  ],
+  'health and safety compliance': [
+    'Notion','Google Docs','Microsoft Word',
+    'SafetyCulture (iAuditor)','Safesite','Donesafe',
+    'Excel','Google Sheets','Google Forms','Microsoft Forms'
+  ],
+  'knowledge management': [
+    'Notion','Confluence','Google Drive','SharePoint','Microsoft 365',
+    'ClickUp','Slite','Guru','Tettra','Loom','Google Docs','Microsoft Word'
+  ],
+  // ── FINANCE ───────────────────────────────────────────────────────────
+  'invoicing and billing': [
+    'Xero','QuickBooks','Sage','FreshBooks','Wave','Zoho Books',
+    'Stripe','PayPal','Square','HubSpot','Excel','Google Sheets'
+  ],
+  'accounts receivable and collections': [
+    'Xero','QuickBooks','Sage','Zoho Books','FreshBooks',
+    'Stripe','HubSpot','Chaser','Kolleno','GoCardless','Excel','Google Sheets'
+  ],
+  'accounts payable and payments': [
+    'Xero','QuickBooks','Sage','Zoho Books','SAP','Oracle NetSuite',
+    'PayPal','Wise','Stripe','GoCardless','Revolut','Excel','Google Sheets'
+  ],
+  'expense tracking and approvals': [
+    'Expensify','Dext','Hubdoc','Xero','QuickBooks','Zoho Expense',
+    'Excel','Google Sheets'
+  ],
+  'payroll': [
+    'Sage Payroll','QuickBooks Payroll','Gusto','Deel','Rippling','Paychex',
+    'BambooHR','ADP','Excel'
+  ],
+  'cash flow forecasting': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Float','Dryrun','Fathom','Spotlight Reporting',
+    'Power BI','Tableau','Looker Studio','Excel','Google Sheets'
+  ],
+  'financial reporting': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Power BI','Tableau','Looker Studio','Fathom','Excel','Google Sheets'
+  ],
+  'budget planning': [
+    'Xero','QuickBooks','Sage',
+    'Power BI','Looker Studio','Airtable','Notion','Excel','Google Sheets'
+  ],
+  'banking and treasury management': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Wise','PayPal','Revolut','Notion','Excel','Google Sheets'
+  ],
+  'tax and compliance': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Avalara','TaxJar','Excel','Google Sheets'
+  ],
+  // ── HR ────────────────────────────────────────────────────────────────
+  'recruitment': [
+    'LinkedIn Recruiter','Indeed','Glassdoor',
+    'BambooHR','Workable','Greenhouse','Lever','Teamtailor',
+    'Typeform','Google Forms','Notion','Excel','Google Sheets'
+  ],
+  'onboarding new team members': [
+    'BambooHR','Rippling','Deel','Notion','ClickUp','Monday.com',
+    'Google Docs','Microsoft Word','Loom',
+    'Gmail','Outlook','Slack','Microsoft Teams'
+  ],
+  'performance management': [
+    'BambooHR','Lattice','15Five','Culture Amp','Leapsome',
+    'Notion','ClickUp','Google Forms','Excel','Google Sheets'
+  ],
+  'training and development': [
+    'Notion','Google Drive','SharePoint','Microsoft 365',
+    'TalentLMS','Moodle','LearnDash','Docebo','Teachable',
+    'Loom','Zoom','Google Meet','Microsoft Teams'
+  ],
+  'compensation and benefits': [
+    'BambooHR','Rippling','Deel','Gusto','Paychex',
+    'Notion','Excel','Google Sheets'
+  ],
+  'team culture and engagement': [
+    'Slack','Microsoft Teams','Discord',
+    'Officevibe','Lattice','Culture Amp','15Five',
+    'Typeform','Google Forms','SurveyMonkey',
+    'Zoom','Google Meet','Notion'
+  ],
+  'workforce planning': [
+    'BambooHR','Rippling','Deel',
+    'Notion','ClickUp','Monday.com','Airtable','Excel','Google Sheets'
+  ],
+  'offboarding': [
+    'BambooHR','Rippling','Deel','Notion','ClickUp',
+    'Google Docs','Microsoft Word','Gmail','Outlook','Excel','Google Sheets'
+  ],
+  'HR records and compliance': [
+    'BambooHR','Rippling','Deel','Personio',
+    'Microsoft 365','Google Workspace','Excel','Google Sheets'
+  ],
+  // ── MANAGEMENT ────────────────────────────────────────────────────────
+  'business planning and goal setting': [
+    'Notion','ClickUp','Monday.com','Miro','Mural',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'KPI and metrics reporting': [
+    'Power BI','Tableau','Looker Studio',
+    'HubSpot','Salesforce','Airtable','Notion','Excel','Google Sheets'
+  ],
+  'team meetings and communication': [
+    'Microsoft Teams','Slack','Zoom','Google Meet','WhatsApp Business','Discord',
+    'Outlook','Gmail','Notion','ClickUp'
+  ],
+  'decision making and approvals': [
+    'Microsoft Teams','Slack','Notion','ClickUp','Monday.com','Jira',
+    'DocuSign','Adobe Acrobat Sign','n8n','Power Automate'
+  ],
+  'risk and issues management': [
+    'Notion','ClickUp','Monday.com','Jira','Airtable',
+    'Power BI','Looker Studio','Excel','Google Sheets'
+  ],
+  'external relationships (partners, accountants, lawyers)': [
+    'Outlook','Gmail','HubSpot','Salesforce','Zoho CRM',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets'
+  ],
+  'legal and compliance oversight': [
+    'Notion','Google Docs','Microsoft Word',
+    'DocuSign','Adobe Acrobat Sign','PandaDoc',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'systems review and improvement': [
+    'Notion','ClickUp','Monday.com','Airtable','Miro','Lucidchart',
+    'n8n','Power Automate','Power BI','Looker Studio','Excel','Google Sheets'
+  ],
+  'technology and tools management': [
+    'Notion','Airtable','ClickUp',
+    'Google Workspace','Microsoft 365','LastPass','1Password','Okta',
+    'Excel','Google Sheets'
+  ],
+  'strategic planning and review': [
+    'Notion','ClickUp','Monday.com','Miro','Mural',
+    'Power BI','Tableau','Looker Studio','Airtable','Excel','Google Sheets'
+  ]
+};
+const UNIVERSAL_TOOLS = ['n8n','Zapier','Make','Slack','Telegram','WhatsApp Business','Gmail','Outlook','LLM / AI'];
 const INV_STATUS = ['', 'documented', 'not documented', 'not yet implemented', 'not applicable'];
 const FIELDS = [['trigger', 'trigger'], ['inputs', 'required inputs'], ['action', 'action'], ['output', 'output'], ['routing', 'routing'], ['comms_template', 'communication template']];
 const PIPE = [['p0', 'contract signed, 50% paid'], ['p1', 'mapping plan agreed'], ['p2', 'all systems documented'], ['p3', 'all systems signed off'], ['p4', 'library complete, handed to build']];
@@ -206,15 +592,35 @@ function s1() {
   return sectionShell('section-1', 1, 'critical client flow', 'filled by the client before the consultation', conf.s1_confirmed_at ? 'confirmed' : (s ? 'in progress' : 'not started'), conf.s1_confirmed_at ? 'so' : (s ? 'ip' : ''), body);
 }
 function s2() {
-  const s = sec('2'); const c = EDIT.s2 || (s && s.content) || { inventory: {} };
-  const inv = c.inventory || {};
+  const s = sec('2'); const c = EDIT.s2 || (s && s.content) || {};
+  const inv = c.inventory || {}, owners = c.owners || {};
   const conf = D.authoritative.confirmations || {};
   const edit = can('save_section:2');
-  const body = `<div class="sec-body"><p class="note">which systems exist in your business today and whether they are written down.</p>
-    ${DEPTS.map(([d, list]) => `<div class="inv-dept"><div class="inv-dept-h">${esc(d)}</div>${list.map(name => {
-      const v = inv[name] || {};
-      return `<div class="inv-row"><div>${esc(name)}</div><select class="fi" data-bind="s2.inventory.${esc(name)}.status" ${edit ? '' : 'disabled'}>${INV_STATUS.map(o => `<option ${o === (v.status || '') ? 'selected' : ''} value="${esc(o)}">${esc(o || 'choose')}</option>`).join('')}</select>
-      <input class="fi" data-bind="s2.inventory.${esc(name)}.software" placeholder="software used" value="${esc(v.software)}" ${edit ? '' : 'readonly'}></div>`; }).join('')}</div>`).join('')}
+  const explain = `<p class="note">for every system below, set its current status: <b>documented</b> (written down and followed), <b>not documented</b> (done but not written down), <b>not yet implemented</b> (not in place yet), or <b>not applicable</b> (does not apply to this business). leave a system unset if you are unsure. for each system that applies, tick the software you use, add any <b>other</b> tool, or tick <b>no software / paper-based</b>.</p>`;
+  const depts = DEPT_SYSTEMS.map(dept => {
+    const ow = owners[dept.key] || {};
+    const count = dept.systems.filter(sys => { const st = (inv[sys.label] || {}).status; return st && st !== 'not applicable'; }).length;
+    const rows = dept.systems.map(sys => {
+      const name = sys.label, it = inv[name] || {}, st = it.status || '';
+      const swArr = Array.isArray(it.software) ? it.software : [];
+      const otherVal = it.other || (typeof it.software === 'string' ? it.software : '');
+      const none = swArr.includes('no software / paper-based');
+      const swBase = SW_MAP[name] || SW_FALLBACK;
+      const swOpts = [...swBase, ...UNIVERSAL_TOOLS.filter(t => !swBase.includes(t))];
+      const stBtn = (v, lbl) => `<button type="button" class="inv-stat ${st === v ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-status" data-k="${esc(name)}" data-v="${esc(v)}">${lbl}</button>`;
+      let sw;
+      if (!edit) sw = none ? 'no software / paper-based' : (esc([...swArr, otherVal].filter(Boolean).join(', ')) || '<span class="muted">—</span>');
+      else sw = `<label class="sw-item${none ? ' on' : ''}"><input type="checkbox" ${none ? 'checked' : ''} data-act="inv-none" data-k="${esc(name)}">no software / paper-based</label>` +
+        (none ? '' : swOpts.map(o => `<label class="sw-item${swArr.includes(o) ? ' on' : ''}"><input type="checkbox" ${swArr.includes(o) ? 'checked' : ''} data-act="inv-sw" data-k="${esc(name)}" data-sw="${esc(o)}">${esc(o)}</label>`).join('') +
+          `<input class="fi sw-other" placeholder="other software" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other">`);
+      return `<div class="inv-row"><div class="inv-sys">${esc(name)}</div><div class="inv-stats">${stBtn('documented', 'documented')}${stBtn('not documented', 'not documented')}${stBtn('not yet implemented', 'not yet implemented')}${stBtn('not applicable', 'n/a')}</div><div class="inv-sw">${sw}</div></div>`;
+    }).join('');
+    const ownerHtml = edit
+      ? `<span class="dept-owner"><input class="fi" placeholder="functional owner" value="${esc(ow.name || '')}" data-bind="s2.owners.${dept.key}.name"><input class="fi" placeholder="role / title" value="${esc(ow.role || '')}" data-bind="s2.owners.${dept.key}.role"></span>`
+      : (ow.name ? `<span class="muted">owner ${esc(ow.name)}${ow.role ? ' · ' + esc(ow.role) : ''}</span>` : '');
+    return `<div class="inv-dept"><div class="inv-dept-h"><span>${esc(dept.label)} <span class="muted">· ${count} identified</span></span>${ownerHtml}</div>${rows}</div>`;
+  }).join('');
+  const body = `<div class="sec-body">${explain}${depts}
     <div class="row" style="margin-top:10px">${edit ? '<button class="btn" data-act="save-s2">save section 2</button>' : ''}${savedLine(s)}</div></div>
     <div class="sec-foot"><div class="fl">confirmation</div>${conf.s2_confirmed_at ? `<span class="ok">confirmed ${fmt(conf.s2_confirmed_at)}${conf.s2_confirmed_name ? ' by ' + esc(conf.s2_confirmed_name) : ''}</span>` :
       (can('section_confirm') && s ? `${conf.s1_confirmed_at ? '<input class="fi" id="confirm-name-2" placeholder="type your name to confirm" style="max-width:260px;display:inline-block;margin-right:8px">' : ''}<button class="btn" data-act="confirm-2" ${conf.s1_confirmed_at ? '' : 'disabled'}>confirm section 2 is accurate</button> ${conf.s1_confirmed_at ? '' : '<span class="muted">confirm section 1 first</span>'}` : '<span class="muted">not confirmed yet</span>')}
@@ -349,7 +755,9 @@ function bindValue(path, value) {
   const [root, ...rest] = path.split('.');
   if (root === 's1' || root === 's2' || root === 's3') {
     const key = root, base = EDIT[key] || JSON.parse(JSON.stringify((sec(root.slice(1)) || {}).content || (root === 's2' ? { inventory: {} } : {})));
-    if (root === 's2') { base.inventory = base.inventory || {}; const status = rest[rest.length - 1]; const name = rest.slice(1, -1).join('.'); base.inventory[name] = base.inventory[name] || {}; base.inventory[name][status] = value; }
+    if (root === 's2') { base.inventory = base.inventory || {}; base.owners = base.owners || {};
+      if (rest[0] === 'owners') { const dk = rest[1], f = rest[2]; base.owners[dk] = base.owners[dk] || {}; base.owners[dk][f] = value; }
+      else { const field = rest[rest.length - 1]; const name = rest.slice(1, -1).join('.'); base.inventory[name] = base.inventory[name] || {}; base.inventory[name][field] = value; } }
     else base[rest[0]] = value;
     EDIT[key] = base; return;
   }
@@ -370,6 +778,11 @@ function bindValue(path, value) {
 document.addEventListener('input', e => { const b = e.target.getAttribute && e.target.getAttribute('data-bind'); if (b) bindValue(b, e.target.type === 'checkbox' ? e.target.checked : e.target.value); });
 document.addEventListener('change', e => { const b = e.target.getAttribute && e.target.getAttribute('data-bind'); if (b) bindValue(b, e.target.type === 'checkbox' ? e.target.checked : e.target.value); });
 const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+function s2buf() { if (!EDIT.s2) EDIT.s2 = JSON.parse(JSON.stringify((sec('2') || {}).content || {})); EDIT.s2.inventory = EDIT.s2.inventory || {}; EDIT.s2.owners = EDIT.s2.owners || {}; return EDIT.s2; }
+function invSetStatus(k, v) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; b.inventory[k].status = (b.inventory[k].status === v ? '' : v); render(); }
+function invSetNone(k, on) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; if (on) { b.inventory[k].software = ['no software / paper-based']; b.inventory[k].other = ''; } else { b.inventory[k].software = []; } render(); }
+function invToggleSw(k, sw, on) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; let arr = (Array.isArray(b.inventory[k].software) ? b.inventory[k].software : []).filter(x => x !== 'no software / paper-based'); if (on) { if (!arr.includes(sw)) arr.push(sw); } else arr = arr.filter(x => x !== sw); b.inventory[k].software = arr; }
+document.addEventListener('change', e => { const el = e.target, a = el.getAttribute && el.getAttribute('data-act'); if (a === 'inv-none') invSetNone(el.getAttribute('data-k'), el.checked); else if (a === 'inv-sw') invToggleSw(el.getAttribute('data-k'), el.getAttribute('data-sw'), el.checked); });
 
 async function saveSection(n, sys) {
   const key = sys ? 'sys:' + sys : 's' + n; const s = sec(String(n), sys);
@@ -383,6 +796,7 @@ async function saveSection(n, sys) {
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.getAttribute('data-act'), sys = t.getAttribute('data-sys'), d = deal();
+  if (a === 'inv-none' || a === 'inv-sw') return;
   t.disabled = true;
   try {
     if (a === 'si-send') { SIGN.email = val('si-email'); const r = await call('request_code', { email: SIGN.email }); if (r.status === 200) { SIGN.stage = 'code'; render(); } else toast('try again', true); }
@@ -391,6 +805,7 @@ document.addEventListener('click', async e => {
     else if (a === 'sign-out') { await call('sign_out'); setToken(''); D = null; render(); }
     else if (a === 'save-s1') await saveSection(1);
     else if (a === 'save-s2') await saveSection(2);
+    else if (a === 'inv-status') invSetStatus(t.getAttribute('data-k'), t.getAttribute('data-v'));
     else if (a === 'save-s3') await saveSection(3);
     else if (a === 'confirm-1') { const nm = val('confirm-name-1'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '1', name: nm }, 'section 1 confirmed'); }
     else if (a === 'confirm-2') { const nm = val('confirm-name-2'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '2', name: nm }, 'section 2 confirmed'); }
