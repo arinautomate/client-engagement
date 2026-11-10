@@ -94,6 +94,20 @@
   .assist { border:1px solid var(--blue); background:#f3f8ff; padding:12px 14px; margin-bottom:14px; }
   .assist h4 { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue); margin-bottom:6px; }
   .assist textarea.fi { min-height:38px; margin:6px 0; }
+  /* s2 redesign */
+  .s2-intro { margin-bottom:12px; }
+  .s2-intro .legend { list-style:none; margin:8px 0; padding:8px 10px; background:#faf8f4; border:1px solid var(--border); border-radius:4px; }
+  .s2-intro .legend li { font-size:11px; color:var(--dark); padding:1px 0; }
+  .wdtm { margin:3px 0 2px; }
+  .wdtm .wdtm-body { font-size:11px; margin-top:3px; max-width:620px; }
+  .wdtm .lnk { font-size:10.5px; }
+  .sw-prompt { font-size:10.5px; color:var(--dark); font-weight:600; width:100%; margin-bottom:2px; }
+  .assess-box { border:1px solid var(--blue); background:#f3f8ff; padding:12px 14px; margin:14px 0; }
+  .assess-box h4 { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue); margin-bottom:6px; }
+  .assess-box textarea.fi { min-height:38px; margin:6px 0; }
+  .finding { border-left:3px solid var(--blue); background:#fff; padding:8px 10px; margin:8px 0; font-size:11.5px; }
+  .finding b { text-transform:uppercase; font-size:10px; letter-spacing:.3px; color:var(--blue); }
+  .finding .why { font-size:10.5px; color:var(--subtle); margin:4px 0; font-style:italic; }
   .meter { display:flex; gap:10px; align-items:center; font-size:10.5px; color:var(--subtle); flex-wrap:wrap; }
   .meter .bar { width:120px; height:7px; background:#e3dfd8; border-radius:4px; overflow:hidden; display:inline-flex; }
   .meter .bar i { height:100%; display:block; }
@@ -133,16 +147,26 @@
 <script>
 'use strict';
 const API = 'https://arinautomate.app.n8n.cloud/webhook/ced-001-api';   // fixed: the session token is never sent to a user-supplied destination
-const API2 = 'https://arinautomate.app.n8n.cloud/webhook/ced-002-inventory-assistant';  // s2 inventory assistant (begin->model->commit)
+const API2 = 'https://arinautomate.app.n8n.cloud/webhook/ced-002-inventory-assessment';  // s2 inventory assessment (optional, after a complete inventory)
 const SLUG = new URLSearchParams(location.search).get('e') || '';
 const TKEY = 'arin-ced-session:' + SLUG;
 let D = null;           // last load
 let EDIT = {};          // unsaved edits, kept across re-renders
 let SIGN = { stage: 'email', email: '' };
 let DRAFT = {};         // latest helper answer per system (also served from the record)
-let SUGGEST = {};       // open AI suggestions for catalogue systems, keyed by system name
-let ADD = [];           // open AI suggestions for activities NOT in the catalogue (to review/add)
+let FINDINGS = { run_id: null, stale: false, findings: [] };  // the optional AI inventory review (migration 013)
+let BRIEF = { consultation_findings: [] };  // for-consultation findings shown to ar|in in the pre-consultation brief
+let FIX = {};           // findings the client is fixing: id -> 'armed' (clicked "i'll fix it") | 'ready' (saved since)
 let SWOPEN = {};        // which inventory rows have the software picker expanded
+let EXPAND = {};        // which "what does this mean?" explanations are open
+const rowSlug = name => 'invrow-' + String(name || '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+// software selection tokens (stored verbatim in inventory[name].software) + their client-facing labels.
+// the legacy 'no software / paper-based' token from older records is preserved, never split (E2).
+const SW_TOKEN_LABEL = { '__none__': 'no software used', '__paper__': 'paper, notebooks or printed forms',
+  '__outsourced__': 'outside provider handles the tools', '__unsure_tools__': 'not sure',
+  'no software / paper-based': 'no software / paper-based (your earlier answer)' };
+const SW_SENTINELS = ['__none__', '__paper__', '__outsourced__', '__unsure_tools__', 'no software / paper-based'];
+const swLabel = x => SW_TOKEN_LABEL[x] || x;
 
 const CCF = [
   ['ccf-s1', 'how do you attract new clients?', 'e.g. advertising, referrals, linkedin content'],
@@ -533,6 +557,7 @@ const SW_MAP = {
   ]
 };
 const UNIVERSAL_TOOLS = ['n8n','Zapier','Make','Slack','Telegram','WhatsApp Business','Gmail','Outlook','LLM / AI'];
+const EXPLAIN = {"lead generation": "getting people interested in buying from your business through referrals, your website, advertising or reaching out directly.", "content creation and publishing": "creating and sharing photos, videos, articles or other content about your business and what it offers.", "social media management": "posting on your business's social accounts, replying to comments and messages, and keeping profiles up to date.", "email marketing and newsletters": "sending news, useful information or offers by email to customers and people who might buy from you.", "advertising and paid media": "paying to promote your business through online ads, print, radio or other places where potential customers will see it.", "SEO and website management": "updating your website, fixing problems and helping people find it through Google and other search engines.", "brand and messaging": "explaining what your business does, who it helps and why customers might choose it, using consistent words and visuals.", "referral and partnership programme": "getting customers or other businesses to recommend you or introduce potential customers, whether or not you have a formal referral programme.", "PR and media relations": "contacting journalists or news outlets, arranging interviews and responding to media enquiries about your business.", "events and webinars": "organising or taking part in online or in-person events to meet people and introduce them to your business.", "customer reviews and testimonials": "collecting customer reviews or comments, responding to them and sharing feedback with permission.", "lead qualification": "checking whether someone interested in buying is a potential customer your business can help.", "sales calls and discovery": "talking with potential customers to understand what they need and whether your business can provide it.", "proposal and quote creation": "preparing a price and explaining what the customer will receive, including the work, products or delivery terms.", "follow-up and nurture": "following up with people who asked about buying but haven't made a decision yet.", "contract and agreement": "agreeing what you and the customer will each do, getting any required approval or signature, and keeping a record.", "CRM management": "keeping track of customer details, sales conversations and who needs following up, whether in a system, spreadsheet or notes.", "sales reporting": "checking how many enquiries and quotes turn into sales, what you've sold and what sales you expect next.", "account management": "staying in touch with existing customers, handling concerns and discussing what they need next.", "upselling and cross-selling": "offering existing customers more of what they buy, an upgrade or another product or service they may need.", "lost deal analysis": "finding out why someone didn't buy and checking whether the same reasons keep coming up.", "client onboarding": "collecting a new customer's details, explaining next steps and getting everything ready to start their order or work.", "project or job management": "tracking what needs doing on each job, who's doing it and whether it's on schedule.", "service delivery": "doing the work or providing the service a customer is paying for.", "quality control and review": "checking work or products for mistakes and whether they meet what was agreed with the customer.", "supplier and vendor management": "finding and working with suppliers, agreeing prices or terms, and following up on what they provide.", "inventory and stock management": "tracking what goods or materials you have, where they are and when more needs to be ordered.", "client communication and updates": "keeping customers updated on their orders or work, including progress, delays and anything you need from them.", "facilities and equipment management": "keeping your premises, vehicles and equipment working, including maintenance and repairs.", "IT and technology management": "keeping computers, internet access and software working, dealing with technical problems and managing who can access them.", "health and safety compliance": "following workplace safety rules, identifying hazards and dealing with accidents or unsafe conditions.", "knowledge management": "keeping instructions, answers and important know-how where people can find them when they need help.", "invoicing and billing": "sending bills or invoices to customers and keeping track of what you've charged them.", "accounts receivable and collections": "tracking who owes you money and following up when payments are late.", "accounts payable and payments": "checking what you owe suppliers and other businesses, paying their bills and keeping track of what's still unpaid.", "expense tracking and approvals": "recording what the business spends, keeping receipts and deciding which purchases or expenses need approval.", "payroll": "calculating what team members should be paid, including deductions, and making their payments.", "cash flow forecasting": "looking ahead at money expected in and payments due to see whether you'll have enough cash to pay upcoming bills.", "financial reporting": "checking what the business earns, spends, owns and owes, and whether it's making a profit.", "budget planning": "planning what the business expects to earn and spend, then comparing those plans with what actually happens.", "banking and treasury management": "managing business bank accounts, checking balances and moving money when needed to make payments.", "tax and compliance": "keeping tax records, preparing or filing returns and paying taxes the business owes.", "recruitment": "finding people to work for the business, interviewing them and deciding who to hire.", "onboarding new team members": "getting new team members set up with paperwork, tools, introductions and the information they need to start work.", "performance management": "making sure people know what's expected, giving feedback and dealing with work that falls short.", "training and development": "teaching people how to do their jobs and helping them learn new skills.", "compensation and benefits": "deciding what to pay team members, including raises, bonuses, leave and other benefits.", "team culture and engagement": "checking how people feel at work, listening to concerns and helping the team work well together.", "workforce planning": "working out how many people and which skills you'll need, including cover for busy periods or absences.", "offboarding": "handling someone leaving the business, including handing over work, final payments, returning equipment and removing access.", "HR records and compliance": "keeping staff details, contracts, leave records and other information needed to meet employment rules.", "business planning and goal setting": "setting goals for the coming months and deciding what needs doing and who will do it.", "KPI and metrics reporting": "checking the numbers you use to tell whether the business is on track, such as sales, costs or delivery times.", "team meetings and communication": "keeping people informed through meetings and messages about priorities, decisions and what is happening in the business.", "decision making and approvals": "deciding who can make which business decisions and what needs someone's approval before going ahead.", "risk and issues management": "spotting things that could go wrong, dealing with problems and checking that they're resolved.", "external relationships (partners, accountants, lawyers)": "working with business partners, accountants, lawyers and other outside advisers on matters affecting the business.", "legal and compliance oversight": "keeping track of the rules, licences and legal commitments your business needs to meet.", "systems review and improvement": "changing how work gets done when you notice repeated mistakes, delays or unnecessary work.", "technology and tools management": "deciding which software and tools the business needs, what they cost and what to keep or replace.", "strategic planning and review": "deciding where you want the business to be in a few years and reviewing the bigger choices needed to get there."};
 const INV_STATUS = ['', 'documented', 'not documented', 'not yet implemented', 'not applicable'];
 const FIELDS = [['trigger', 'trigger'], ['inputs', 'required inputs'], ['action', 'action'], ['output', 'output'], ['routing', 'routing'], ['comms_template', 'communication template']];
 const PIPE = [['p0', 'contract signed, 50% paid'], ['p1', 'mapping plan agreed'], ['p2', 'all systems documented'], ['p3', 'all systems signed off'], ['p4', 'library complete, handed to build']];
@@ -571,59 +596,55 @@ async function call2(action, args) {
   let body = {}; try { body = await r.json(); } catch (e) {}
   return { status: r.status, body };
 }
-function ingestSuggestions(list) {
-  SUGGEST = {}; ADD = [];
-  (list || []).forEach(su => {
-    if (su.status && su.status !== 'open') return;
-    if (su.system_name) SUGGEST[su.system_name] = su;         // catalogue system
-    else if (su.custom_label) ADD.push(su);                   // activity not in the catalogue
-  });
-}
-async function loadSuggestions() {
-  SUGGEST = {}; ADD = [];
+// the optional AI inventory review. loadFindings reads the newest assessment's open / for-consultation
+// findings and whether it is stale (its section 1+2 fingerprint no longer matches the saved data).
+async function loadFindings() {
+  FINDINGS = { run_id: null, stale: false, findings: [] };
   if (!D || !can('save_section:2')) return;
-  try { const r = await call2('suggestions_load', {});
-    if (r.body && r.body.ok) ingestSuggestions(r.body.suggestions);
+  try { const r = await call2('findings_load', {});
+    if (r.body && r.body.ok) FINDINGS = { run_id: r.body.run_id || null, stale: !!r.body.stale, findings: r.body.findings || [] };
   } catch (e) {}
+}
+// the pre-consultation brief ar|in reviews: the client's for-consultation findings. read-only; never
+// reads or writes section 3 consultation outcomes.
+async function loadBrief() {
+  BRIEF = { consultation_findings: [] };
+  if (!D || !isAdmin()) return;
+  try { const r = await call2('preconsult_brief', {});
+    if (r.body && r.body.ok) BRIEF = { consultation_findings: r.body.consultation_findings || [] };
+  } catch (e) {}
+}
+// run the optional review (begin -> model -> commit happens server-side; the DB grounds every finding).
+async function runAssessment() {
+  try {
+    const r = await call2('assess', { extra: val('assess-extra') || '' });
+    if (r.body && r.body.ok) {
+      FINDINGS = { run_id: r.body.run_id || null, stale: !!r.body.stale, findings: r.body.findings || [] };
+      const n = FINDINGS.findings.filter(f => f.status === 'open').length;
+      toast(n ? n + ' point' + (n > 1 ? 's' : '') + ' to review below' : 'no issues found — your inventory matches what you described'); render();
+    } else toast((r.body && r.body.error) || 'the review did not run', true);
+  } catch (e) { toast('the review did not run', true); }
+}
+// record a finding's disposition. NEVER changes an inventory status or section 3 — only the finding's state.
+async function resolveFinding(id, action) {
+  try { const r = await call2('finding_resolve', { finding_id: id, action });
+    if (r && r.body && r.body.ok) { await loadFindings(); render(); }
+    else { toast('could not update — try again', true); await loadFindings(); render(); }
+  } catch (e) { toast('could not update — try again', true); }
+}
+// "add this activity" on an omission: add it to the inventory (client still statuses it), then mark the finding handled.
+async function applyOmission(id, fkey, label) {
+  addCustom(fkey, label);
+  if (!await saveSection(2)) { toast('could not save — try again', true); return; }
+  await resolveFinding(id, 'applied');
 }
 async function load() {
   if (!token()) { D = null; return render(); }
   const r = await call('load');
   D = r.body && r.body.ok ? r.body : null;
-  await loadSuggestions();     // open AI suggestions persist across reloads
+  await loadFindings();        // the optional review's findings persist across reloads
+  await loadBrief();           // ar|in's pre-consultation brief (for-consultation findings)
   render();
-}
-// Resolve a suggestion server-side and confirm the server accepted it. Returns true ONLY on {ok:true}.
-// A failed resolution (not ok, or a transport error) is never treated as success: callers keep or
-// reload the still-open suggestion and surface an actionable error.
-async function resolveSuggestion(id, action) {
-  try { const r = await call2('suggestion_resolve', { suggestion_id: id, action }); return !!(r && r.body && r.body.ok); }
-  catch (e) { return false; }
-}
-// accept a suggestion into the editor (the client still saves + confirms); AI never writes authoritative inventory.
-// Same save-before-resolve rule as the additional activities: persist the inventory change, then mark the
-// suggestion accepted only if the server confirms it. On save failure or resolve failure the suggestion stays open.
-async function applySuggestion(name) {
-  const su = SUGGEST[name]; if (!su) return;
-  const b = s2buf(); b.inventory[name] = b.inventory[name] || {};
-  if (su.proposed_status) { b.inventory[name].status = su.proposed_status; b.inventory[name].unresolved = false; }
-  const sw = (su.software || []).map(x => x.name).filter(Boolean);
-  if (sw.length) b.inventory[name].software = Array.from(new Set([...(Array.isArray(b.inventory[name].software) ? b.inventory[name].software : []).filter(x => x !== 'no software / paper-based'), ...sw]));
-  if (!await saveSection(2)) { toast('could not save — not accepted, try again', true); return; }
-  if (!await resolveSuggestion(su.suggestion_id, 'accepted')) { await loadSuggestions(); render(); toast('saved, but could not mark the suggestion handled — it is still open, try again', true); return; }
-  delete SUGGEST[name]; render();
-}
-async function markUnresolvedFromSuggestion(name) {
-  const su = SUGGEST[name]; if (!su) return;
-  const b = s2buf(); b.inventory[name] = b.inventory[name] || {}; b.inventory[name].unresolved = true; b.inventory[name].status = '';
-  if (!await saveSection(2)) { toast('could not save — try again', true); return; }
-  if (!await resolveSuggestion(su.suggestion_id, 'accepted')) { await loadSuggestions(); render(); toast('saved, but could not mark the suggestion handled — it is still open, try again', true); return; }
-  delete SUGGEST[name]; render();
-}
-async function dismissSuggestion(name) {
-  const su = SUGGEST[name]; if (!su) return;   // dismiss changes no inventory, so no save — just resolve
-  if (!await resolveSuggestion(su.suggestion_id, 'rejected')) { await loadSuggestions(); render(); toast('could not dismiss — it is still open, try again', true); return; }
-  delete SUGGEST[name]; render();
 }
 // custom (off-catalogue) activity: a stable key under inventory so the completeness gate accounts for it
 function custKey(label) { return 'custom:' + String(label || '').trim().toLowerCase().replace(/\s+/g, ' '); }
@@ -635,34 +656,6 @@ function addCustom(fkey, label) {
   const b = s2buf(); const k = custKey(label);
   if (!b.inventory[k]) b.inventory[k] = { label: label, func: fkey, status: '', software: [] };
   invalidateReview(fkey);
-  render();
-}
-// accept an AI-flagged additional activity -> becomes a custom inventory entry the client still statuses.
-// The inventory change must PERSIST before the suggestion is marked accepted: if the save fails the
-// suggestion stays open (not lost), so "accepted" never gets recorded without the matching inventory row.
-async function acceptAdditional(id) {
-  const su = ADD.find(x => x.suggestion_id === id); if (!su) return;
-  addCustom(su.function_key, su.custom_label);
-  if (!await saveSection(2)) { toast('could not save — not accepted, try again', true); return; }
-  if (!await resolveSuggestion(id, 'accepted')) { await loadSuggestions(); render(); toast('saved, but could not mark it handled — it is still open, try again', true); return; }
-  ADD = ADD.filter(x => x.suggestion_id !== id);
-  render();
-}
-// an AI-found activity the model could not place in a function: the client picks where it belongs.
-// Same rule — persist the placement before recording the suggestion as accepted.
-async function assignAdditional(id, fkey) {
-  const su = ADD.find(x => x.suggestion_id === id); if (!su) return;
-  if (!fkey) { toast('choose a function first', true); return; }
-  addCustom(fkey, su.custom_label);
-  if (!await saveSection(2)) { toast('could not save — not accepted, try again', true); return; }
-  if (!await resolveSuggestion(id, 'accepted')) { await loadSuggestions(); render(); toast('saved, but could not mark it handled — it is still open, try again', true); return; }
-  ADD = ADD.filter(x => x.suggestion_id !== id);
-  render();
-}
-async function dismissAdditional(id) {
-  const su = ADD.find(x => x.suggestion_id === id); if (!su) return;   // dismiss changes no inventory, so no save
-  if (!await resolveSuggestion(id, 'rejected')) { await loadSuggestions(); render(); toast('could not dismiss — it is still open, try again', true); return; }
-  ADD = ADD.filter(x => x.suggestion_id !== id);
   render();
 }
 function setReviewed(fkey, on) {
@@ -721,60 +714,78 @@ function invState(it) { it = it || {}; return it.status ? 'ok' : (it.unresolved 
 // render a status/unresolved control + a software control for one inventory row (standard or custom)
 function invRow(name, it, edit, opts) {
   const st = it.status || '', uns = !!it.unresolved, custom = !!opts.custom;
+  // stored status VALUES are unchanged; only the client-facing LABELS change (migration keeps the values).
   const stBtn = (v, lbl) => `<button type="button" class="inv-stat ${st === v ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-status" data-k="${esc(name)}" data-v="${esc(v)}">${lbl}</button>`;
-  const unsBtn = `<button type="button" class="inv-stat uns ${uns ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-unresolved" data-k="${esc(name)}">not sure yet</button>`;
+  const unsBtn = `<button type="button" class="inv-stat uns ${uns ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-unresolved" data-k="${esc(name)}">not sure</button>`;
   const swArr = Array.isArray(it.software) ? it.software : [];
   const otherVal = it.other || (typeof it.software === 'string' ? it.software : '');
-  const none = swArr.includes('no software / paper-based');
-  let sw;
-  if (custom) {
-    // custom activities have no catalogue tool list — a simple free-text software field
+  const named = swArr.filter(x => SW_SENTINELS.indexOf(x) < 0);
+  const sentinels = swArr.filter(x => SW_SENTINELS.indexOf(x) >= 0);
+  // no point asking for tools on an activity that is not happening
+  const hideSw = (st === 'not yet implemented' || st === 'not applicable');
+  const chipItems = [...sentinels.map(swLabel), ...named, otherVal].filter(Boolean);
+  const chips = chipItems.length ? chipItems.map(x => `<span class="sw-chip">${esc(x)}</span>`).join('') : '<span class="muted">no tools chosen yet</span>';
+  let sw = '';
+  if (hideSw) {
+    sw = edit ? '<span class="muted">tools not needed for this status</span>' : '';
+  } else if (custom) {
     sw = edit ? `<input class="fi sw-other" style="max-width:220px" placeholder="software (optional)" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other">`
               : (otherVal ? `<span class="sw-chip">${esc(otherVal)}</span>` : '<span class="muted">no software</span>');
   } else {
     const swBase = SW_MAP[opts.sysName] || SW_FALLBACK;
     const swOpts = [...swBase, ...UNIVERSAL_TOOLS.filter(t => !swBase.includes(t))];
     const open = !!SWOPEN[name];
-    const chips = none ? '<span class="sw-chip">no software / paper-based</span>'
-      : ([...swArr, otherVal].filter(Boolean).map(x => `<span class="sw-chip">${esc(x)}</span>`).join('') || '<span class="muted">no software yet</span>');
     if (!edit) sw = chips;
-    else if (!open) sw = `<div class="sw-chips">${chips} <button class="lnk" data-act="sw-open" data-k="${esc(name)}">change software</button></div>`;
-    else sw = `<label class="sw-item${none ? ' on' : ''}"><input type="checkbox" ${none ? 'checked' : ''} data-act="inv-none" data-k="${esc(name)}">no software / paper-based</label>`
-      + (none ? '' : swOpts.map(o => `<label class="sw-item${swArr.includes(o) ? ' on' : ''}"><input type="checkbox" ${swArr.includes(o) ? 'checked' : ''} data-act="inv-sw" data-k="${esc(name)}" data-sw="${esc(o)}">${esc(o)}</label>`).join('')
-        + `<input class="fi sw-other" placeholder="other software" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other"> <button class="lnk" data-act="sw-open" data-k="${esc(name)}">done</button>`);
+    else if (!open) sw = `<div class="sw-chips">${chips} <button class="lnk" data-act="sw-open" data-k="${esc(name)}">which tools?</button></div>`;
+    else {
+      // "no software used" / "not sure" / the legacy token suppress the named-tool list; "paper" and
+      // "outside provider" may combine with named tools (mixed internal/outsourced).
+      const noneLike = swArr.includes('__none__') || swArr.includes('__unsure_tools__') || swArr.includes('no software / paper-based');
+      const special = ['__none__', '__paper__', '__outsourced__', '__unsure_tools__']
+        .map(tok => `<label class="sw-item${swArr.includes(tok) ? ' on' : ''}"><input type="checkbox" ${swArr.includes(tok) ? 'checked' : ''} data-act="sw-token" data-k="${esc(name)}" data-sw="${tok}">${esc(swLabel(tok))}</label>`).join('');
+      const legacy = swArr.includes('no software / paper-based')
+        ? `<label class="sw-item on"><input type="checkbox" checked data-act="sw-token" data-k="${esc(name)}" data-sw="no software / paper-based">${esc(swLabel('no software / paper-based'))}</label>` : '';
+      const tools = noneLike ? '' : (swOpts.map(o => `<label class="sw-item${named.includes(o) ? ' on' : ''}"><input type="checkbox" ${named.includes(o) ? 'checked' : ''} data-act="sw-token" data-k="${esc(name)}" data-sw="${esc(o)}">${esc(o)}</label>`).join('')
+        + `<input class="fi sw-other" placeholder="other tool" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other">`);
+      sw = `<div class="sw-prompt">which tools do you use for this activity? select all that apply.</div>${special}${legacy}${tools} <button class="lnk" data-act="sw-open" data-k="${esc(name)}">done</button>`;
+    }
   }
   const stp = invState(it);
-  const dot = `<span class="pill ${stp}">${stp === 'ok' ? 'assessed' : (stp === 'uns' ? 'not sure' : 'to do')}</span>`;
+  const dot = `<span class="pill ${stp}">${stp === 'ok' ? 'done' : (stp === 'uns' ? 'not sure' : 'to do')}</span>`;
+  const exp = (!custom) ? (EXPLAIN[opts.sysName] || '') : '';
+  const wdtm = exp ? `<div class="wdtm"><button type="button" class="lnk" data-act="explain-toggle" data-k="${esc(name)}">what does this mean?</button>${EXPAND[name] ? `<div class="wdtm-body muted">${esc(exp)}</div>` : ''}</div>` : '';
   const title = custom ? `${esc(opts.label)} <span class="pill add">added</span> ${dot}${edit ? ` <button class="lnk" data-act="cust-remove" data-k="${esc(name)}">remove</button>` : ''}`
                        : `${esc(opts.sysName)} ${dot}`;
-  return `<div class="inv-row"><div class="inv-sys">${title}</div><div class="inv-stats">${stBtn('documented', 'documented')}${stBtn('not documented', 'not documented')}${stBtn('not yet implemented', 'not yet implemented')}${stBtn('not applicable', 'n/a')}${edit ? unsBtn : ''}</div><div class="inv-sw">${sw}</div>${opts.sugg || ''}</div>`;
+  return `<div class="inv-row" id="${rowSlug(name)}"><div class="inv-sys">${title}${wdtm}</div><div class="inv-stats">${stBtn('documented', 'documented')}${stBtn('not documented', 'not documented')}${stBtn('not yet implemented', 'not doing this yet')}${stBtn('not applicable', "doesn't apply")}${edit ? unsBtn : ''}</div><div class="inv-sw">${sw}</div></div>`;
 }
 function s2() {
   const s = sec('2'); const c = EDIT.s2 || (s && s.content) || {};
   const inv = c.inventory || {}, owners = c.owners || {}, coverage = c.coverage || {};
   const conf = D.authoritative.confirmations || {};
   const edit = can('save_section:2');
-  // custom entries live under inventory with 'custom:' keys
   const customKeys = Object.keys(inv).filter(k => k.indexOf('custom:') === 0);
-  // completeness: standard systems + custom entries not accounted for, and functions not reviewed
   let sysTodo = 0, funcsUnreviewed = 0;
   DEPT_SYSTEMS.forEach(d => {
     d.systems.forEach(sys => { if (invState(inv[sys.label]) === 'todo') sysTodo++; });
     if (!(coverage[d.key] && coverage[d.key].reviewed)) funcsUnreviewed++;
   });
   customKeys.forEach(k => { if (invState(inv[k]) === 'todo') sysTodo++; });
-  const pend = Object.keys(SUGGEST).length + ADD.length;
-  // AI-found activities the model could not place in a function (null/invalid function_key). They
-  // must be placed or dismissed before confirming — they never silently disappear.
-  const deptKeys = DEPT_SYSTEMS.map(d => d.key);
-  const unassigned = edit ? ADD.filter(su => !su.function_key || deptKeys.indexOf(su.function_key) < 0) : [];
+  const coverageComplete = sysTodo === 0 && funcsUnreviewed === 0;
 
-  const assist = edit ? `<div class="assist"><h4>ar|in assistant — optional</h4>
-    <p class="muted">the assistant reads your section 1 answers and, only where it has clear evidence, points out an activity, suggests the tools you named, or flags an activity you do that is not on the standard list. it never sets a documentation status for you — it asks, and you decide. every suggestion shows the words it is based on.</p>
-    <textarea class="fi" id="assist-extra" placeholder="anything else about how you work day to day? (optional — the more you say, the more it can ground a suggestion in)"></textarea>
-    <div class="row"><button class="btn" data-act="suggest">suggest a starting point</button>${pend ? `<span class="muted">${pend} suggestion${pend > 1 ? 's' : ''} to review below</span>` : ''}</div></div>` : '';
-
-  const explain = `<p class="note">this is a <b>coverage checklist</b> of what your business does — not a detailed map of each process (that comes later). go function by function. set each activity's status — <b>documented</b> (written down and followed), <b>not documented</b> (done but not written down), <b>not yet implemented</b>, or <b>not applicable</b> — or mark <b>not sure yet</b> and we cover it in the consultation. add any activity we have not listed. then tick that you have reviewed the function so nothing is missed. the standard list is a guide, not a limit.</p>`;
+  // approved intro + status legend + "what counts as documented?" expander
+  const intro = `<div class="s2-intro">
+    <p class="note">you've described how customers move through your business. now review the other activities that help your business run. for each activity, tell us whether your business does it, whether the main steps are documented and which tools are used.</p>
+    <p class="note">an activity counts whether you do it yourself, your team does it, or someone outside your business handles it for you. you don't need a separate department or a formal process. add any activities missing from the list, and mark each business function as reviewed when you're finished.</p>
+    <p class="note muted">you don't need to write new procedures or change anything before the consultation. just show us how things work today.</p>
+    <ul class="legend">
+      <li><b>documented</b> — we do this, and the main steps are recorded clearly enough for someone else to follow.</li>
+      <li><b>not documented</b> — we do this, but how it's done is mostly in someone's head.</li>
+      <li><b>not doing this yet</b> — our business needs this activity, but we haven't started doing it.</li>
+      <li><b>doesn't apply</b> — our business doesn't need this activity.</li>
+      <li><b>not sure</b> — we're unsure which answer fits.</li>
+    </ul>
+    <div class="wdtm"><button type="button" class="lnk" data-act="explain-toggle" data-k="__documented__">what counts as documented?</button>${EXPAND['__documented__'] ? `<div class="wdtm-body muted">documentation can be written instructions, a checklist, a video, a screen recording, a diagram or steps saved in your software. the format doesn't matter. what matters is whether the main steps are recorded clearly enough for someone else to follow. a process can be documented even if people don't always follow it. if the steps are only in someone's head, choose "not documented".</div>` : ''}</div>
+  </div>`;
 
   const depts = DEPT_SYSTEMS.map(dept => {
     const ow = owners[dept.key] || {};
@@ -784,59 +795,86 @@ function s2() {
     items.forEach(k => { const st = invState(inv[k]); if (st === 'ok') dOk++; else if (st === 'uns') dUns++; });
     const dTodo = n - dOk - dUns;
     const meter = `<span class="meter"><span class="bar"><i class="ok" style="width:${Math.round(dOk / n * 100)}%"></i><i class="uns" style="width:${Math.round(dUns / n * 100)}%"></i></span><span class="pill ok">${dOk} accounted</span>${dUns ? `<span class="pill uns">${dUns} not sure</span>` : ''}${dTodo ? `<span class="pill todo">${dTodo} to go</span>` : ''}</span>`;
-    const rows = dept.systems.map(sys => {
-      const name = sys.label, it = inv[name] || {};
-      const su = edit ? SUGGEST[name] : null;
-      let suHtml = '';
-      if (su) {
-        const why = (su.citations && su.citations[0]) ? su.citations[0].excerpt : '';
-        const swNames = (su.software || []).map(x => x.name);
-        if (su.proposed_status) suHtml = `<div class="sugg"><b>suggested status:</b> ${esc(su.proposed_status)}${swNames.length ? ' · tools: ' + swNames.map(esc).join(', ') : ''}
-          ${why ? `<div class="why">you said: &ldquo;${esc(why)}&rdquo;</div>` : ''}
-          <div class="row"><button class="btn small" data-act="sugg-accept" data-k="${esc(name)}">use this</button><button class="btn small arin" data-act="sugg-dismiss" data-k="${esc(name)}">dismiss</button><span class="muted">a starting point — change it if it's not right</span></div></div>`;
-        else suHtml = `<div class="sugg"><b>${su.activity_present ? 'you seem to do this.' : "couldn't tell from your answers."}</b>${swNames.length ? ' tools you named: ' + swNames.map(esc).join(', ') + '.' : ''} ${esc(su.question || '')}
-          ${why ? `<div class="why">you said: &ldquo;${esc(why)}&rdquo;</div>` : ''}
-          <div class="row">${swNames.length ? `<button class="btn small" data-act="sugg-accept" data-k="${esc(name)}">add these tools</button>` : ''}<button class="btn small" data-act="sugg-unresolved" data-k="${esc(name)}">mark not sure yet</button><button class="btn small arin" data-act="sugg-dismiss" data-k="${esc(name)}">dismiss</button></div></div>`;
-      }
-      return invRow(name, it, edit, { sysName: name, sugg: suHtml });
-    }).join('');
+    const rows = dept.systems.map(sys => invRow(sys.label, inv[sys.label] || {}, edit, { sysName: sys.label })).join('');
     const customRows = custom.map(k => invRow(k, inv[k], edit, { custom: true, label: inv[k].label || k.slice(7) })).join('');
-    // AI-flagged activities not in the catalogue, for this function — must be triaged before review
-    const addHere = edit ? ADD.filter(su => (su.function_key || '') === dept.key) : [];
-    const addHtml = addHere.map(su => `<div class="sugg add"><b>not on the standard list:</b> ${esc(su.custom_label)}.${(su.citations && su.citations[0]) ? ` <span class="why">you said: &ldquo;${esc(su.citations[0].excerpt)}&rdquo;</span>` : ''}
-      <div class="row"><button class="btn small" data-act="add-accept" data-k="${esc(su.suggestion_id)}">add this activity</button><button class="btn small arin" data-act="add-dismiss" data-k="${esc(su.suggestion_id)}">not an activity</button></div></div>`).join('');
     const addBox = edit ? `<div class="cov"><div class="row"><input class="fi" style="max-width:280px" id="cust-add-${dept.key}" placeholder="add an activity we haven't listed"><button class="btn small" data-act="cust-add" data-k="${dept.key}">add</button></div>
-      <label class="rev ${addHere.length ? 'blocked' : ''}"><input type="checkbox" ${(coverage[dept.key] && coverage[dept.key].reviewed && !addHere.length) ? 'checked' : ''} ${addHere.length ? 'disabled' : ''} data-act="func-review" data-k="${dept.key}"> i've reviewed ${esc(dept.label.toLowerCase())} — we've listed every activity we do here (or there are none)${addHere.length ? ' <span class="muted">— a newly found activity needs your review first</span>' : ''}</label></div>` : '';
+      <label class="rev"><input type="checkbox" ${(coverage[dept.key] && coverage[dept.key].reviewed) ? 'checked' : ''} data-act="func-review" data-k="${dept.key}"> i've reviewed ${esc(dept.label.toLowerCase())} — we've listed every activity we do here (or there are none)</label></div>` : '';
     const ownerHtml = edit
       ? `<span class="dept-owner"><input class="fi" placeholder="functional owner" value="${esc(ow.name || '')}" data-bind="s2.owners.${dept.key}.name"><input class="fi" placeholder="role / title" value="${esc(ow.role || '')}" data-bind="s2.owners.${dept.key}.role"></span>`
       : (ow.name ? `<span class="muted">owner ${esc(ow.name)}${ow.role ? ' · ' + esc(ow.role) : ''}</span>` : '');
-    return `<div class="inv-dept"><div class="inv-dept-h"><span>${esc(dept.label)}</span>${meter}${ownerHtml}</div>${rows}${customRows}${addHtml}${addBox}</div>`;
+    return `<div class="inv-dept"><div class="inv-dept-h"><span>${esc(dept.label)}</span>${meter}${ownerHtml}</div>${rows}${customRows}${addBox}</div>`;
   }).join('');
 
-  // AI-found activities that need the client to place them in a function (separate review area)
-  const funcOpts = '<option value="">choose a function…</option>' + DEPT_SYSTEMS.map(d => `<option value="${d.key}">${esc(d.label)}</option>`).join('');
-  const unassignedHtml = (edit && unassigned.length) ? `<div class="assist" style="border-color:#c98a1b">
-    <h4>activities to place (${unassigned.length})</h4>
-    <p class="muted">the assistant spotted these in your answers but could not tell which function they belong to. choose where each one belongs, or dismiss it. you can confirm once none are left here.</p>
-    ${unassigned.map(su => `<div class="sugg add"><b>${esc(su.custom_label)}</b>${(su.citations && su.citations[0]) ? ` <span class="why">you said: &ldquo;${esc(su.citations[0].excerpt)}&rdquo;</span>` : ''}
-      <div class="row"><select class="fi" style="max-width:220px" id="assign-${esc(su.suggestion_id)}">${funcOpts}</select><button class="btn small" data-act="add-assign" data-k="${esc(su.suggestion_id)}">add to this function</button><button class="btn small arin" data-act="add-dismiss" data-k="${esc(su.suggestion_id)}">not an activity</button></div></div>`).join('')}</div>` : '';
+  // the OPTIONAL review — available only when the inventory is coverage-complete and saved (no unsaved edits)
+  const saved = !!s, dirty = !!EDIT.s2;
+  const openFindings = FINDINGS.findings.filter(f => f.status === 'open');
+  const consultFindings = FINDINGS.findings.filter(f => f.status === 'for_consultation');
+  let assess = '';
+  if (edit) {
+    if (!coverageComplete || !saved || dirty) {
+      assess = `<div class="assess-box"><h4>review your inventory with ar|in <span class="muted">(optional)</span></h4>
+        <p class="muted">the optional review becomes available once every activity has a status and each function is reviewed${dirty ? ', and your changes are saved' : ''}.</p></div>`;
+    } else {
+      const findingCard = f => {
+        const why = f.section1_excerpt ? `<div class="why">you said: &ldquo;${esc(f.section1_excerpt)}&rdquo;</div>` : '';
+        const consult = `<button class="btn small" data-act="find-consult" data-k="${esc(f.finding_id)}">mark for the consultation</button>`;
+        const dismiss = `<button class="btn small arin" data-act="find-dismiss" data-k="${esc(f.finding_id)}">dismiss</button>`;
+        let actions;
+        if (f.finding_type === 'omission' && f.custom_label) {
+          // "add this activity" adds the missing row (which persists via a save) then marks the finding handled
+          actions = `<button class="btn small" data-act="find-add" data-k="${esc(f.finding_id)}" data-fk="${esc(f.function_key || '')}" data-label="${esc(f.custom_label)}">add this activity</button>${consult}${dismiss}`;
+        } else if (f.system_name) {
+          // "i'll fix it" takes the client to the activity; "mark fixed" is enabled only after that specific
+          // activity was actually changed and saved (promoteFixesAfterSave), never on a no-op/unrelated save
+          const fx = FIX[f.finding_id] && FIX[f.finding_id].state;
+          if (fx === 'ready') actions = `<button class="btn small" data-act="find-apply" data-k="${esc(f.finding_id)}">mark fixed</button>${consult}${dismiss}`;
+          else if (fx === 'armed') actions = `<span class="muted">change &ldquo;${esc(f.system_name)}&rdquo; above, then save section 2 — then you can mark this fixed.</span> <button class="btn small" disabled>mark fixed</button>${consult}${dismiss}`;
+          else actions = `<button class="btn small" data-act="find-fix" data-k="${esc(f.finding_id)}" data-sys-name="${esc(f.system_name)}">i'll fix it</button>${consult}${dismiss}`;
+        } else {
+          actions = `${consult}${dismiss}`;  // a general question with no specific activity
+        }
+        return `<div class="finding"><b>${esc(f.finding_type)}</b> — ${esc(f.summary)}${why}<div class="row">${actions}</div></div>`;
+      };
+      const visibleFindings = FINDINGS.stale ? openFindings.filter(f => FIX[f.finding_id] && FIX[f.finding_id].state === 'ready') : openFindings;
+      const staleBanner = (FINDINGS.run_id && FINDINGS.stale) ? `<p class="gap">your inventory changed since this review. you can run it again or confirm as is.</p>` : '';
+      const consultLine = consultFindings.length ? `<p class="muted">${consultFindings.length} kept for the consultation.</p>` : '';
+      assess = `<div class="assess-box"><h4>review your inventory with ar|in <span class="muted">(optional)</span></h4>
+        <p class="muted">ar|in reads your section 1 answers and this inventory and points out anything that looks missing or inconsistent, quoting your own words. it never changes your inventory — you decide.</p>
+        <textarea class="fi" id="assess-extra" placeholder="anything else about how you work day to day? (optional)"></textarea>
+        <div class="row"><button class="btn" data-act="run-assess">${FINDINGS.run_id ? 'run the review again' : 'review my inventory'}</button></div>
+        ${staleBanner}
+        ${visibleFindings.length ? visibleFindings.map(findingCard).join('') : (FINDINGS.run_id && !FINDINGS.stale && !openFindings.length ? '<p class="muted">nothing left to review.</p>' : '')}
+        ${consultLine}</div>`;
+    }
+  }
 
-  // confirmed inventory that still carries unresolved items must never read as fully assessed
+  // confirm gating: coverage complete AND no CURRENT open findings (stale/failed never block)
+  const complete = coverageComplete && (FINDINGS.stale || openFindings.length === 0);
+  let gap = '';
+  if (edit && sysTodo > 0) gap += `${sysTodo} activit${sysTodo > 1 ? 'ies' : 'y'} still need a status or a "not sure" flag. `;
+  if (edit && funcsUnreviewed > 0) gap += `${funcsUnreviewed} function${funcsUnreviewed > 1 ? 's' : ''} still need you to confirm nothing is missing. `;
+  if (edit && coverageComplete && !FINDINGS.stale && openFindings.length > 0) gap += `${openFindings.length} review finding${openFindings.length > 1 ? 's' : ''} still need you to add, dismiss, or mark for the consultation.`;
+
+  // confirmed-inventory banners: "not sure" items carried to the consultation; and (correction 6) an
+  // accurate distinction if an older confirmation coexists with activities now unclassified under the checklist.
   const savedInv = (s && s.content && s.content.inventory) || {};
   const openItems = Object.keys(savedInv).filter(k => savedInv[k] && savedInv[k].unresolved).length;
-  // EVERY off-catalogue activity the assistant found (ADD = still-open, assigned or unassigned) must be
-  // resolved before confirming — a function already reviewed does not clear a newly discovered activity.
-  const complete = sysTodo === 0 && funcsUnreviewed === 0 && ADD.length === 0;
-  let gap = '';
-  if (edit && sysTodo > 0) gap += `${sysTodo} activit${sysTodo > 1 ? 'ies' : 'y'} still need a status or a "not sure yet" flag. `;
-  if (edit && funcsUnreviewed > 0) gap += `${funcsUnreviewed} function${funcsUnreviewed > 1 ? 's' : ''} still need you to confirm nothing is missing. `;
-  if (edit && ADD.length > 0) gap += `${ADD.length} assistant-found activit${ADD.length > 1 ? 'ies' : 'y'} still need you to place, add or dismiss ${ADD.length > 1 ? 'them' : 'it'}.`;
+  let savedTodo = 0;
+  if (conf.s2_confirmed_at) DEPT_SYSTEMS.forEach(d => d.systems.forEach(sys => { if (invState(savedInv[sys.label]) === 'todo') savedTodo++; }));
 
-  const body = `<div class="sec-body">${explain}${assist}${unassignedHtml}${depts}
+  // the pre-consultation brief ar|in reviews (for-consultation findings the client kept). read-only; no section-3 write.
+  const brief = isAdmin() ? `<div class="sub arin-only" style="margin-top:14px"><h4>pre-consultation brief<span class="arin-tag">ar|in only</span></h4>
+    ${(BRIEF.consultation_findings || []).length
+      ? `<p class="muted">the client kept these questions for the consultation:</p>` + BRIEF.consultation_findings.map(f => `<div class="finding"><b>${esc(f.finding_type)}</b> — ${esc(f.summary)}${f.system_name ? ` <span class="muted">(${esc(f.system_name)})</span>` : ''}${(f.evidence && f.evidence[0]) ? `<div class="why">they said: &ldquo;${esc(f.evidence[0].excerpt)}&rdquo;</div>` : ''}</div>`).join('')
+      : '<p class="muted">no questions kept for the consultation.</p>'}</div>` : '';
+
+  const body = `<div class="sec-body">${intro}${depts}
     <div class="row" style="margin-top:10px">${edit ? '<button class="btn" data-act="save-s2">save section 2</button>' : ''}${savedLine(s)}</div>
+    ${assess}
     ${gap ? `<p class="gap" style="margin-top:6px">${gap} then you can confirm.</p>` : ''}</div>
-    <div class="sec-foot"><div class="fl">confirmation</div>${conf.s2_confirmed_at ? `<span class="ok">confirmed ${fmt(conf.s2_confirmed_at)}${conf.s2_confirmed_name ? ' by ' + esc(conf.s2_confirmed_name) : ''}${openItems ? ` · ${openItems} open item${openItems > 1 ? 's' : ''} carried to the consultation` : ''}</span>${openItems ? '<div class="muted" style="margin-top:4px">confirmed as a coverage list with open items — not a full assessment. the open items are resolved with ar|in.</div>' : ''}` :
+    <div class="sec-foot"><div class="fl">confirmation</div>${conf.s2_confirmed_at ? `<span class="ok">confirmed ${fmt(conf.s2_confirmed_at)}${conf.s2_confirmed_name ? ' by ' + esc(conf.s2_confirmed_name) : ''}${openItems ? ` · ${openItems} open item${openItems > 1 ? 's' : ''} carried to the consultation` : ''}</span>${openItems ? '<div class="muted" style="margin-top:4px">confirmed as a coverage list with open items — not a full assessment. the open items are resolved with ar|in.</div>' : ''}${savedTodo ? `<div class="gap" style="margin-top:4px">confirmed ${fmt(conf.s2_confirmed_at)} · ${savedTodo} activit${savedTodo > 1 ? 'ies are' : 'y is'} not classified under the current checklist.${edit ? ' open the activity and give it a status.' : ''}</div>` : ''}` :
       (can('section_confirm') && s ? `${conf.s1_confirmed_at ? '<input class="fi" id="confirm-name-2" placeholder="type your name to confirm" style="max-width:260px;display:inline-block;margin-right:8px">' : ''}<button class="btn" data-act="confirm-2" ${conf.s1_confirmed_at && complete ? '' : 'disabled'}>confirm your business is fully covered</button> ${!conf.s1_confirmed_at ? '<span class="muted">confirm section 1 first</span>' : (!complete ? '<span class="muted">account for every activity and review each function first</span>' : '')}` : '<span class="muted">not confirmed yet</span>')}
+    ${brief}
     ${can('consultation_complete') && !deal() ? `<div class="sub arin-only" style="margin-top:14px"><h4>after the consultation<span class="arin-tag">ar|in only</span></h4>
       <div class="row"><input class="fi" style="max-width:220px" id="deal-id" placeholder="HubSpot deal id"><button class="btn arin" data-act="consult-done">consultation completed, open section 3</button></div></div>` : ''}</div>`;
   return sectionShell('section-2', 2, 'systems inventory', 'a complete coverage list of what your business does, before the consultation', conf.s2_confirmed_at ? 'confirmed' : (s ? 'in progress' : 'not started'), conf.s2_confirmed_at ? 'so' : (s ? 'ip' : ''), body);
@@ -995,16 +1033,73 @@ function s2buf() { if (!EDIT.s2) EDIT.s2 = JSON.parse(JSON.stringify((sec('2') |
 function invRemove(k) { const b = s2buf(); const f = b.inventory[k] && b.inventory[k].func; delete b.inventory[k]; invalidateReview(f); render(); }
 function invSetStatus(k, v) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; const now = (b.inventory[k].status === v ? '' : v); b.inventory[k].status = now; if (now) b.inventory[k].unresolved = false; render(); }
 function invSetUnresolved(k) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; const on = !b.inventory[k].unresolved; b.inventory[k].unresolved = on; if (on) b.inventory[k].status = ''; render(); }
-function invSetNone(k, on) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; if (on) { b.inventory[k].software = ['no software / paper-based']; b.inventory[k].other = ''; } else { b.inventory[k].software = []; } render(); }
-function invToggleSw(k, sw, on) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; let arr = (Array.isArray(b.inventory[k].software) ? b.inventory[k].software : []).filter(x => x !== 'no software / paper-based'); if (on) { if (!arr.includes(sw)) arr.push(sw); } else arr = arr.filter(x => x !== sw); b.inventory[k].software = arr; }
-document.addEventListener('change', e => { const el = e.target, a = el.getAttribute && el.getAttribute('data-act'); if (a === 'inv-none') invSetNone(el.getAttribute('data-k'), el.checked); else if (a === 'inv-sw') invToggleSw(el.getAttribute('data-k'), el.getAttribute('data-sw'), el.checked); else if (a === 'func-review') setReviewed(el.getAttribute('data-k'), el.checked); });
+// software selection with combination rules (correction 3):
+//  - "no software used" (__none__): exclusive with named tools / "other" / "not sure"; COMPATIBLE with paper + outside provider
+//  - "paper" (__paper__) and "outside provider" (__outsourced__): combine with named tools, each other, and "no software used"
+//      (a mixed internal/outsourced arrangement = a named tool AND "outside provider" together)
+//  - "not sure" (__unsure_tools__): exclusive, chosen alone
+//  - a named tool: clears "no software used" / "not sure" / the legacy token
+//  - the legacy 'no software / paper-based' token is preserved verbatim and only removed when the client changes something (E2)
+function invToggleSwToken(k, tok, on) {
+  const b = s2buf(); b.inventory[k] = b.inventory[k] || {};
+  let arr = Array.isArray(b.inventory[k].software) ? b.inventory[k].software.slice() : [];
+  if (on) {
+    if (tok === '__unsure_tools__') { arr = ['__unsure_tools__']; b.inventory[k].other = ''; }
+    else if (tok === '__none__') { arr = arr.filter(x => x === '__paper__' || x === '__outsourced__'); arr.push('__none__'); b.inventory[k].other = ''; }
+    else if (tok === 'no software / paper-based') { /* legacy is shown already-checked; turning it on is a no-op */ }
+    else if (tok === '__paper__' || tok === '__outsourced__') {
+      arr = arr.filter(x => x !== '__unsure_tools__' && x !== 'no software / paper-based');
+      if (!arr.includes(tok)) arr.push(tok);
+    } else { // a named tool
+      arr = arr.filter(x => x !== '__none__' && x !== '__unsure_tools__' && x !== 'no software / paper-based');
+      if (!arr.includes(tok)) arr.push(tok);
+    }
+  } else {
+    arr = arr.filter(x => x !== tok);
+  }
+  b.inventory[k].software = arr; render();
+}
+document.addEventListener('change', e => { const el = e.target, a = el.getAttribute && el.getAttribute('data-act'); if (a === 'sw-token') invToggleSwToken(el.getAttribute('data-k'), el.getAttribute('data-sw'), el.checked); else if (a === 'func-review') setReviewed(el.getAttribute('data-k'), el.checked); });
 
+// Verify the specific activity was corrected. For an inconsistency, a software
+// change does not qualify: the client must correct its mistaken not-done status.
+function isSavedFix(fx, savedInv) {
+  if (!fx || !fx.sys || !fx.before) return false;
+  const after = (savedInv && savedInv[fx.sys]) || {};
+  if (fx.findingType === 'inconsistency') {
+    const before = JSON.parse(fx.before);
+    return ['not applicable', 'not yet implemented'].includes(before.status)
+      && ['documented', 'not documented'].includes(after.status);
+  }
+  return JSON.stringify(after) !== fx.before;
+}
+// Resolve after successful save and before load() marks the assessment stale.
+// Retain a retryable action if the resolution request itself fails.
+async function resolveSavedFixesAfterSave(savedInv) {
+  let failures = 0;
+  for (const id of Object.keys(FIX)) {
+    const fx = FIX[id];
+    if (!fx || !['armed', 'ready'].includes(fx.state) || !isSavedFix(fx, savedInv)) continue;
+    try {
+      const r = await call2('finding_resolve', { finding_id: id, action: 'applied' });
+      if (r && r.body && r.body.ok) delete FIX[id];
+      else { fx.state = 'ready'; failures++; }
+    } catch (e) { fx.state = 'ready'; failures++; }
+  }
+  return failures;
+}
 async function saveSection(n, sys) {
   const key = sys ? 'sys:' + sys : 's' + n; const s = sec(String(n), sys);
   const content = EDIT[key] || (s && s.content) || {};
   if (n === 3) content.scopeSystems = String(content.scope_text || '').split('\n').map(x => x.trim()).filter(Boolean);
   const r = await call('save_section', { section: String(n), system_id: sys || '', content, base_version: s ? s.version : 0 });
-  if (r.body.ok) { delete EDIT[key]; toast('saved, version ' + r.body.version); await load(); return true; }
+  if (r.body.ok) {
+    delete EDIT[key];
+    const failed = n === 2 ? await resolveSavedFixesAfterSave(content.inventory || {}) : 0;
+    await load();
+    toast(failed ? 'saved, but could not mark the finding fixed. please try again.' : 'saved, version ' + r.body.version, failed > 0);
+    return true;
+  }
   toast(r.body.error === 'conflict' ? 'someone saved a newer version. reload to see it.' : (r.body.error || 'not saved'), true);
   return false;
 }
@@ -1012,7 +1107,7 @@ async function saveSection(n, sys) {
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.getAttribute('data-act'), sys = t.getAttribute('data-sys'), d = deal();
-  if (a === 'inv-none' || a === 'inv-sw' || a === 'func-review') return;
+  if (a === 'sw-token' || a === 'func-review') return;
   t.disabled = true;
   try {
     if (a === 'si-send') { SIGN.email = val('si-email'); const r = await call('request_code', { email: SIGN.email }); if (r.status === 200) { SIGN.stage = 'code'; render(); } else toast('try again', true); }
@@ -1024,18 +1119,15 @@ document.addEventListener('click', async e => {
     else if (a === 'inv-status') invSetStatus(t.getAttribute('data-k'), t.getAttribute('data-v'));
     else if (a === 'inv-unresolved') invSetUnresolved(t.getAttribute('data-k'));
     else if (a === 'sw-open') { const k = t.getAttribute('data-k'); SWOPEN[k] = !SWOPEN[k]; render(); }
-    else if (a === 'suggest') { toast('reading your section 1 answers…'); const r = await call2('suggest', { extra: val('assist-extra') });
-      if (r.body && r.body.ok) { ingestSuggestions(r.body.suggestions);
-        const n = Object.keys(SUGGEST).length + ADD.length; toast(n ? n + ' suggestion' + (n > 1 ? 's' : '') + ' ready to review below' : 'nothing to suggest yet — your section 1 answers did not give enough to go on'); render(); }
-      else toast((r.body && r.body.error) || 'the assistant did not run', true); }
-    else if (a === 'sugg-accept') await applySuggestion(t.getAttribute('data-k'));
-    else if (a === 'sugg-unresolved') await markUnresolvedFromSuggestion(t.getAttribute('data-k'));
-    else if (a === 'sugg-dismiss') await dismissSuggestion(t.getAttribute('data-k'));
+    else if (a === 'explain-toggle') { const k = t.getAttribute('data-k'); EXPAND[k] = !EXPAND[k]; render(); }
+    else if (a === 'run-assess') { toast('reviewing your inventory…'); await runAssessment(); }
+    else if (a === 'find-fix') { const id = t.getAttribute('data-k'); const sysName = t.getAttribute('data-sys-name'); const savedInv = ((sec('2') || {}).content || {}).inventory || {}; FIX[id] = { state: 'armed', sys: sysName, before: JSON.stringify(savedInv[sysName] || {}), findingType: (FINDINGS.findings.find(f => f.finding_id === id) || {}).finding_type || null }; const el = document.getElementById(rowSlug(sysName)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); render(); }
+    else if (a === 'find-apply') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'applied'); delete FIX[id]; }
+    else if (a === 'find-dismiss') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'dismissed'); delete FIX[id]; }
+    else if (a === 'find-consult') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'for_consultation'); delete FIX[id]; }
+    else if (a === 'find-add') await applyOmission(t.getAttribute('data-k'), t.getAttribute('data-fk'), t.getAttribute('data-label'));
     else if (a === 'cust-add') { const fk = t.getAttribute('data-k'); const inp = document.getElementById('cust-add-' + fk); addCustom(fk, inp ? inp.value : ''); }
     else if (a === 'cust-remove') invRemove(t.getAttribute('data-k'));
-    else if (a === 'add-accept') await acceptAdditional(t.getAttribute('data-k'));
-    else if (a === 'add-assign') { const id = t.getAttribute('data-k'); const sel = document.getElementById('assign-' + id); await assignAdditional(id, sel ? sel.value : ''); }
-    else if (a === 'add-dismiss') await dismissAdditional(t.getAttribute('data-k'));
     else if (a === 'save-s3') await saveSection(3);
     else if (a === 'confirm-1') { const nm = val('confirm-name-1'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '1', name: nm }, 'section 1 confirmed'); }
     else if (a === 'confirm-2') { const nm = val('confirm-name-2'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '2', name: nm }, 'section 2 confirmed'); }
