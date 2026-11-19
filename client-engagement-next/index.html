@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ar|in engagement document</title>
+<style>
+  :root { --red:#D11919; --dark:#62605C; --mid:#84817C; --subtle:#84817C; --light-bg:#EAE5DC; --border:#C8C4BC; --green:#2D6A4F; --amber:#b8750a; --blue:#1565c0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:var(--dark); background:#C8C4BC; line-height:1.55; }
+  .app { display:flex; min-height:100vh; }
+  .sidebar { width:220px; min-width:220px; background:#62605C; color:#EAE5DC; padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+  .logo { padding:0 20px 18px; border-bottom:1px solid #84817C; margin-bottom:12px; }
+  .logo .word { font-size:30px; font-weight:300; letter-spacing:-1px; color:#EAE5DC; }
+  .logo .word b { color:var(--red); font-weight:400; }
+  .logo .doc-type { font-size:10px; color:#A6A29C; margin-top:4px; text-transform:uppercase; letter-spacing:.6px; }
+  .nav-label { padding:14px 20px 4px; font-size:10px; text-transform:uppercase; letter-spacing:.7px; color:#A6A29C; }
+  .nav-item { display:block; padding:6px 20px; color:#C8C4BC; font-size:12px; cursor:pointer; text-decoration:none; }
+  .nav-item:hover { color:#fff; }
+  .sdot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:7px; background:#84817C; vertical-align:middle; }
+  .sdot.active { background:var(--amber); } .sdot.done { background:#7fc49b; }
+  .me { padding:10px 20px; font-size:11px; color:#C8C4BC; }
+  .main { flex:1; padding:28px 36px 64px; max-width:1100px; }
+  .doc-header { background:#fff; border:1px solid var(--border); border-left:3px solid var(--red); padding:20px 24px; margin-bottom:18px; }
+  .doc-title { font-size:17px; font-weight:700; }
+  .doc-title small { display:block; font-size:11px; font-weight:400; color:var(--subtle); margin-top:3px; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .spread { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .band { background:#fff; border:1px solid var(--border); padding:14px 20px; margin-bottom:18px; }
+  .chip { display:inline-block; font-size:11px; padding:3px 9px; border:1px solid var(--border); background:#fafafa; color:var(--subtle); margin:2px 4px 2px 0; }
+  .chip.done { background:#d4edda; border-color:var(--green); color:var(--green); font-weight:600; }
+  .chip.warn { background:#fff3cd; border-color:var(--amber); color:#7d5a00; }
+  .section { background:#fff; border:1px solid var(--border); margin-bottom:18px; }
+  .section.locked .sec-body { opacity:.6; }
+  .sec-header { padding:14px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .sec-left { display:flex; align-items:center; gap:12px; }
+  .sec-num { width:28px; height:28px; border-radius:50%; background:var(--dark); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .section.locked .sec-num { background:#bbb; }
+  .sec-title { font-size:14px; font-weight:600; } .sec-sub { font-size:11px; color:var(--subtle); margin-top:2px; }
+  .badge { font-size:11px; padding:3px 10px; font-weight:500; background:#f0f0f0; color:#888; white-space:nowrap; }
+  .badge.ip { background:#fef3cd; color:#7d5a00; } .badge.so { background:#d4edda; color:#155724; } .badge.rm { background:#f8d7da; color:#9b1111; }
+  .sec-body { padding:18px 22px; }
+  .sec-foot { background:var(--light-bg); border-top:1px solid var(--border); padding:14px 22px; }
+  .lock-notice { padding:18px 22px; color:var(--subtle); font-size:12px; }
+  .note { font-size:11.5px; color:var(--subtle); margin-bottom:12px; }
+  .fl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--subtle); margin-bottom:4px; }
+  .fr { margin-bottom:12px; }
+  textarea.fi, input.fi, select.fi { width:100%; border:1px solid var(--border); padding:7px 9px; font-size:13px; font-family:inherit; color:var(--dark); background:#fafafa; outline:none; }
+  textarea.fi { min-height:56px; resize:vertical; line-height:1.5; }
+  textarea.fi:focus, input.fi:focus, select.fi:focus { border-color:var(--red); background:#fff; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; } .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .btn { padding:7px 16px; background:var(--dark); color:#fff; border:none; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+  .btn:hover { background:var(--red); } .btn:disabled { background:#bbb; cursor:default; }
+  .btn.arin { background:#fff; color:var(--dark); border:1px solid var(--dark); }
+  .btn.arin:hover { border-color:var(--red); color:var(--red); }
+  .btn.small { padding:4px 10px; font-size:11px; }
+  .card { border:1px solid var(--border); margin-bottom:14px; }
+  .card-header { padding:10px 14px; background:var(--light-bg); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .card-body { padding:14px; border-top:1px solid var(--border); }
+  .sub { border:1px solid #e3dfd8; background:#fcfbf9; padding:12px; margin-bottom:12px; }
+  .sub h4 { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--subtle); margin-bottom:8px; }
+  .arin-only { border-left:3px solid var(--blue); }
+  .arin-tag { font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--blue); margin-left:6px; }
+  .step { border:1px solid var(--border); padding:10px; margin-bottom:10px; background:#fff; }
+  .field-row { display:grid; grid-template-columns:120px 1fr 90px; gap:8px; align-items:start; margin-bottom:6px; }
+  .field-row label.acc { font-size:11px; color:var(--subtle); display:flex; gap:4px; align-items:center; padding-top:7px; }
+  .cite { font-size:11px; color:var(--subtle); margin:-2px 0 6px 128px; font-style:italic; }
+  .q { border-left:3px solid var(--amber); padding:8px 10px; background:#fffdf6; margin-bottom:8px; }
+  .gap { color:var(--red); font-size:11.5px; }
+  .ok { color:var(--green); font-size:11.5px; }
+  .msg { position:fixed; right:18px; bottom:18px; background:var(--dark); color:#fff; padding:10px 14px; font-size:12px; max-width:420px; display:none; z-index:9; }
+  .msg.err { background:var(--red); }
+  table.t { width:100%; border-collapse:collapse; font-size:12px; }
+  table.t td, table.t th { border-bottom:1px solid #eee; padding:5px 6px; text-align:left; vertical-align:top; }
+  table.t th { font-size:10px; text-transform:uppercase; color:var(--subtle); letter-spacing:.4px; }
+  .signin { max-width:420px; margin:60px auto; background:#fff; border:1px solid var(--border); border-left:3px solid var(--red); padding:26px; }
+  .muted { color:var(--subtle); font-size:11.5px; }
+  .inv-dept { border:1px solid var(--border); margin-bottom:8px; }
+  .inv-dept-h { padding:8px 12px; background:var(--light-bg); font-weight:700; font-size:12px; }
+  .inv-dept-h { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .dept-owner { display:inline-flex; gap:6px; }
+  .dept-owner .fi { max-width:150px; font-size:11px; padding:3px 6px; }
+  .inv-row { display:grid; grid-template-columns:1fr; gap:6px; padding:8px 12px; border-bottom:1px solid #f0ede8; align-items:start; }
+  .inv-sys { font-weight:600; font-size:12px; }
+  .inv-stats { display:flex; flex-wrap:wrap; gap:6px; }
+  .inv-stat { font-size:10.5px; padding:3px 8px; border:1px solid var(--border); background:#fff; color:var(--subtle); cursor:pointer; border-radius:3px; }
+  .inv-stat.on { background:var(--dark); color:#fff; border-color:var(--dark); }
+  .inv-stat:disabled { cursor:default; opacity:.6; }
+  .inv-sw { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:center; }
+  .sw-item { font-size:10.5px; color:var(--subtle); display:inline-flex; gap:3px; align-items:center; cursor:pointer; }
+  .sw-item.on { color:var(--dark); }
+  .sw-other { max-width:180px !important; font-size:10.5px; padding:2px 6px; }
+  /* --- s2 assistant + compact inventory --- */
+  .assist { border:1px solid var(--blue); background:#f3f8ff; padding:12px 14px; margin-bottom:14px; }
+  .assist h4 { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue); margin-bottom:6px; }
+  .assist textarea.fi { min-height:38px; margin:6px 0; }
+  /* s2 redesign */
+  .s2-intro { margin-bottom:12px; }
+  .s2-intro .legend { list-style:none; margin:8px 0; padding:8px 10px; background:#faf8f4; border:1px solid var(--border); border-radius:4px; }
+  .s2-intro .legend li { font-size:11px; color:var(--dark); padding:1px 0; }
+  .wdtm { margin:3px 0 2px; }
+  .wdtm .wdtm-body { font-size:11px; margin-top:3px; max-width:620px; }
+  .wdtm .lnk { font-size:10.5px; }
+  .sw-prompt { font-size:10.5px; color:var(--dark); font-weight:600; width:100%; margin-bottom:2px; }
+  .assess-box { border:1px solid var(--blue); background:#f3f8ff; padding:12px 14px; margin:14px 0; }
+  .assess-box h4 { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue); margin-bottom:6px; }
+  .assess-box textarea.fi { min-height:38px; margin:6px 0; }
+  .finding { border-left:3px solid var(--blue); background:#fff; padding:8px 10px; margin:8px 0; font-size:11.5px; }
+  .finding b { text-transform:uppercase; font-size:10px; letter-spacing:.3px; color:var(--blue); }
+  .finding .why { font-size:10.5px; color:var(--subtle); margin:4px 0; font-style:italic; }
+  .meter { display:flex; gap:10px; align-items:center; font-size:10.5px; color:var(--subtle); flex-wrap:wrap; }
+  .meter .bar { width:120px; height:7px; background:#e3dfd8; border-radius:4px; overflow:hidden; display:inline-flex; }
+  .meter .bar i { height:100%; display:block; }
+  .meter .bar i.ok { background:var(--green); } .meter .bar i.uns { background:var(--amber); }
+  .pill { font-size:10px; padding:1px 6px; border-radius:3px; font-weight:600; }
+  .pill.ok { background:#d4edda; color:var(--green); } .pill.uns { background:#fff3cd; color:#7d5a00; } .pill.todo { background:#eee; color:var(--subtle); } .pill.add { background:#e7f0ff; color:var(--blue); }
+  .sugg.add { border-left-color:#c79a2e; background:#fffaf0; }
+  .cov { margin:8px 0 4px; padding-top:8px; border-top:1px dashed var(--border); }
+  .rev { display:flex; gap:6px; align-items:flex-start; font-size:11px; color:var(--dark); margin-top:6px; cursor:pointer; }
+  .rev.blocked { color:var(--subtle); }
+  .inv-stat.uns.on { background:var(--amber); border-color:var(--amber); color:#fff; }
+  .sw-chips { display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+  .sw-chip { font-size:10px; padding:1px 7px; background:#f0ede8; border:1px solid var(--border); border-radius:3px; }
+  .lnk { font-size:10.5px; color:var(--blue); cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; }
+  .sugg { border-left:3px solid var(--blue); background:#f3f8ff; padding:7px 10px; margin-top:4px; font-size:11px; }
+  .sugg .why { color:var(--subtle); font-style:italic; margin-top:3px; }
+  .sugg .row { margin-top:5px; gap:6px; }
+.pc-stage,.pc-stage-result{border:1px solid #C8C4BC;padding:12px;margin:12px 0;border-radius:6px}
+.pc-opt{display:block;margin:8px 0}.pc-custom-row{display:flex;gap:8px;margin:7px 0;flex-wrap:wrap}
+.pc-custom-label{min-width:180px;flex:1}.pc-custom-status{max-width:190px}
+.pc-save-error{color:#b22222;font-weight:600}.pc-source{margin-top:22px}
+.pc-item{padding:5px 0}.pc-muted{color:#62605C}.pc-warn{border-left:3px solid #D11919;padding-left:8px}
+
+/* OPS-001 factual traffic-light package, isolated test only */
+.pc2-intro,.pc2-note,.pc2-muted,.pc2-footer { font-size:12px;line-height:1.6;color:#62605C;margin:8px 0 14px }
+.pc2-note,.pc2-muted { color:#84817C }
+.pc2-title { font-size:15px;margin:18px 0 7px;font-weight:700 }
+.pc2-overview { display:flex;gap:12px;flex-wrap:wrap;margin:14px 0 }
+.pc2-tile { display:flex;align-items:center;gap:8px;background:#f7f7f5;border:1px solid #C8C4BC;border-radius:6px;padding:9px 13px;font-size:12px }
+.pc2-tile strong { font-size:17px }
+.pc2-dot {flex-shrink:0;width:12px;height:12px;display:inline-block;border-radius:50%;border:1px solid #777}
+.pc2-green {background:#2D6A4F;border-color:#2D6A4F}
+.pc2-orange {background:#B8750A;border-color:#B8750A}
+.pc2-grey {background:#9C9C9C;border-color:#777}
+.pc2-stage { border:1px solid #C8C4BC;background:white;border-radius:6px;margin:8px 0;overflow:hidden }
+.pc2-stage-heading {display:flex;align-items:center;gap:10px;cursor:pointer;padding:13px 14px;list-style:none}
+.pc2-stage-heading::-webkit-details-marker{display:none}
+.pc2-stage-heading:after{content:"+";font-size:16px;color:#84817C}
+.pc2-stage[open] .pc2-stage-heading:after{content:"−"}
+.pc2-number {color:#D11919;font-weight:700;min-width:20px}
+.pc2-heading-text {font-size:13px;font-weight:600;flex:1}
+.pc2-flags {margin-left:auto;font-size:11px}
+.pc2-pill {border-radius:12px;padding:4px 8px;display:inline-block}
+.pc2-pill-orange {background:#f6e9ce;color:#805209}
+.pc2-pill-neutral {background:#efede8;color:#62605C}
+.pc2-stage-body {padding:14px 16px;border-top:1px solid #eee;background:#fdfdfb}
+.pc2-reported-label {font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#84817C;font-weight:700;margin:10px 0 4px}
+.pc2-reported {font-size:12px;white-space:pre-wrap;line-height:1.65}
+.pc2-system {display:flex;align-items:center;gap:9px;font-size:12px;margin:7px 0;flex-wrap:wrap}
+.pc2-system-name {flex:1;min-width:130px}
+.pc2-status {min-width:100px;text-align:right;color:#62605C;font-size:11px}
+.pc2-software {display:block;width:100%;margin-left:22px;color:#84817C;font-size:11px}
+.pc2-extra {margin:16px 0;padding:12px 14px;border:1px solid #C8C4BC;border-radius:6px;background:#fff}
+.pc2-extra summary {font-weight:600;font-size:12px;cursor:pointer}
+.pc2-loading,.pc2-error {padding:12px;color:#62605C}
+@media(max-width:650px){.pc2-stage-heading{flex-wrap:wrap}.pc2-flags{margin-left:30px}.pc2-system-name{min-width:0}.pc2-overview{gap:6px}.pc2-tile{padding:7px}}
+.pc2-context {background:#f7f7f5;border:1px solid #C8C4BC;border-radius:6px;padding:10px 14px;font-size:12px;margin:11px 0}.pc2-context p{margin:3px 0;white-space:pre-wrap}
+
+.pc2-red{background:#D11919;border-color:#D11919}
+.pc2-pill-red{background:#fbe8e6;color:#9d1919}
+.pc2-function .pc2-heading-text{text-transform:lowercase}
+.pc2-function .pc2-stage-body{padding:9px 16px}
+
+
+/* Inventory: functions and systems collapsed by default, status visible in summaries. */
+.inv-dept{border:1px solid var(--border);border-radius:5px;margin-bottom:10px;background:#fff;overflow:hidden}
+.inv-dept-h{display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 14px;background:var(--light-bg);list-style:none;font-size:12px;font-weight:600;min-height:44px}
+.inv-dept-h::-webkit-details-marker,.inv-sys::-webkit-details-marker{display:none}
+.inv-dept-name,.inv-sys-name{flex:1;min-width:0}
+.inv-dept-status{font-size:11px;color:var(--subtle);font-weight:500}
+.inv-dept-body{padding:0 12px 12px}
+.inv-dept-info{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:12px 4px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.inv-caret{width:10px;height:10px;flex:none;border-right:1.5px solid #666;border-bottom:1.5px solid #666;transform:rotate(45deg);margin:0 5px 5px}
+details[open] > summary .inv-caret{transform:rotate(225deg);margin:5px 5px 0}
+.inv-row{display:block;padding:0;margin:0;border:none;border-bottom:1px solid #e9e6df}
+.inv-sys{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;padding:11px 6px;font-size:12px;font-weight:600;min-height:42px}
+.inv-sys:hover,.inv-dept-h:hover{background:#f7f5f1}
+.inv-sys:focus-visible,.inv-dept-h:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+.inv-row-body{padding:10px 14px 15px;background:#fcfbf9;border-top:1px solid #eeebe6;display:grid;gap:10px}
+.inv-status-badge{display:inline-block;font-size:10.5px;font-weight:600;white-space:normal;text-align:right;padding:3px 8px;border-radius:12px;background:#efefec;color:#65625d}
+.inv-status-badge.documented{background:#e1eee5;color:#226641}
+.inv-status-badge.undocumented{background:#f9ecd3;color:#8c5b04}
+.inv-status-badge.unimplemented{background:#fbe7e5;color:#a32222}
+.inv-status-badge.unsure{background:#ecebea;color:#5c5c5c}
+.inv-status-badge.na,.inv-status-badge.empty{background:#eee;color:#696969}
+.inv-guide{font-size:12px;color:var(--dark);line-height:1.55;max-width:820px}
+.inv-guide p{margin:4px 0 10px}
+.inv-guide-label{color:var(--subtle);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+.inv-row-body .inv-stats,.inv-row-body .inv-sw{padding:0;margin:0}
+.inv-row-body .inv-sw{display:block}
+@media(max-width:650px){.inv-dept-h,.inv-sys{gap:6px;padding:11px 8px}.inv-status-badge,.inv-dept-status{font-size:10px}}
+
+/* CCF stage headers show all non-zero statuses; keep them readable on narrow screens. */
+.pc2-stage-heading .pc2-flags{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:wrap}
+.pc2-pill-green{background:#e1eee5;color:#226641}
+.pc2-pill-grey{background:#ecebea;color:#5c5c5c}
+.pc2-stage-heading .pc2-pill{font-size:10.5px;line-height:1.35;white-space:nowrap}
+.inv-examples{margin:6px 0 8px;padding-left:22px;list-style:disc outside}
+.inv-examples li{font-size:12px;line-height:1.6;padding:2px 0;margin:2px 0}
+.inv-examples strong{font-weight:600}
+@media(max-width:680px){
+ .pc2-stage-heading .pc2-flags{width:100%;justify-content:flex-start;margin-left:30px}
+ .pc2-stage-heading .pc2-heading-text{flex-basis:calc(100% - 70px)}
+}
+
+
+/* Source-A client-flow synthesis: factual statuses plus conditional risk examples. */
+.pc2-across{border:1px solid #C8C4BC;border-radius:6px;margin:14px 0 18px;background:#f9f8f5;overflow:hidden}
+.pc2-across-heading{display:flex;align-items:center;gap:9px;padding:13px 15px;cursor:pointer;list-style:none;font-size:12px;font-weight:600}
+.pc2-across-heading::-webkit-details-marker{display:none}
+.pc2-across-heading:after{content:"+";font-size:16px;color:#84817C}
+.pc2-across[open] .pc2-across-heading:after{content:"−"}
+.pc2-across .pc2-flags{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.pc2-across-body{padding:12px 14px 5px;border-top:1px solid #dedad3}
+.pc2-across-body .pc2-stage{margin:6px 0}
+.pc2-story{margin:20px 0;padding:18px 20px;border:1px solid #C8C4BC;background:#f9f8f5;border-radius:6px}
+.pc2-story .pc2-title{margin:0 0 14px;font-size:16px}
+.pc2-story-lead{font-weight:600;font-size:13px;line-height:1.6;margin:0 0 10px}
+.pc2-story-fact,.pc2-story-reading,.pc2-story-risk{font-size:12px;line-height:1.65;margin:8px 0}
+.pc2-story-risk{margin-bottom:13px}
+.pc2-story-boundary{font-size:11px;line-height:1.6;color:#74706a;margin:10px 0}
+.pc2-story-details{border-top:1px solid #dedad3;padding-top:10px;margin-top:12px}
+.pc2-story-details-heading{font-size:12px;font-weight:600;cursor:pointer}
+.pc2-story-list{padding-left:22px;margin:8px 0 12px}
+.pc2-story-list li{margin:8px 0;line-height:1.6;font-size:12px}
+.pc2-story-list strong{font-weight:600}
+@media(max-width:680px){.pc2-across-heading{flex-wrap:wrap}.pc2-across .pc2-flags{justify-content:flex-start;width:100%}.pc2-story{padding:14px 12px}}
+
+
+/* Unweighted CCF summary: counts describe documentation/implementation work. */
+.pc2-work-totals{display:flex;align-items:stretch;flex-wrap:wrap;gap:8px;margin:14px 0}
+.pc2-work-total{border:1px solid #C8C4BC;background:#fff;border-radius:6px;padding:9px 11px;display:flex;align-items:center;gap:7px;font-size:11px}
+.pc2-work-total strong{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.pc2-story-definitions{margin:12px 0}
+.pc2-story-subtitle{font-size:12px;font-weight:700;margin:10px 0 7px}
+@media(max-width:680px){.pc2-work-totals{gap:6px}.pc2-work-total{padding:7px 9px}}
+
+
+/* Responsive client engagement layout: use the available browser width. */
+html,body {max-width:100%;width:100%}
+body {overflow-x:hidden}
+.app {display:flex;width:100%;max-width:100%;min-width:0}
+.sidebar {flex:0 0 220px}
+.main {flex:1 1 auto;min-width:0;width:100%;max-width:none;padding:clamp(14px,2.3vw,36px) clamp(14px,2.3vw,36px) 64px}
+.main > *, .section, .sec-body, .sec-header, .doc-header, .band, .card, .card-body,
+.inv-dept, .inv-row, .inv-dept-body, .inv-row-body, .pc2-stage, .pc2-story, .pc2-overview,
+.pc2-across, .pc2-stage-body, .pc2-context, .grid2, .grid3 {min-width:0;max-width:100%}
+.main p, .main li, .pc2-heading-text, .inv-sys-name, .inv-dept-name,
+.pc2-system-name, .inv-guide {overflow-wrap:break-word}
+.main textarea, .main input, .main select {min-width:0;max-width:100%}
+.sec-header, .sec-left {min-width:0;flex-wrap:wrap}
+.pc2-stage-heading .pc2-heading-text {min-width:0}
+.pc2-stage-heading .pc2-flags {min-width:0;max-width:100%}
+table.t {width:100%;max-width:100%;table-layout:auto}
+table.t th,table.t td {overflow-wrap:anywhere}
+@media(max-width:1050px){
+  .grid3 {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .field-row {grid-template-columns:110px minmax(0,1fr) 80px}
+}
+@media(max-width:850px){
+  .app {display:block}
+  .sidebar {position:static;display:flex;align-items:center;gap:5px;
+    width:100%;min-width:0;height:auto;min-height:0;max-width:100%;
+    overflow-x:auto;overflow-y:hidden;padding:6px 10px;white-space:nowrap}
+  .sidebar .logo {flex:none;align-self:center;border:0;margin:0;padding:2px 14px 2px 2px}
+  .sidebar .logo .word {font-size:23px}
+  .sidebar .logo .doc-type {display:none}
+  .sidebar .nav-label {display:none}
+  .sidebar .nav-item {display:inline-block;flex:none;padding:8px 10px;
+    border-radius:4px;font-size:11px}
+  .sidebar .me {display:inline-block;flex:none;padding:8px 10px;font-size:11px}
+  .main {width:100%;max-width:100%;padding:16px 14px 56px}
+  .sec-body {padding:15px 14px}
+  .sec-header {padding:12px 14px}
+  .sec-foot {padding:12px 14px}
+  .grid2,.grid3 {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .main {padding:10px 9px 52px}
+  .doc-header {padding:14px 12px}
+  .sec-body {padding:12px 10px}
+  .sec-header,.sec-foot {padding:12px 10px}
+  .grid2,.grid3 {grid-template-columns:minmax(0,1fr)}
+  .field-row {grid-template-columns:minmax(0,1fr)}
+  .cite {margin-left:0}
+  .sec-header .badge {white-space:normal}
+  .dept-owner {flex-wrap:wrap}
+  .pc2-stage-heading .pc2-flags {margin:6px 0 0;width:100%;justify-content:flex-start}
+  .pc2-work-totals {gap:5px}
+  .pc2-work-total {flex:1 1 140px}
+  .msg {left:8px;right:8px;bottom:8px;max-width:none}
+}
+
+/* OPS-001 v2.1: identical systems hierarchy for entry and diagnosis. */
+.ccf-hierarchy { border:1px solid var(--border);border-radius:7px;background:#fff;padding:14px;margin:14px 0 16px;min-width:0; }
+.ccf-hierarchy-title { font-size:14px;font-weight:700;margin:0 0 6px;color:var(--dark); }
+.ccf-hierarchy-desc { font-size:11.5px;color:var(--subtle);margin:0 0 12px;line-height:1.6; }
+.ccf-hierarchy-head { display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px; }
+.ccf-hierarchy-count { color:var(--dark);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums; }
+.ccf-hierarchy-sub { margin:6px 0;font-size:11.5px;color:var(--subtle);line-height:1.6; }
+.ccf-group { border:1px solid var(--border);border-radius:6px;background:#fff;margin:10px 0;min-width:0;overflow:hidden; }
+.ccf-group > summary {display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:12px;cursor:pointer;list-style:none;background:#f7f7f5; }
+.ccf-group > summary::-webkit-details-marker {display:none;}
+.ccf-group > summary:after { content:'+';color:var(--subtle);margin-left:3px;font-size:17px;line-height:1; }
+.ccf-group[open] > summary:after {content:'−';}
+.ccf-group-name {font-weight:700;font-size:12px;flex:1 1 190px;min-width:0;}
+.ccf-group-count {font-size:11px;color:var(--subtle);font-variant-numeric:tabular-nums;white-space:normal;}
+.ccf-group-body {padding:10px 12px 12px;min-width:0;}
+.ccf-stage-summary {font-weight:600;font-size:12px;}
+.ccf-stage-number {color:var(--red);font-weight:700;margin-right:8px;}
+.ccf-review {margin:16px 0 0;}
+.ccf-review .inv-dept-h {background:#f7f7f5;}
+.ccf-review-note {font-size:11.5px;color:var(--subtle);line-height:1.6;margin:6px 0 12px;}
+.ccf-applicable {font-size:11px;color:var(--subtle);font-variant-numeric:tabular-nums;}
+.ccf-hierarchy .inv-dept {margin:7px 0;}
+.ccf-hierarchy .inv-dept-body {padding:0 10px 10px;}
+.ccf-hierarchy .inv-row {min-width:0;}
+.ccf-hierarchy .inv-row-body {min-width:0;}
+.ccf-simple-stat {display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;color:var(--subtle);}
+.ccf-simple-stat .pc2-dot {width:9px;height:9px;}
+.pc2-hierarchy {margin:14px 0 18px;}
+.pc2-hierarchy .ccf-group-body {padding:10px 12px;}
+.pc2-hierarchy .pc2-stage {margin:7px 0;}
+.pc2-hierarchy .pc2-across {margin:7px 0;border:0;background:transparent;}
+.pc2-hierarchy .pc2-across-body {padding:0;border:0;}
+@media(max-width:650px){
+ .ccf-hierarchy {padding:10px;}
+ .ccf-group > summary{padding:10px 9px;}
+ .ccf-group-body{padding:9px;}
+ .ccf-group-count{width:100%;}
+ .pc2-hierarchy .pc2-stage-heading{padding:10px 9px;}
+}
+/* OPS-001 v2.1: inline new-system entry, one confirmation, two diagnosis scopes. */
+.ccf-add-system{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:11px 2px 4px;border-top:1px dashed #dedad3;margin-top:9px}
+.ccf-add-system label{font-size:11px;color:var(--subtle)}
+.ccf-add-system .fi{flex:1 1 210px;width:auto;max-width:420px;min-width:140px}
+.ccf-add-system select.fi{flex:0 1 165px;min-width:115px;max-width:190px}
+.ccf-add-system .btn{flex:none}
+.s2-unsaved-note,.inv-unsaved{font-size:11px;color:#9a5b00;background:#fff4e0;border:1px solid #f0d3a0;border-radius:10px;padding:1px 8px;white-space:nowrap}
+.inv-unsaved{margin-left:auto;margin-right:6px}
+.s2-unsaved-bar{position:sticky;bottom:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px;padding:10px 13px;background:#fff4e0;border:1px solid #f0d3a0;border-radius:5px;font-size:12px;color:#5c3a00}
+.s2-unsaved-bar[hidden],.s2-unsaved-note[hidden]{display:none}
+.inv-trail{margin-top:8px;font-size:11px;color:var(--subtle);line-height:1.5}
+.ccf-confirm-line{margin:14px 0 8px;padding:11px 13px;background:#faf8f4;border:1px solid var(--border);border-radius:5px}
+.ccf-confirm-line label{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.5;cursor:pointer}
+.ccf-confirm-line input{margin-top:3px;flex:none}
+.ccf-owners{margin:7px 0 12px;border:1px solid var(--border);border-radius:5px}
+.ccf-owners summary{font-size:11.5px;font-weight:600;cursor:pointer;padding:10px 13px;list-style:none}
+.ccf-owner-list{padding:10px 13px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-items:start}
+.ccf-owner-line{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ccf-owner-line strong{font-size:11px;flex:0 0 112px}
+.ccf-owner-line input.fi{flex:1 1 140px;width:auto;max-width:none}
+.ccf-owners-head{font-size:11.5px;font-weight:600;padding:10px 13px 4px}
+.owner-need{font-size:11px;flex-basis:100%}
+.owner-need:empty{display:none}
+/* s3 pre-consultation review, ar|in only */
+.s3r-list{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:6px 14px;font-size:12px;margin:0 0 12px}
+.s3r-list dt{color:var(--subtle)}
+.s3r-list dd{margin:0}
+.s3r-owners{list-style:none;padding:0;margin:0 0 12px;font-size:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px}
+.s3r-changes{margin:6px 0 10px 18px;font-size:12px}
+.s3r-state{font-size:12.5px;margin:4px 0 10px}
+@media(max-width:680px){.s3r-list{grid-template-columns:1fr;gap:2px}.s3r-list dd{margin-bottom:6px}.s3r-owners{grid-template-columns:1fr}}
+.ccf-diagnosis-notes{font-size:11px;color:var(--subtle);margin:9px 0;line-height:1.65}
+@media(max-width:680px){.ccf-owner-list{grid-template-columns:1fr}.ccf-add-system{align-items:stretch}.ccf-add-system .fi{max-width:none}.ccf-add-system select.fi{max-width:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="logo"><div class="word">ar<b>|</b>in</div><div class="doc-type">client engagement</div></div>
+    <div class="nav-label">sections</div>
+    <a class="nav-item" href="#section-1"><span class="sdot" id="dot1"></span>01 critical client flow</a>
+    <a class="nav-item" href="#section-2"><span class="sdot" id="dot2"></span>02 systems inventory</a>
+    <a class="nav-item" href="#section-3"><span class="sdot" id="dot3"></span>03 consultation outcomes</a>
+    <a class="nav-item" href="#section-plan"><span class="sdot" id="dotp"></span>contract and mapping plan</a>
+    <a class="nav-item" href="#section-4"><span class="sdot" id="dot4"></span>04 system library</a>
+    <a class="nav-item" href="#section-approvals">approvals</a>
+    <div class="nav-label">signed in</div>
+    <div class="me" id="me">not signed in</div>
+  </nav>
+  <main class="main" id="main"></main>
+</div>
+<div class="msg" id="msg"></div>
+<script>
+'use strict';
+/* OPS-001 v2.1: factual, read-only S1+S2 documentation traffic lights.
+   No journey confirmation, automatic required-systems judgement or LLM. */
+(function (root) {
+  function el(tag, cls, value) {
+    var x = document.createElement(tag);
+    if (cls) x.className = cls;
+    if (value != null) x.textContent = String(value);
+    return x;
+  }
+  function add(parent, tag, cls, value) {
+    var x=el(tag,cls,value); parent.appendChild(x);return x;
+  }
+  function statusName(s) {
+    if (s==='documented') return 'documented';
+    if (s==='not documented') return 'not documented';
+    if (s==='not sure') return 'not sure';
+    if (s==='not yet implemented') return 'needed, not yet implemented';
+    if (s==='not applicable') return 'does not apply';
+    return s;
+  }
+  function statusClass(s) {
+    return s==='documented'?'green':s==='not documented'?'orange':s==='not yet implemented'?'red':'grey';
+  }
+  function renderRows(host, rows) {
+    rows.forEach(function (system) {
+      var row=add(host,'div','pc2-system');
+      add(row,'span','pc2-dot pc2-'+statusClass(system.status),'');
+      add(row,'span','pc2-system-name',system.name);
+      add(row,'span','pc2-status',statusName(system.status));
+      if (system.software && system.software.length) {
+        var readable=system.software.filter(function(x){return !/^__/.test(x);});
+        if(readable.length) add(row,'span','pc2-software',readable.join(', '));
+      }
+    });
+  }
+  function render(opts) {
+    var host=opts.mountPackage;
+    if (!host) return;
+    host.replaceChildren();
+    add(host,'p','pc2-loading','loading saved documentation status…');
+    Promise.resolve().then(opts.fetchPackage).then(function (result) {
+      host.replaceChildren();
+      if (!result || result.ok!==true || !result.package || !result.package.source_A) throw Error('package unavailable');
+      var a=result.package.source_A;
+      add(host,'p','pc2-intro','this view uses your saved answers. green means documented, orange means done but not documented, red means you said this activity is needed but not yet implemented, and grey means not sure. this is a self-reported overview, not a verified readiness score.');
+      var ctx=a.client_context||{};
+      if(ctx.target||ctx.product){
+        var context=add(host,'div','pc2-context');
+        if(ctx.target)add(context,'p','','target customers: '+ctx.target);
+        if(ctx.product)add(context,'p','','product or service: '+ctx.product);
+      }
+      var counts=a.inventory_counts||{};
+      var allApplicable=['documented','not documented','not yet implemented','not sure'].reduce(function(n,k){return n+(Number(counts[k])||0);},0);
+      add(host,'h3','pc2-title','all '+allApplicable+' systems across your business');
+      add(host,'p','pc2-note','the status counts below cover systems you reported as applicable, including those marked not sure. activities marked not applicable are excluded.');
+      var top=add(host,'div','pc2-overview');
+      [['documented','green'],['not documented','orange'],['not yet implemented','red'],['not sure','grey']].forEach(function(row){
+        var tile=add(top,'div','pc2-tile');
+        add(tile,'span','pc2-dot pc2-'+row[1],'');
+        add(tile,'strong','',counts[row[0]]||0);
+        add(tile,'span','',row[0]+' systems');
+      });
+      var flow=a.ccf_flow||null;
+      var acrossGroups=a.ccf_supporting_functions||[];
+      var crossTotal=acrossGroups.reduce(function(n,fn){return n+(fn.items||[]).filter(function(x){return x.status!=='not applicable';}).length;},0);
+      var stageTotal=(a.stage_coverage||[]).reduce(function(n,stage){return n+(stage.items||[]).filter(function(x){return x.status!=='not applicable';}).length;},0);
+      var ccfTotal=flow ? flow.process_count : stageTotal+crossTotal;
+      add(host,'h3','pc2-title','critical client flow');
+      add(host,'p','pc2-note',ccfTotal+' applicable systems support your client flow. each is counted once: '+stageTotal+' support one stage and '+crossTotal+' support multiple stages. the associations come from the current reference map and still require review; statuses are your saved answers.');
+      var narrative=add(host,'section','pc2-story');
+      var hierarchy=add(host,'div','pc2-hierarchy');
+      var single=add(hierarchy,'details','ccf-group');
+      var singleHeader=add(single,'summary','');
+      add(singleHeader,'span','ccf-group-name','systems supporting one stage');
+      add(singleHeader,'span','ccf-group-count',stageTotal+' applicable');
+      var singleFlags=add(singleHeader,'span','pc2-flags');
+      [['documented','green','documented'],['not documented','orange','undocumented'],
+       ['not yet implemented','red','needed, not started'],['not sure','grey','not sure']].forEach(function(item){
+        var num=(a.stage_coverage||[]).reduce(function(n,stage){return n+(stage.items||[]).filter(function(x){return x.status===item[0];}).length;},0);
+        if(num)add(singleFlags,'span','pc2-pill pc2-pill-'+item[1],num+' '+item[2]);
+      });
+      var singleBody=add(single,'div','ccf-group-body');
+      (a.stage_coverage||[]).forEach(function(stage,index){
+        var box=add(singleBody,'details','pc2-stage');
+        var summary=add(box,'summary','pc2-stage-heading');
+        add(summary,'span','pc2-number',String(index+1));
+        add(summary,'span','pc2-heading-text',stage.question);
+        var flags=add(summary,'span','pc2-flags');
+        // Report every non-zero, client-reported status at this stage.
+        // A documented system must not disappear because another is undocumented.
+        var stageCounts=[
+          {number:stage.documented||0,cls:'green',label:'documented'},
+          {number:stage.undocumented||0,cls:'orange',label:'undocumented'},
+          {number:stage.needed_not_implemented||0,cls:'red',label:'needed, not started'},
+          {number:stage.uncertain||0,cls:'grey',label:'not sure'}
+        ];
+        stageCounts.forEach(function(item){
+          if(item.number>0)add(flags,'span','pc2-pill pc2-pill-'+item.cls,item.number+' '+item.label);
+        });
+        if(!stageCounts.some(function(item){return item.number>0;})) {
+          add(flags,'span','pc2-pill pc2-pill-neutral',stage.items.length ? 'status unavailable' : 'no associated systems');
+        }
+        var body=add(box,'div','pc2-stage-body');
+        add(body,'div','pc2-reported-label','what you told us');
+        add(body,'p','pc2-reported',stage.free_text||'no description provided for this stage.');
+        if(stage.items.length){
+          add(body,'div','pc2-reported-label','possible related systems from your inventory');
+          renderRows(body,stage.items);
+        }else{
+          add(body,'p','pc2-muted','no active system in the catalogue is associated with this stage. this is not evidence of a missing system.');
+        }
+      });
+      // This is one connected critical client flow. Some systems serve several
+      // stages; keep them inside this journey rather than as a different section.
+      function countSystems(groups,status) {
+        return (groups||[]).reduce(function(n,g) {
+          return n+(g.items||[]).filter(function(x){return x.status===status;}).length;
+        },0);
+      }
+      function renderFunctionGroups(parent,groups) {
+        (groups||[]).forEach(function(fn){
+          if(!fn.items || !fn.items.some(function(x){return x.status!=='not applicable';})) return;
+          var box=add(parent,'details','pc2-stage pc2-function');
+          var summary=add(box,'summary','pc2-stage-heading');
+          add(summary,'span','pc2-heading-text',fn.title);
+          var badges=add(summary,'span','pc2-flags');
+          var options=[
+            ['documented','green','documented'],
+            ['undocumented','orange','undocumented'],
+            ['needed_not_implemented','red','needed, not started'],
+            ['uncertain','grey','not sure']
+          ];
+          options.forEach(function(item){
+            if(fn[item[0]])add(badges,'span','pc2-pill pc2-pill-'+item[1],fn[item[0]]+' '+item[2]);
+          });
+          var detail=add(box,'div','pc2-stage-body');
+          renderRows(detail,fn.items.filter(function(item){return item.status!=='not applicable';}));
+        });
+      }
+      if(crossTotal){
+        var across=add(hierarchy,'details','ccf-group');
+        var acrossSummary=add(across,'summary','');
+        add(acrossSummary,'span','ccf-group-name','systems supporting multiple stages');
+        add(acrossSummary,'span','ccf-group-count',crossTotal+' applicable');
+        var acrossFlags=add(acrossSummary,'span','pc2-flags');
+        [
+          ['documented','green','documented'],
+          ['not documented','orange','undocumented'],
+          ['not yet implemented','red','needed, not started'],
+          ['not sure','grey','not sure']
+        ].forEach(function(option){
+          var n=countSystems(acrossGroups,option[0]);
+          if(n)add(acrossFlags,'span','pc2-pill pc2-pill-'+option[1],n+' '+option[2]);
+        });
+        var acrossBody=add(across,'div','ccf-group-body');
+        add(acrossBody,'p','pc2-note','these processes are part of your critical client flow and are included in its total counts. they appear here because they support more than one step, rather than belonging to only one.');
+        renderFunctionGroups(acrossBody,acrossGroups);
+      }
+      // One connected SYSTEMology client flow: there is no per-system or
+      // per-stage importance weighting. Status counts indicate the work
+      // reported by the prospect, not risk severity or later pricing.
+      var stages=a.stage_coverage||[];
+      add(narrative,'div','pc2-reported-label','critical client flow');
+      if(!flow){
+        add(narrative,'h3','pc2-title','flow diagnosis unavailable');
+        add(narrative,'p','pc2-story-boundary','this report needs the updated CED-003 workflow to classify the complete client flow. the system statuses above remain available.');
+      } else {
+        if(flow.status==='exposed'){
+          add(narrative,'h3','pc2-title','your critical client flow is exposed');
+          add(narrative,'p','pc2-story-lead',
+            'you have identified '+flow.work_count+' '+(flow.work_count===1?'process':'processes')+' in your client flow that still '+(flow.work_count===1?'needs':'need')+' attention: '+flow.undocumented_count+' '+(flow.undocumented_count===1?'needs':'need')+' documenting and '+flow.needed_not_implemented_count+' '+(flow.needed_not_implemented_count===1?'needs':'need')+' to be put in place.');
+          add(narrative,'p','pc2-story-reading',
+            'your client flow only works reliably when every step connects to the next. one missed step can cost you the sale, delay the money or stop a customer coming back. when markets get rough, your business has less room to absorb those losses. documenting the other steps does not remove that exposure.');
+        } else if(flow.status==='unverified'){
+          add(narrative,'h3','pc2-title','documentation of your critical client flow is unverified');
+          add(narrative,'p','pc2-story-reading',
+            'your saved information does not identify an undocumented or not-started process within the applicable client-flow systems, but some statuses or stage associations remain unresolved. the documentation of the full flow cannot yet be established.');
+        } else {
+          add(narrative,'h3','pc2-title','your identified client-flow processes are documented as reported');
+          add(narrative,'p','pc2-story-reading',
+            'all applicable client-flow processes identified in your inventory are reported documented. this does not verify actual execution, handoffs or that every necessary process has been captured.');
+        }
+        var totals=add(narrative,'div','pc2-work-totals');
+        [
+          {num:flow.documented_count,label:'documented',cls:'green'},
+          {num:flow.undocumented_count,label:'to document',cls:'orange'},
+          {num:flow.needed_not_implemented_count,label:'to establish',cls:'red'},
+          {num:flow.uncertain_count,label:'to clarify',cls:'grey'}
+        ].forEach(function(item){
+          var tile=add(totals,'div','pc2-work-total');
+          add(tile,'span','pc2-dot pc2-'+item.cls,'');
+          add(tile,'strong','',item.num||0);
+          add(tile,'span','',item.label);
+        });
+        if(flow.status==='exposed') {
+          add(narrative,'p','pc2-story-fact',
+            'this assessment counts all '+flow.process_count+' applicable processes in your critical client flow. '+
+            flow.work_count+' '+(flow.work_count===1?'process needs':'processes need')+
+            ' work, wherever '+(flow.work_count===1?'it sits':'they sit')+' in the flow.');
+          add(narrative,'p','pc2-story-boundary',
+            'the counts show how much work you identified across the flow. every process in your client flow matters.');
+          var meaning=add(narrative,'div','pc2-story-definitions');
+          add(meaning,'h4','pc2-story-subtitle','why these gaps put your business at risk');
+          if(flow.undocumented_count){
+            add(meaning,'p','pc2-story-risk',
+              'undocumented: the work is happening, but there are no documented steps for someone else to follow. when the person who knows the routine is busy, away or leaves, customers may not get the same result.');
+          }
+          if(flow.needed_not_implemented_count){
+            add(meaning,'p','pc2-story-risk',
+              'needed, not started: you have identified work your business needs, but the process is not in place. depending on the activity, that can mean missed enquiries, delayed payments, problems delivering orders or fewer customers coming back.');
+          }
+          // Fixed, business-outcome-led stage examples; each scenario is a risk,
+          // never a claim that a sale, customer or payment has already been lost.
+          var stageScenarios={
+            s1:'when the way new buyers find you depends on unfinished or undocumented steps, enquiries can slow without warning. fewer enquiries can mean fewer sales.',
+            s2:'you can attract a buyer and still lose them before the sale. unanswered enquiries, missed bookings or slow order handling can send customers elsewhere.',
+            s3:'when the steps that turn interest into a sale are unclear, buyers can leave without buying. inconsistent answers, offers or follow-up can cost you revenue.',
+            s4:'a sale cannot keep your business running if the money does not arrive. missed charges or late payment follow-up can leave you short of cash when bills come due.',
+            s5:'you can win the customer and lose their trust before delivery. missed requirements, promises or next steps can lead to delays, disputes or refunds.',
+            s6:'more orders bring more pressure. when delivery depends on undocumented steps, mistakes and delays can lead to refunds, lost customers and damaged trust.',
+            s7:'if you lose touch after a sale, customers who could buy again may disappear. repeat orders and referrals can dry up, leaving you more dependent on finding new buyers.'
+          };
+          var stageNames={
+            s1:'1. finding new buyers',s2:'2. receiving enquiries and orders',
+            s3:'3. making the sale',s4:'4. getting paid',
+            s5:'5. preparing for delivery',s6:'6. delivering what was sold',
+            s7:'7. bringing customers back'
+          };
+          var affected=stages.filter(function(s){
+            return (s.undocumented||0)+(s.needed_not_implemented||0)>0;
+          });
+          if(affected.length){
+            var detail=add(narrative,'details','pc2-story-details');
+            add(detail,'summary','pc2-story-details-heading','where your business could lose customers, cash or repeat sales');
+            add(detail,'p','pc2-story-boundary',
+              'your customers move through one connected flow. these are the business risks to check in the stages where you reported undocumented or not-started processes.');
+            var scenarios=add(detail,'ul','pc2-story-list');
+            affected.forEach(function(s){
+              var item=add(scenarios,'li','');
+              add(item,'strong','',(stageNames[s.stage]||s.question||s.title||s.stage)+': ');
+              add(item,'span','',stageScenarios[s.stage]||'a handoff may need clarification');
+            });
+          }
+        }
+        if(flow.uncertain_count){
+          add(narrative,'p','pc2-story-boundary',
+            flow.uncertain_count+' applicable client-flow '+(flow.uncertain_count===1?'process has':'processes have')+' an uncertain status and need clarification.');
+        }
+        add(narrative,'p','pc2-story-boundary',
+          'these are risks to check, not losses we have measured. during your consultation, you can trace how customers move from first contact to repeat business and see what needs documenting or putting in place.');
+      }
+      // HR and management matter as business-wide enablers but do not dictate
+      // the topics of the consultation simply because they are outside the CCF.
+      var enabling=a.enabling_functions||[];
+      var anyEnabler=enabling.some(function(fn){return fn.items&&fn.items.length;});
+      if(anyEnabler){
+        var flat=enabling.flatMap(function(fn){return (fn.items||[]).filter(function(item){return item.status!=='not applicable';});});
+        var businessTotal=flat.length;
+        var bcounts={
+          documented:flat.filter(function(x){return x.status==='documented';}).length,
+          undocumented:flat.filter(function(x){return x.status==='not documented';}).length,
+          needed:flat.filter(function(x){return x.status==='not yet implemented';}).length,
+          unsure:flat.filter(function(x){return x.status==='not sure';}).length
+        };
+        var bwork=bcounts.undocumented+bcounts.needed;
+        add(host,'h3','pc2-title','business-wide supporting systems · '+businessTotal);
+        var bstory=add(host,'section','pc2-story');
+        add(bstory,'div','pc2-reported-label','business-wide systems');
+        add(bstory,'h3','pc2-title',bwork>0?'your business-wide systems need attention':bcounts.unsure>0?'some business-wide systems need clarification':'your business-wide systems are documented as reported');
+        add(bstory,'p','pc2-story-lead',bwork>0?
+          'you identified '+bwork+' of '+businessTotal+' supporting systems that need attention: '+bcounts.undocumented+' to document and '+bcounts.needed+' to establish.' :
+          'your saved answers identify no undocumented or not-started business-wide systems.');
+        var bt=add(bstory,'div','pc2-work-totals');
+        [[bcounts.documented,'documented','green'],[bcounts.undocumented,'to document','orange'],
+          [bcounts.needed,'to establish','red'],[bcounts.unsure,'to clarify','grey']].forEach(function(item){
+          var tile=add(bt,'div','pc2-work-total');
+          add(tile,'span','pc2-dot pc2-'+item[2],'');
+          add(tile,'strong','',item[0]);
+          add(tile,'span','',item[1]);
+        });
+        add(bstory,'p','pc2-story-reading',
+          'human resources and management support the people, decisions and coordination needed to serve customers and respond when markets change. these systems also matter to s.p.a.: identifying signals, deciding how to respond and carrying out the response depend on reliable information and human follow-through.');
+        if(bcounts.undocumented){
+          add(bstory,'p','pc2-story-risk','undocumented supporting systems: work may depend on people remembering how it is done. changes in staffing, responsibilities or workload can make decisions and handoffs harder to repeat consistently.');
+        }
+        if(bcounts.needed){
+          add(bstory,'p','pc2-story-risk','supporting systems needed but not started: necessary coordination, reviews or safeguards may be unavailable when the business needs to respond to a disruption.');
+        }
+        if(bcounts.unsure)add(bstory,'p','pc2-story-boundary',bcounts.unsure+' system'+(bcounts.unsure===1?'':'s')+' still need'+(bcounts.unsure===1?'s':'')+' clarification.');
+        add(bstory,'p','pc2-story-boundary','these are potential dependencies, not confirmed breakdowns. during the consultation, review which gaps affect the client flow and the business’s ability to see early, plan fast and act in time.');
+        add(host,'p','pc2-note','review the systems below by function. each system appears once in the business-wide total.');
+        renderFunctionGroups(host,enabling);
+      }
+      if(a.unassigned_custom_systems && a.unassigned_custom_systems.length){
+        var custom=add(host,'details','pc2-extra');
+        add(custom,'summary','','custom systems without a business function');
+        add(custom,'p','pc2-muted','these activities still need a business-function assignment in the inventory.');
+        renderRows(custom,a.unassigned_custom_systems);
+      }
+      var b=result.package.source_B;
+      if (b) {
+        var block=add(host,'section','pc2-extra');
+        add(block,'h3','','market-disruption self-assessment (separate source)');
+        add(block,'p','',b.tier||'assessment available');
+        var chains=b.structured_analysis && b.structured_analysis.chains;
+        if(Array.isArray(chains))chains.forEach(function(c){
+          add(block,'p','',String(c.name||c.label||'')+': '+String(c.text||''));
+        });
+      }
+    }).catch(function(){
+      host.replaceChildren();
+      add(host,'p','pc2-error','the operating picture could not be loaded. refresh the page, or sign in again if your session has expired.');
+    });
+  }
+  root.PreconsultUI={mount:render,renderPackage:render};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+'use strict';
+const PRECONSULT_URL = 'https://arinautomate.app.n8n.cloud/webhook/ops001-factual-traffic';
+const API = 'https://arinautomate.app.n8n.cloud/webhook/ced-001-api';   // fixed: the session token is never sent to a user-supplied destination
+const API2 = '';  // s2 inventory assessment (optional, after a complete inventory)
+const API_S3 = 'https://arinautomate.app.n8n.cloud/webhook/ops001-s3-review';
+const API_S4 = 'https://arinautomate.app.n8n.cloud/webhook/ops001-s4-actions';  // s3 pre-consultation review, ar|in only
+let S3R = null;         // latest s3 review status (ar|in only); null until loaded
+let S3R_ERR = false;    // the review record could not be loaded
+const SLUG = new URLSearchParams(location.search).get('e') || '';
+if (!SLUG) { document.body.innerHTML = '<div style="max-width:520px;margin:60px auto;padding:0 16px;font-family:system-ui,sans-serif"><h2>no engagement selected</h2><p>open the link from your email.</p></div>'; throw new Error('no engagement selected'); }
+const TKEY = 'arin-ced-session:' + SLUG;
+let D = null;           // last load
+let EDIT = {};          // unsaved edits, kept across re-renders
+let SIGN = { stage: 'email', email: '' };
+let DRAFT = {};         // latest helper answer per system (also served from the record)
+let FINDINGS = { run_id: null, stale: false, findings: [] };  // the optional AI inventory review (migration 013)
+let BRIEF = { consultation_findings: [] };  // for-consultation findings shown to ar|in in the pre-consultation brief
+let FIX = {};           // findings the client is fixing: id -> 'armed' (clicked "i'll fix it") | 'ready' (saved since)
+let SWOPEN = {};        // which inventory rows have the software picker expanded
+let EXPAND = {};        // which "what does this mean?" explanations are open
+let INVENTORY_FUNCTION_OPEN = {}; // presentation only, not saved in Supabase
+let INVENTORY_SYSTEM_OPEN = {};   // presentation only, not saved in Supabase
+let PRECONSULT_CACHE = null; // latest factual package; never written back into the engagement
+let PRECONSULT_PENDING = null; // one in-flight factual read shared by both views
+let PRECONSULT_GENERATION = 0; // prevents an old session read from updating a new session
+let CCF_PRESENTATION_MAP = null; // maps the report's stage/cross-stage associations onto inventory names
+const rowSlug = name => 'invrow-' + String(name || '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+// software selection tokens (stored verbatim in inventory[name].software) + their client-facing labels.
+// the legacy 'no software / paper-based' token from older records is preserved, never split (E2).
+const SW_TOKEN_LABEL = { '__none__': 'no software used', '__paper__': 'paper, notebooks or printed forms',
+  '__outsourced__': 'outside provider handles the tools', '__unsure_tools__': 'not sure',
+  'no software / paper-based': 'no software / paper-based (your earlier answer)' };
+const SW_SENTINELS = ['__none__', '__paper__', '__outsourced__', '__unsure_tools__', 'no software / paper-based'];
+const swLabel = x => SW_TOKEN_LABEL[x] || x;
+
+const CCF = [
+  [
+    "ccf-s1",
+    "how do new clients find out about your business?",
+    "e.g. referrals, shop visits, social media, website"
+  ],
+  [
+    "ccf-s2",
+    "how do they get in touch with your business or place an order?",
+    "e.g. walk-in, phone, online order, consultation booking"
+  ],
+  [
+    "ccf-s3",
+    "how do you get them to buy your product or service?",
+    "e.g. in-store purchase, online checkout, discussion, quote"
+  ],
+  [
+    "ccf-s4",
+    "how and when do your customers pay?",
+    "e.g. POS, online payment, invoice, deposit, credit terms"
+  ],
+  [
+    "ccf-s5",
+    "what happens after a customer buys, before delivery?",
+    "e.g. immediate handover, preparation, setup, kickoff"
+  ],
+  [
+    "ccf-s6",
+    "how do you deliver the product or service they paid for?",
+    "e.g. handover, shipping, service, project delivery"
+  ],
+  [
+    "ccf-s7",
+    "how do you keep clients coming back?",
+    "e.g. repeat orders, account management, newsletters"
+  ]
+];
+const DEPT_SYSTEMS = [
+  { key:'mkt', label:'Marketing', systems:[
+    { label:'lead generation',                    stages:[1] },
+    { label:'content creation and publishing',    stages:[1,7] },
+    { label:'social media management',            stages:[1,7] },
+    { label:'email marketing and newsletters',    stages:[1,7] },
+    { label:'advertising and paid media',         stages:[1] },
+    { label:'SEO and website management',         stages:[1,2] },
+    { label:'brand and messaging',                stages:[1,7] },
+    { label:'referral and partnership programme', stages:[1,7] },
+    { label:'PR and media relations',             stages:[1] },
+    { label:'events and webinars',                stages:[1] },
+    { label:'customer reviews and testimonials',  stages:[1,7] }
+  ]},
+  { key:'sls', label:'Sales', systems:[
+    { label:'lead qualification',                 stages:[2] },
+    { label:'sales calls and discovery',          stages:[2,3] },
+    { label:'proposal and quote creation',        stages:[3] },
+    { label:'follow-up and nurture',              stages:[2,7] },
+    { label:'contract and agreement',             stages:[3] },
+    { label:'CRM management',                     stages:[2,3] },
+    { label:'sales reporting',                    stages:[3] },
+    { label:'account management',                 stages:[7] },
+    { label:'upselling and cross-selling',        stages:[7] },
+    { label:'lost deal analysis',                 stages:[3] }
+  ]},
+  { key:'ops', label:'Operations', systems:[
+    { label:'client onboarding',                  stages:[5] },
+    { label:'project or job management',          stages:[6] },
+    { label:'service delivery',                   stages:[6] },
+    { label:'quality control and review',         stages:[6] },
+    { label:'supplier and vendor management',     stages:[6] },
+    { label:'inventory and stock management',     stages:[6] },
+    { label:'client communication and updates',   stages:[5,6,7] },
+    { label:'facilities and equipment management',stages:[6] },
+    { label:'IT and technology management',       stages:[6] },
+    { label:'health and safety compliance',       stages:[6] },
+    { label:'knowledge management',               stages:[6] }
+  ]},
+  { key:'fin', label:'Finance', systems:[
+    { label:'invoicing and billing',              stages:[4] },
+    { label:'accounts receivable and collections',stages:[4] },
+    { label:'accounts payable and payments',      stages:[4] },
+    { label:'expense tracking and approvals',     stages:[4] },
+    { label:'payroll',                            stages:[4] },
+    { label:'cash flow forecasting',              stages:[4] },
+    { label:'financial reporting',                stages:[4] },
+    { label:'budget planning',                    stages:[4] },
+    { label:'banking and treasury management',    stages:[4] },
+    { label:'tax and compliance',                 stages:[4] }
+  ]},
+  { key:'hr', label:'HR', systems:[
+    { label:'recruitment',                        stages:[5,6] },
+    { label:'onboarding new team members',        stages:[5] },
+    { label:'performance management',             stages:[6] },
+    { label:'training and development',           stages:[5,6] },
+    { label:'compensation and benefits',          stages:[4,6] },
+    { label:'team culture and engagement',        stages:[7] },
+    { label:'workforce planning',                 stages:[6] },
+    { label:'offboarding',                        stages:[6] },
+    { label:'HR records and compliance',          stages:[6] }
+  ]},
+  { key:'mgmt', label:'Management', systems:[
+    { label:'business planning and goal setting', stages:[1,7] },
+    { label:'KPI and metrics reporting',          stages:[3,7] },
+    { label:'team meetings and communication',    stages:[6] },
+    { label:'decision making and approvals',      stages:[6] },
+    { label:'risk and issues management',         stages:[6] },
+    { label:'external relationships (partners, accountants, lawyers)', stages:[1,6] },
+    { label:'legal and compliance oversight',     stages:[3,6] },
+    { label:'systems review and improvement',     stages:[6,7] },
+    { label:'technology and tools management',    stages:[6] },
+    { label:'strategic planning and review',      stages:[1,7] }
+  ]}
+];
+
+/* ══════════════════════════════════════════════════════════════════════
+   SOFTWARE MAP — per-system options (one list per system)
+   ══════════════════════════════════════════════════════════════════════ */
+const SW_FALLBACK = [
+  'Excel','Google Sheets','Google Docs','Microsoft Word',
+  'Notion','Airtable','ClickUp','Monday.com','Asana','Trello',
+  'Gmail','Outlook','Slack','Microsoft Teams','Zoom','WhatsApp Business',
+  'HubSpot','Salesforce','Zoho CRM','QuickBooks','Xero','Sage',
+  'n8n','Zapier','Make','Apify','Supabase','Telegram','ChatGPT','Claude'
+];
+
+const SW_MAP = {
+  // ── MARKETING ─────────────────────────────────────────────────────────
+  'lead generation': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'LinkedIn','LinkedIn Sales Navigator','Meta Business Suite','Google Ads','Microsoft Ads',
+    'Mailchimp','ActiveCampaign','Klaviyo',
+    'WordPress','Framer','Webflow','Wix','Squarespace','Shopify',
+    'Google Business Profile','Excel','Google Sheets','Apify'
+  ],
+  'content creation and publishing': [
+    'Canva','Adobe Creative Cloud','Figma',
+    'ChatGPT','Claude','Gemini',
+    'Buffer','Hootsuite','Later',
+    'Meta Business Suite','WordPress','Framer','Webflow','Wix','Squarespace',
+    'Notion','Google Docs','Microsoft Word'
+  ],
+  'social media management': [
+    'Meta Business Suite','Buffer','Hootsuite','Sprout Social','Later','Metricool','Loomly',
+    'Canva','ChatGPT','Claude','Gemini'
+  ],
+  'email marketing and newsletters': [
+    'HubSpot','Mailchimp','ActiveCampaign','Klaviyo','Brevo','Constant Contact',
+    'ConvertKit','Campaign Monitor','Customer.io','Drip','Keap',
+    'Gmail','Outlook'
+  ],
+  'advertising and paid media': [
+    'Google Ads','Meta Ads Manager','LinkedIn Campaign Manager','Microsoft Ads','TikTok Ads',
+    'HubSpot','Excel','Google Sheets'
+  ],
+  'SEO and website management': [
+    'WordPress','Framer','Webflow','Wix','Squarespace','Shopify',
+    'Google Search Console','Google Analytics','SEMrush','Ahrefs',
+    'Screaming Frog','Yoast SEO','Rank Math'
+  ],
+  'brand and messaging': [
+    'Canva','Adobe Creative Cloud','Figma',
+    'Notion','Google Docs','Microsoft Word',
+    'ChatGPT','Claude','Gemini'
+  ],
+  'referral and partnership programme': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'PartnerStack','Referral Rock','Tapfiliate',
+    'Airtable','Excel','Google Sheets','Notion','Gmail','Outlook'
+  ],
+  'PR and media relations': [
+    'Muck Rack','Cision','Prowly','Presspage',
+    'Gmail','Outlook','Notion','Google Docs','Microsoft Word',
+    'Canva','Adobe Creative Cloud'
+  ],
+  'events and webinars': [
+    'Zoom','Webex','Microsoft Teams','Google Meet',
+    'Eventbrite','Hopin','Luma',
+    'Calendly','HubSpot','Mailchimp','ActiveCampaign',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets'
+  ],
+  'customer reviews and testimonials': [
+    'Google Business Profile','Trustpilot','G2','Capterra',
+    'Typeform','Google Forms','Jotform','SurveyMonkey',
+    'HubSpot','Intercom','Zendesk','Help Scout',
+    'Canva','Notion','Gmail','Outlook'
+  ],
+  // ── SALES ─────────────────────────────────────────────────────────────
+  'lead qualification': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Monday CRM','Copper','Freshsales',
+    'Calendly','Typeform','Google Forms','Jotform',
+    'Notion','Excel','Google Sheets','n8n','Zapier','Make','Apify','Supabase'
+  ],
+  'sales calls and discovery': [
+    'Calendly','HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Zoom','Microsoft Teams','Google Meet','WhatsApp Business',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets','n8n'
+  ],
+  'proposal and quote creation': [
+    'HubSpot','PandaDoc','DocuSign','Proposify','Better Proposals','Quotient','Qwilr',
+    'Google Docs','Microsoft Word','Excel','Google Sheets',
+    'Canva','Adobe Acrobat'
+  ],
+  'follow-up and nurture': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'ActiveCampaign','Mailchimp','Klaviyo','Brevo','Customer.io','Keap',
+    'Gmail','Outlook','WhatsApp Business','Intercom','n8n','Zapier','Make','Twilio'
+  ],
+  'contract and agreement': [
+    'DocuSign','Adobe Acrobat Sign','Dropbox Sign','PandaDoc',
+    'HubSpot','Google Docs','Microsoft Word','Adobe Acrobat'
+  ],
+  'CRM management': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Microsoft Dynamics 365',
+    'Monday CRM','Copper','Freshsales','Insightly','Nimble','Capsule CRM',
+    'Airtable','Notion','Excel','Google Sheets','Supabase'
+  ],
+  'sales reporting': [
+    'HubSpot','Salesforce','Zoho CRM',
+    'Power BI','Tableau','Looker Studio',
+    'Airtable','Notion','Excel','Google Sheets'
+  ],
+  'account management': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive','Copper','Freshsales',
+    'Notion','ClickUp','Monday.com','Asana',
+    'Gmail','Outlook','WhatsApp Business','Slack','Microsoft Teams',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'upselling and cross-selling': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Intercom','Zendesk','Help Scout','Front',
+    'Mailchimp','ActiveCampaign','Klaviyo','Customer.io',
+    'n8n','Zapier','Make','Notion','Excel','Google Sheets'
+  ],
+  'lost deal analysis': [
+    'HubSpot','Salesforce','Zoho CRM','Pipedrive',
+    'Power BI','Tableau','Looker Studio',
+    'Airtable','Notion','Excel','Google Sheets'
+  ],
+  // ── OPERATIONS ────────────────────────────────────────────────────────
+  'client onboarding': [
+    'HubSpot','Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
+    'Google Docs','Microsoft Word','Gmail','Outlook','DocuSign','Calendly','Loom','n8n'
+  ],
+  'project or job management': [
+    'ClickUp','Monday.com','Asana','Trello','Notion','Jira','Basecamp',
+    'Airtable','Microsoft Planner','Excel','Google Sheets'
+  ],
+  'service delivery': [
+    'Notion','ClickUp','Monday.com','Asana','Trello','Airtable',
+    'Google Workspace','Microsoft 365',
+    'Slack','Microsoft Teams','Zoom','WhatsApp Business','Loom'
+  ],
+  'quality control and review': [
+    'Notion','ClickUp','Monday.com','Asana','Trello','Jira',
+    'Airtable','Excel','Google Sheets','Google Forms','Microsoft Forms','Typeform','Loom'
+  ],
+  'supplier and vendor management': [
+    'Excel','Google Sheets','Airtable','Notion',
+    'SAP','Oracle NetSuite','Odoo','Zoho Inventory','Microsoft Dynamics 365',
+    'Gmail','Outlook'
+  ],
+  'inventory and stock management': [
+    'Shopify','Lightspeed','Cin7','Unleashed','Zoho Inventory','Odoo',
+    'SAP Business One','Oracle NetSuite','Airtable','Excel','Google Sheets'
+  ],
+  'client communication and updates': [
+    'Gmail','Outlook','HubSpot','Salesforce','Zoho CRM',
+    'WhatsApp Business','Slack','Microsoft Teams','Zoom','Google Meet',
+    'Intercom','Zendesk','Help Scout','Front','Twilio','Telegram'
+  ],
+  'facilities and equipment management': [
+    'Excel','Google Sheets','Airtable','Notion',
+    'Hippo CMMS','UpKeep','Fiix','Asset Panda',
+    'Google Workspace','Microsoft 365'
+  ],
+  'IT and technology management': [
+    'Notion','ClickUp','Jira','Airtable',
+    'Google Workspace','Microsoft 365',
+    'LastPass','1Password','Okta','JumpCloud',
+    'Excel','Google Sheets'
+  ],
+  'health and safety compliance': [
+    'Notion','Google Docs','Microsoft Word',
+    'SafetyCulture (iAuditor)','Safesite','Donesafe',
+    'Excel','Google Sheets','Google Forms','Microsoft Forms'
+  ],
+  'knowledge management': [
+    'Notion','Confluence','Google Drive','SharePoint','Microsoft 365',
+    'ClickUp','Slite','Guru','Tettra','Loom','Google Docs','Microsoft Word'
+  ],
+  // ── FINANCE ───────────────────────────────────────────────────────────
+  'invoicing and billing': [
+    'Xero','QuickBooks','Sage','FreshBooks','Wave','Zoho Books',
+    'Stripe','PayPal','Square','HubSpot','Excel','Google Sheets'
+  ],
+  'accounts receivable and collections': [
+    'Xero','QuickBooks','Sage','Zoho Books','FreshBooks',
+    'Stripe','HubSpot','Chaser','Kolleno','GoCardless','Excel','Google Sheets'
+  ],
+  'accounts payable and payments': [
+    'Xero','QuickBooks','Sage','Zoho Books','SAP','Oracle NetSuite',
+    'PayPal','Wise','Stripe','GoCardless','Revolut','Excel','Google Sheets'
+  ],
+  'expense tracking and approvals': [
+    'Expensify','Dext','Hubdoc','Xero','QuickBooks','Zoho Expense',
+    'Excel','Google Sheets'
+  ],
+  'payroll': [
+    'Sage Payroll','QuickBooks Payroll','Gusto','Deel','Rippling','Paychex',
+    'BambooHR','ADP','Excel'
+  ],
+  'cash flow forecasting': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Float','Dryrun','Fathom','Spotlight Reporting',
+    'Power BI','Tableau','Looker Studio','Excel','Google Sheets'
+  ],
+  'financial reporting': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Power BI','Tableau','Looker Studio','Fathom','Excel','Google Sheets'
+  ],
+  'budget planning': [
+    'Xero','QuickBooks','Sage',
+    'Power BI','Looker Studio','Airtable','Notion','Excel','Google Sheets'
+  ],
+  'banking and treasury management': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Wise','PayPal','Revolut','Notion','Excel','Google Sheets'
+  ],
+  'tax and compliance': [
+    'Xero','QuickBooks','Sage','Zoho Books',
+    'Avalara','TaxJar','Excel','Google Sheets'
+  ],
+  // ── HR ────────────────────────────────────────────────────────────────
+  'recruitment': [
+    'LinkedIn Recruiter','Indeed','Glassdoor',
+    'BambooHR','Workable','Greenhouse','Lever','Teamtailor',
+    'Typeform','Google Forms','Notion','Excel','Google Sheets'
+  ],
+  'onboarding new team members': [
+    'BambooHR','Rippling','Deel','Notion','ClickUp','Monday.com',
+    'Google Docs','Microsoft Word','Loom',
+    'Gmail','Outlook','Slack','Microsoft Teams'
+  ],
+  'performance management': [
+    'BambooHR','Lattice','15Five','Culture Amp','Leapsome',
+    'Notion','ClickUp','Google Forms','Excel','Google Sheets'
+  ],
+  'training and development': [
+    'Notion','Google Drive','SharePoint','Microsoft 365',
+    'TalentLMS','Moodle','LearnDash','Docebo','Teachable',
+    'Loom','Zoom','Google Meet','Microsoft Teams'
+  ],
+  'compensation and benefits': [
+    'BambooHR','Rippling','Deel','Gusto','Paychex',
+    'Notion','Excel','Google Sheets'
+  ],
+  'team culture and engagement': [
+    'Slack','Microsoft Teams','Discord',
+    'Officevibe','Lattice','Culture Amp','15Five',
+    'Typeform','Google Forms','SurveyMonkey',
+    'Zoom','Google Meet','Notion'
+  ],
+  'workforce planning': [
+    'BambooHR','Rippling','Deel',
+    'Notion','ClickUp','Monday.com','Airtable','Excel','Google Sheets'
+  ],
+  'offboarding': [
+    'BambooHR','Rippling','Deel','Notion','ClickUp',
+    'Google Docs','Microsoft Word','Gmail','Outlook','Excel','Google Sheets'
+  ],
+  'HR records and compliance': [
+    'BambooHR','Rippling','Deel','Personio',
+    'Microsoft 365','Google Workspace','Excel','Google Sheets'
+  ],
+  // ── MANAGEMENT ────────────────────────────────────────────────────────
+  'business planning and goal setting': [
+    'Notion','ClickUp','Monday.com','Miro','Mural',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'KPI and metrics reporting': [
+    'Power BI','Tableau','Looker Studio',
+    'HubSpot','Salesforce','Airtable','Notion','Excel','Google Sheets'
+  ],
+  'team meetings and communication': [
+    'Microsoft Teams','Slack','Zoom','Google Meet','WhatsApp Business','Discord',
+    'Outlook','Gmail','Notion','ClickUp'
+  ],
+  'decision making and approvals': [
+    'Microsoft Teams','Slack','Notion','ClickUp','Monday.com','Jira',
+    'DocuSign','Adobe Acrobat Sign','n8n','Power Automate'
+  ],
+  'risk and issues management': [
+    'Notion','ClickUp','Monday.com','Jira','Airtable',
+    'Power BI','Looker Studio','Excel','Google Sheets'
+  ],
+  'external relationships (partners, accountants, lawyers)': [
+    'Outlook','Gmail','HubSpot','Salesforce','Zoho CRM',
+    'Notion','Google Docs','Microsoft Word','Excel','Google Sheets'
+  ],
+  'legal and compliance oversight': [
+    'Notion','Google Docs','Microsoft Word',
+    'DocuSign','Adobe Acrobat Sign','PandaDoc',
+    'Airtable','Excel','Google Sheets'
+  ],
+  'systems review and improvement': [
+    'Notion','ClickUp','Monday.com','Airtable','Miro','Lucidchart',
+    'n8n','Power Automate','Power BI','Looker Studio','Excel','Google Sheets'
+  ],
+  'technology and tools management': [
+    'Notion','Airtable','ClickUp',
+    'Google Workspace','Microsoft 365','LastPass','1Password','Okta',
+    'Excel','Google Sheets'
+  ],
+  'strategic planning and review': [
+    'Notion','ClickUp','Monday.com','Miro','Mural',
+    'Power BI','Tableau','Looker Studio','Airtable','Excel','Google Sheets'
+  ]
+};
+const UNIVERSAL_TOOLS = ['n8n','Zapier','Make','Slack','Telegram','WhatsApp Business','Gmail','Outlook','LLM / AI'];
+// The definitions and examples are synchronized to the 61-system guide.
+const SYSTEM_GUIDE = {"lead generation":{"definition":"how your business attracts interest or enquiries from potential buyers through walk-ins, recommendations, outreach, online channels or advertising, with contact capture when relevant.","examples":"service: consultation enquiries, referrals or LinkedIn outreach. retail/online: walk-in interest, window displays, online enquiries or loyalty signups."},"content creation and publishing":{"definition":"producing helpful or engaging material to attract and educate your audience.","examples":"service: Blog posts, case studies, or YouTube tutorials. Retail/Online: Product lookbooks, unboxing reels, recipe cards, or style guides."},"social media management":{"definition":"posting updates and interacting with people on social platforms.","examples":"service: Sharing client wins on LinkedIn. Retail/Hospitality: Posting daily specials, new stock arrivals, or customer tags on Instagram/TikTok."},"email marketing and newsletters":{"definition":"how your business sends newsletters, useful information or offers to potential and existing customers by email, whether regularly or for a particular campaign.","examples":"service: Monthly industry tips or company news. Retail/Online: Weekly promo blasts, VIP early-access sales, or back-in-stock alerts."},"advertising and paid media":{"definition":"paying for ad space to put your offer in front of targeted buyers.","examples":"service: Google Search ads or LinkedIn sponsored posts. Retail/Online: Meta/TikTok product ads, local flyers, or radio/billboard spots."},"SEO and website management":{"definition":"keeping your website accurate, fast, and easy to find on search engines.","examples":"service: Updating service pages and local Google Business profile. Retail/Online: Updating product listings, store hours, stock availability, and Google Maps pins."},"brand and messaging":{"definition":"defining how your business looks, sounds, and explains its value so it stays consistent.","examples":"all models: Logo files, color codes, tone-of-voice rules, shop signage guidelines, and your 1-sentence elevator pitch."},"referral and partnership programme":{"definition":"encouraging existing customers or partner businesses to send new buyers your way.","examples":"service: Accountant-lawyer cross-referrals or finder's fees. Retail/Online: \"Give $10, Get $10\" friend codes, affiliate links, or local gym/cafe cross-promotions."},"PR and media relations":{"definition":"getting featured in news outlets, podcasts, or industry publications.","examples":"service: Being interviewed on a business podcast or quoted in trade press. Retail/Hospitality: Local newspaper features, food blogger tastings, or magazine gift guides."},"events and webinars":{"definition":"hosting or attending live gatherings to connect with prospects face-to-face or online.","examples":"service: Educational webinars, workshops, or trade show booths. Retail/Hospitality: VIP shopping nights, pop-up markets, tastings, or in-store demos."},"customer reviews and testimonials":{"definition":"how your business requests, receives, responds to and uses customer reviews and feedback, including positive and negative experiences.","examples":"service: asking for project feedback and responding to Google reviews. retail/online: collecting product ratings, handling negative reviews or requesting post-purchase feedback."},"lead qualification":{"definition":"how your business checks whether an enquiry fits what it offers and any relevant customer or service requirements, when screening is needed.","examples":"service: checking scope, budget and suitability before a sales meeting. retail/online: screening special orders, financing requests or products requiring eligibility checks; ordinary shopping assistance is not always qualification."},"sales calls and discovery":{"definition":"how your business arranges and conducts conversations, consultations, demonstrations or site visits to understand potential customers' needs and help them decide what to buy.","examples":"service: scheduling and conducting a discovery consultation or site inspection. retail/hospitality: in-store product guidance, a fitting consultation or a meeting about a private event."},"proposal and quote creation":{"definition":"how your business prepares and presents tailored quotes, estimates, configured offers or proposals when the purchase needs more than a standard listed price.","examples":"service: a tailored PDF proposal or itemized trade estimate. retail/online: custom bundles, trade or bulk quotes, or personalized configurations with agreed prices; a normal listed product price is not a separate quote."},"follow-up and nurture":{"definition":"checking back in with interested buyers who haven't purchased yet.","examples":"service: Calling 3 days after sending a quote. Retail/Online: Automated abandoned-cart emails, holding an item behind the counter, or texting when a requested size arrives."},"contract and agreement":{"definition":"confirming the terms, price, and rules of the purchase before work or handover happens.","examples":"service: Signed service agreement or terms of engagement. Retail/Online: Ticking \"Agree to Terms & Return Policy\" at checkout, or signing a layaway/custom-order slip."},"CRM management":{"definition":"how your business keeps customer details, interactions, purchase history and follow-up information accurate and accessible, whether in software, a spreadsheet or other records.","examples":"service: contact notes in HubSpot, a spreadsheet or shared records. retail/online: customer profiles, purchase history or follow-up notes in a POS or store system."},"sales reporting":{"definition":"tracking how many enquiries, quotes, and sales closed over a set period.","examples":"service: Weekly pipeline conversion review. Retail/Online: Reviewing daily register totals, average basket size, and conversion rates."},"account management":{"definition":"proactively looking after ongoing or repeat clients to keep them happy and retained.","examples":"service: Quarterly check-ins with retainer clients. Retail/Wholesale: Managing VIP personal shopping clients or checking in with wholesale stockists."},"upselling and cross-selling":{"definition":"recommending higher-tier options or helpful add-ons during or after a purchase.","examples":"service: Offering an ongoing maintenance plan after a build. Retail/Online: \"Would you like batteries/protector spray with that?\" at the till, or \"Frequently bought together\" widgets."},"lost deal analysis":{"definition":"reviewing why prospects didn't buy so you can fix pricing, messaging, or stock gaps.","examples":"service: Logging why a proposal was rejected (price, timing, competitor). Retail/Online: Tracking common out-of-stock requests, high cart-abandonment steps, or items left in fitting rooms."},"client onboarding":{"definition":"how your business prepares a customer after they commit or buy for what happens next, including setup, requirements, instructions or a kickoff where relevant.","examples":"service: welcome pack, requirements form or kickoff after agreement. retail/online: post-purchase setup instructions, warranty registration or first-use guidance when needed."},"project or job management":{"definition":"how your business assigns, schedules and tracks customer jobs, orders or projects through completion, including work responsibilities and deadlines.","examples":"service: scheduling repairs, assignments and project deliverables. retail/online: managing custom-order queues, work orders, repair tickets and shipping preparation."},"service delivery":{"definition":"how your business fulfils what customers purchased by performing work, handing over goods, preparing orders or meals, delivering services or shipping products.","examples":"service: Running the workshop, fixing the pipe, or delivering the design. Retail/Online: Bagging the purchase at the till, preparing the meal, or packing and shipping the parcel."},"quality control and review":{"definition":"checking that the product or work meets your standard before it reaches the customer.","examples":"service: Proofreading a report or inspecting a finished repair. Retail/Online: Checking incoming stock for defects, verifying order items before sealing a box, or tasting food before service."},"supplier and vendor management":{"definition":"ordering from, negotiating with, and managing external companies that supply your goods or subcontractors.","examples":"service: Managing freelance specialists or software vendors. Retail/Online: Placing wholesale stock orders, managing manufacturers, or dealing with courier partners."},"inventory and stock management":{"definition":"tracking what physical items or materials you have on hand and knowing when to reorder.","examples":"service: Tracking spare parts, clinic consumables, or job materials. Retail/Online: Running stocktakes, setting low-stock alerts, and organizing warehouse/backroom shelves."},"client communication and updates":{"definition":"keeping buyers informed on progress, delays, or support questions during fulfillment.","examples":"service: Weekly project status updates. Retail/Online: Automated order-shipped texts, \"ready for pickup\" alerts, or answering customer service emails/DMs."},"facilities and equipment management":{"definition":"maintaining your physical workspace, vehicles, and machinery so they stay clean, safe, and working.","examples":"service: Servicing work vans, calibrating clinic tools, or office cleaning. Retail/Hospitality: Maintaining espresso machines, HVAC, store lighting, fitting rooms, and storefront upkeep."},"IT and technology management":{"definition":"keeping your software, computers, networks, and data secure and operational.","examples":"service: Managing team logins, cloud backups, and cybersecurity. Retail/Online: Maintaining POS registers, barcode scanners, store Wi-Fi, and e-commerce checkout uptime."},"health and safety compliance":{"definition":"following legal safety, hygiene, and workplace rules to protect staff and visitors.","examples":"service: Ergonomic checks, first-aid kits, or on-site safety assessments. Retail/Hospitality: Food temperature logs, fire exit checks, wet-floor signage, and warehouse lifting rules."},"knowledge management":{"definition":"storing your company's SOPs, checklists, and how-to guides in one easy-to-find place.","examples":"all models: Internal Notion/Google Drive playbook, training videos, product cheat-sheets, or register closing checklists."},"invoicing and billing":{"definition":"how your business records what customers are charged, issues invoices or receipts, and records payments through checkout, point-of-sale or other billing methods.","examples":"service: issuing an invoice or payment request and recording a deposit. retail/online: registering a till sale, giving a receipt or recording an online checkout payment."},"accounts receivable and collections":{"definition":"tracking unpaid balances and following up to collect overdue money.","examples":"Service/B2B: Chasing late invoices at 7/14/30 days. Retail/Online: Recovering failed subscription/card payments, managing layaway balances, or handling chargebacks."},"accounts payable and payments":{"definition":"reviewing and paying bills you owe to suppliers, landlords, and contractors.","examples":"all models: Paying wholesale stock invoices, commercial rent, utilities, and software bills on schedule."},"expense tracking and approvals":{"definition":"recording and approving day-to-day business purchases made by you or your team.","examples":"all models: Snapping receipts into Dext/Xero, approving staff travel/fuel expenses, or reconciling petty cash."},"payroll":{"definition":"calculating hours, commissions, and deductions to pay your team accurately and on time.","examples":"all models: Approving timesheets/rosters, calculating sales commissions, and running weekly or monthly wage transfers."},"cash flow forecasting":{"definition":"how your business estimates cash expected in and payments due over time to identify potential cash shortages before they occur.","examples":"service: projecting client payments against payroll or supplier costs. retail/online: estimating available cash before seasonal stock purchases, rent or taxes."},"financial reporting":{"definition":"producing regular profit, loss, and balance summaries to see real financial performance.","examples":"all models: Monthly P&L review, checking gross product margins, or reviewing store-by-store profitability."},"budget planning":{"definition":"setting spending limits and revenue goals for the upcoming quarter or year.","examples":"all models: Setting monthly ad spend caps, seasonal stock buying budgets, and payroll percentage targets."},"banking and treasury management":{"definition":"reconciling bank feeds, managing cash reserves, and handling loans or credit facilities.","examples":"all models: Matching daily POS/Stripe payouts to bank deposits, banking register cash, and managing business credit cards."},"tax and compliance":{"definition":"calculating, filing, and paying sales tax, payroll tax, and business income tax on time.","examples":"all models: Filing GST/VAT/sales tax returns, submitting annual company tax filings, and keeping statutory audit records."},"recruitment":{"definition":"attracting, screening, and hiring the right people for open roles.","examples":"all models: Writing job ads, reviewing resumes, running trial shifts or skill tests, and sending job offers."},"onboarding new team members":{"definition":"getting new hires set up with tools, training, and expectations in their first weeks.","examples":"all models: Signing employment contracts, setting up logins/POS codes, uniform handover, and a 30-day buddy/training schedule."},"performance management":{"definition":"giving regular feedback and reviewing how well team members are meeting role expectations.","examples":"all models: Quarterly 1-on-1 check-ins, mystery shopper/call reviews, and annual performance appraisals."},"training and development":{"definition":"teaching staff new skills, product knowledge, or updated processes so they improve over time.","examples":"all models: New season product briefings, customer service roleplay, software training, or leadership coaching."},"compensation and benefits":{"definition":"managing pay rates, bonuses, leave entitlements, and staff perks fairly.","examples":"all models: Annual pay reviews, commission structures, staff discounts, and tracking vacation/sick leave balances."},"team culture and engagement":{"definition":"how your business listens to the people doing the work, supports collaboration, responds to concerns and recognizes contributions.","examples":"service: receiving team feedback and recognizing strong work. retail/hospitality: shift feedback, brief team check-ins and handling workplace concerns."},"workforce planning":{"definition":"forecasting staffing needs and building schedules/rosters to match business demand.","examples":"service: Matching consultant capacity to project pipeline. Retail/Hospitality: Building weekly shift rosters and hiring extra casual staff for holiday peaks."},"offboarding":{"definition":"handling resignations or terminations smoothly while protecting company assets and knowledge.","examples":"all models: Exit interviews, revoking software/POS access, collecting keys/uniforms, and issuing final pay."},"HR records and compliance":{"definition":"keeping employee files, right-to-work checks, and labor law documentation up to date.","examples":"all models: Storing signed contracts, emergency contacts, certifications/licenses, and fair-work policy acknowledgments."},"business planning and goal setting":{"definition":"setting clear annual and quarterly priorities so everyone knows what success looks like.","examples":"all models: Quarterly 90-day rocks/OKRs, annual revenue targets, and store/department action plans."},"KPI and metrics reporting":{"definition":"tracking a weekly scoreboard of vital numbers to spot trends early.","examples":"service: Leads, billable utilization, and client satisfaction. Retail/Online: Foot traffic, average transaction value, repeat customer rate, and gross margin."},"team meetings and communication":{"definition":"running structured daily, weekly, or monthly meetings to align the team and solve blockers.","examples":"all models: 10-minute daily pre-shift huddles, weekly leadership meetings, and a central team announcement channel."},"decision making and approvals":{"definition":"clarifying who has authority to approve spending, discounts, refunds, or policy exceptions.","examples":"all models: Refund limits for floor staff without a manager, spending approval thresholds, and escalation rules."},"risk and issues management":{"definition":"spotting potential threats or recurring operational problems and putting safeguards in place.","examples":"all models: Backup supplier plans, data breach/theft protocols, insurance reviews, and logging recurring customer complaints."},"external relationships (partners, accountants, lawyers)":{"definition":"managing key outside advisors, landlords, and strategic allies who support the business.","examples":"all models: Regular check-ins with your CPA/bookkeeper, lease negotiations with landlords, and industry association memberships."},"legal and compliance oversight":{"definition":"making sure your business licenses, contracts, privacy rules, and consumer laws stay compliant.","examples":"all models: Renewing trading/industry licenses, updating website privacy policies, and honoring consumer warranty/return laws."},"systems review and improvement":{"definition":"regularly auditing and updating your SOPs so they stay accurate as the business evolves.","examples":"all models: Reviewing broken processes after a mistake, updating checklists when software changes, and assigning system owners."},"technology and tools management":{"definition":"choosing, integrating, and reviewing your software stack so tools work together without bloat.","examples":"all models: Auditing unused software subscriptions, connecting your POS/CRM to accounting, and evaluating new tools."},"strategic planning and review":{"definition":"stepping back to evaluate market changes, new offerings, and long-term business direction.","examples":"all models: Annual owner retreat, deciding whether to open a second location, launch a new product line, or pivot pricing."}};
+const EXPLAIN = Object.fromEntries(Object.entries(SYSTEM_GUIDE).map(([k,v])=>[k,v.definition]));
+const INV_STATUS = ['', 'documented', 'not documented', 'not yet implemented', 'not applicable'];
+const FIELDS = [['trigger', 'trigger'], ['inputs', 'required inputs'], ['action', 'action'], ['output', 'output'], ['routing', 'routing'], ['comms_template', 'communication template']];
+const PIPE = [['p0', 'contract signed, 50% paid'], ['p1', 'mapping plan agreed'], ['p2', 'all systems documented'], ['p3', 'all systems signed off'], ['p4', 'library complete, handed to build']];
+const ACTION_LABEL = { a01: 'book the kickoff', a02: 'confirm the mapping plan', a03: 'answer open questions', a04: 'weekly review', a05: 'phase 1 approval waiting', a06: 'mapping deadline passed' };
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = t => t ? new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+const can = a => !!(D && D.actions && D.actions.indexOf(a) >= 0);
+const isAdmin = () => D && D.role === 'arin_admin';
+// sign-in kept across tabs in this browser for the server's 12-hour session, cleared on sign-out (Lamine approved 2026-11-18).
+// localStorage, with this tab only as the fallback when the browser blocks it. the server still decides: an expired or refused token gives 401 and is cleared.
+const SESSION_MS = 12 * 60 * 60 * 1000;
+const STORE = (() => { try { const k = '__arin_probe'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return localStorage; } catch (e) { try { return sessionStorage; } catch (e2) { return null; } } })();
+const sget = k => { try { return STORE ? STORE.getItem(k) : null; } catch (e) { return null; } };
+const sset = (k, v) => { try { if (STORE) STORE.setItem(k, v); } catch (e) {} };
+const sdel = k => { try { if (STORE) STORE.removeItem(k); } catch (e) {} };
+const clearSession = () => { sdel(TKEY); sdel(TKEY + ':email'); sdel(TKEY + ':at'); };
+const token = () => { const t = sget(TKEY) || ''; if (!t) return ''; const at = Number(sget(TKEY + ':at') || 0); if (!at || Date.now() - at > SESSION_MS) { clearSession(); return ''; } return t; };
+function setToken(t) { if (t) { sset(TKEY, t); sset(TKEY + ':at', String(Date.now())); } else clearSession(); }
+// the email this session signed in with (verified by the 6-digit code). used only to label who added or changed a system.
+const meEmail = () => sget(TKEY + ':email') || '';
+function setMeEmail(v) { if (v) sset(TKEY + ':email', v); else sdel(TKEY + ':email'); }
+// another tab signed out: this tab goes back to the sign-in view too
+window.addEventListener('storage', e => { try { if (e.key === TKEY && !e.newValue && D) { D = null; render(); } } catch (err) {} });
+function toast(text, err) { const m = document.getElementById('msg'); m.textContent = text; m.className = 'msg' + (err ? ' err' : ''); m.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => m.style.display = 'none', 4500); }
+
+async function call(action, args) {
+  // form-encoded POST = CORS "simple request": no Authorization header, no preflight.
+  // the session token travels in the body over HTTPS.
+  const form = new URLSearchParams();
+  form.set('action', action); form.set('slug', SLUG); form.set('token', token()); form.set('args', JSON.stringify(args || {}));
+  const r = await fetch(API, { method: 'POST', body: form });
+  let body = {}; try { body = await r.json(); } catch (e) {}
+  if (r.status === 401 && action !== 'verify_code') { setToken(''); D = null; render(); }
+  return { status: r.status, body };
+}
+async function act(action, args, okText) {
+  const r = await call(action, args);
+  if (r.body && r.body.ok) { if (okText) toast(okText); await load(); return r.body; }
+  const e = (r.body && r.body.error) || ('error ' + r.status);
+  toast(e === 'not authorised' ? MSG4_SESSION : e, true);
+  return null;
+}
+// s3 review endpoint: its own isolated workflow. same form-encoded pattern, token in the body.
+// s4 actions endpoint (section 3): prefill, consultation complete, confirm, review. Same form-encoded pattern, token in the body.
+// words shown to people follow the business clarity standard v1.1: plain, say what to do, give the support address. approved by Lamine 2026-11-19 (RELEASE-MESSAGES-S4-2026-11-19.md).
+const TELL_ARIN = 'tell ar|in at support@arinautomate.ai';
+const MSG4_SESSION = 'your session ended, or you cannot do this. sign in again. if it keeps happening, ' + TELL_ARIN + '.';
+function s3Name(n) { const sy = (((sec('3') || {}).content || {}).systems) || []; const x = sy[n - 1]; return (x && String(x.name || '').trim()) || ('system ' + n); }
+function plainProblem(p) {
+  p = String(p); let m;
+  if ((m = p.match(/^system (\d+) needs a short id/))) return s3Name(+m[1]) + ' needs a short label (lowercase letters, numbers and dashes).';
+  if ((m = p.match(/^system id used twice: (.+)$/))) return 'two systems share the label ' + m[1] + '. each needs its own.';
+  if ((m = p.match(/^system (\d+) needs a name/))) return 'system ' + m[1] + ' needs a name.';
+  if ((m = p.match(/^system (\d+) needs a status/))) return s3Name(+m[1]) + ' needs a status.';
+  if ((m = p.match(/^system (\d+) (software|needs a software)/))) return s3Name(+m[1]) + ': write the software it uses, or write none.';
+  if ((m = p.match(/^system (\d+) is not a record/))) return 'system ' + m[1] + ' is not filled in correctly. remove it and add it again.';
+  if (/^add at least one system/.test(p)) return 'add at least one system.';
+  if (/^at most 60 systems/.test(p)) return 'the list is too long. keep it to 60 systems.';
+  if (/^choose the assessment tier/.test(p)) return 'choose how ready your business is today.';
+  if (/^write the assumptions/.test(p)) return 'write the assumptions behind the quote (up to 4000 characters).';
+  if (/^section 3 is empty/.test(p)) return 'section 3 is empty. fill the list, choose how ready the business is and write the assumptions.';
+  return p;
+}
+function plainError4(e, problems) {
+  e = String(e || '');
+  if (e === 'not authorised') return MSG4_SESSION;
+  if (e === 'confirm section 2 first') return 'section 3 opens after you confirm section 2. confirm section 2 first.';
+  if (e === 'nothing to confirm') return 'there is nothing to confirm yet. save section 3 first.';
+  if (e === 'changed since confirmation') return 'the section changed after the client confirmed. ask them to confirm again, then check it.';
+  if (e === 'section 2 not found') return 'we could not find section 2 for this deal. check the deal number.';
+  if (e === 'section 3 incomplete') { const ps = Array.isArray(problems) ? problems.map(plainProblem) : []; return 'section 3 is not complete yet. fix these, then confirm: ' + (ps.join(' ') || 'something is missing.'); }
+  return 'something went wrong on our side. try again. if it still fails, ' + TELL_ARIN + '.';
+}
+async function call4(action, dealId) {
+  const form = new URLSearchParams();
+  form.set('action', action); form.set('slug', SLUG); form.set('token', token()); form.set('deal_id', String(dealId || ''));
+  const r = await fetch(API_S4, { method: 'POST', body: form });
+  let body = {}; try { body = await r.json(); } catch (e) {}
+  if (r.status === 401) { toast(MSG4_SESSION, true); }
+  return { status: r.status, body };
+}
+async function act4(action, dealId, okText) {
+  try {
+    const r = await call4(action, dealId);
+    if (r.body && r.body.ok) { if (okText) toast(okText); await load(); return r.body; }
+    if (r.status !== 401) toast(plainError4(r.body && r.body.error, r.body && r.body.problems), true);
+  } catch (e) { toast('we could not reach the service. wait a minute and try again. if it still fails, ' + TELL_ARIN + '.', true); }
+  return null;
+}
+async function call3(action, args) {
+  const form = new URLSearchParams();
+  form.set('action', action); form.set('slug', SLUG); form.set('token', token()); form.set('args', JSON.stringify(args || {}));
+  const r = await fetch(API_S3, { method: 'POST', body: form });
+  let body = {}; try { body = await r.json(); } catch (e) {}
+  return { status: r.status, body };
+}
+async function loadReview() {
+  if (!D || !isAdmin()) { S3R = null; S3R_ERR = false; return; }
+  try { const r = await call3('review_status', {});
+    if (r.body && r.body.ok) { S3R = r.body; S3R_ERR = false; } else { S3R = null; S3R_ERR = true; }
+  } catch (e) { S3R = null; S3R_ERR = true; }
+  render();
+}
+async function markReviewed() {
+  const v = n => { const s = sec(n); return s ? s.version : null; };
+  if (EDIT.s1 || s2Dirty()) { toast('save your changes first, so the review records what is saved.', true); render(); return; }
+  try {
+    const r = await call3('review_mark', { s1_version: v('1'), s2_version: v('2') });
+    if (r.body && r.body.ok) toast(r.body.already_recorded ? 'already recorded. nothing has changed since your review.' : 'marked as reviewed');
+    else if (r.body && /^waiting for the client/.test(r.body.error || '')) { toast(r.body.error, true); await load(); return; }
+    else if (r.body && r.body.error === 'conflict') { toast('the client saved a newer version. the page has been refreshed. check it, then mark it reviewed.', true); await load(); return; }
+    else toast('could not record the review. try again.', true);
+  } catch (e) { toast('could not record the review. try again.', true); }
+  await loadReview();
+}
+async function call2(action, args) {
+  if (!API2) return {status:503,body:{ok:false,error:'optional integration not available'}};
+  // the s2 inventory assistant endpoint. same form-encoded pattern, same token-in-body.
+  const form = new URLSearchParams();
+  form.set('action', action); form.set('slug', SLUG); form.set('token', token()); form.set('args', JSON.stringify(args || {}));
+  const r = await fetch(API2, { method: 'POST', body: form });
+  let body = {}; try { body = await r.json(); } catch (e) {}
+  return { status: r.status, body };
+}
+// the optional AI inventory review. loadFindings reads the newest assessment's open / for-consultation
+// findings and whether it is stale (its section 1+2 fingerprint no longer matches the saved data).
+async function loadFindings() {
+  FINDINGS = { run_id: null, stale: false, findings: [] };
+  if (!D || !can('save_section:2')) return;
+  try { const r = await call2('findings_load', {});
+    if (r.body && r.body.ok) FINDINGS = { run_id: r.body.run_id || null, stale: !!r.body.stale, findings: r.body.findings || [] };
+  } catch (e) {}
+}
+// the pre-consultation brief ar|in reviews: the client's for-consultation findings. read-only; never
+// reads or writes section 3 consultation outcomes.
+async function loadBrief() {
+  BRIEF = { consultation_findings: [] };
+  if (!D || !isAdmin()) return;
+  try { const r = await call2('preconsult_brief', {});
+    if (r.body && r.body.ok) BRIEF = { consultation_findings: r.body.consultation_findings || [] };
+  } catch (e) {}
+}
+// run the optional review (begin -> model -> commit happens server-side; the DB grounds every finding).
+async function runAssessment() {
+  try {
+    const r = await call2('assess', { extra: val('assess-extra') || '' });
+    if (r.body && r.body.ok) {
+      FINDINGS = { run_id: r.body.run_id || null, stale: !!r.body.stale, findings: r.body.findings || [] };
+      const n = FINDINGS.findings.filter(f => f.status === 'open').length;
+      toast(n ? n + ' point' + (n > 1 ? 's' : '') + ' to review below' : 'no issues found — your inventory matches what you described'); render();
+    } else toast((r.body && r.body.error) || 'the review did not run', true);
+  } catch (e) { toast('the review did not run', true); }
+}
+// record a finding's disposition. NEVER changes an inventory status or section 3 — only the finding's state.
+async function resolveFinding(id, action) {
+  try { const r = await call2('finding_resolve', { finding_id: id, action });
+    if (r && r.body && r.body.ok) { await loadFindings(); render(); }
+    else { toast('could not update — try again', true); await loadFindings(); render(); }
+  } catch (e) { toast('could not update — try again', true); }
+}
+// "add this activity" on an omission: add it to the inventory (client still statuses it), then mark the finding handled.
+async function applyOmission(id, fkey, label) {
+  addCustom(fkey, label);
+  if (!await saveSection(2)) { toast('could not save — try again', true); return; }
+  await resolveFinding(id, 'applied');
+}
+async function load() {
+  if (!token()) { D = null; PRECONSULT_GENERATION++; PRECONSULT_CACHE=null; PRECONSULT_PENDING=null; CCF_PRESENTATION_MAP=null; return render(); }
+  const r = await call('load');
+  D = r.body && r.body.ok ? r.body : null;
+  PRECONSULT_GENERATION++;
+  PRECONSULT_CACHE = null;
+  PRECONSULT_PENDING = null;
+  CCF_PRESENTATION_MAP = null;
+  S3R = null; S3R_ERR = false;
+  if (D && isAdmin()) loadReview();
+  // client-facing AI inventory review retired; do not call live ced-002.
+  // the shared deterministic package replaces the old AI findings brief in this stage.
+  // the factual package reads saved sections 1 and 2 directly; no additional client confirmations.
+  render();
+  // The report read does not delay the saved document. Both displays use the
+  // same result, and the inventory refreshes once its reference map arrives.
+  if (D && token()) cachedPreconsultPackage().then(() => {
+    if (D && token()) render();
+  }).catch(() => { /* inventory remains usable; report shows its read error */ });
+}
+// custom (off-catalogue) activity: a stable key under inventory so the completeness gate accounts for it
+function custKey(label) { return 'custom:' + String(label || '').trim().toLowerCase().replace(/\s+/g, ' '); }
+// adding OR removing an activity invalidates that function's "nothing missing" review, so a
+// confirmation always reflects the current activity inventory (the client must re-review).
+function invalidateReview(fkey) { if (!fkey) return; const b = s2buf(); b.coverage = b.coverage || {}; b.coverage[fkey] = b.coverage[fkey] || {}; b.coverage[fkey].reviewed = false; }
+function addCustom(fkey, label, placement) {
+  label = String(label || '').trim();
+  if (!label) return;
+  if (!DEPT_SYSTEMS.some(d => d.key===fkey)) { toast('choose a business function',true); return; }
+  const b = s2buf(), k = custKey(label);
+  if (b.inventory[k]) {toast('this activity is already listed. open it to update its status.',true);return;}
+  // Preserve the established inventory fields. The optional location metadata is
+  // informative until the server validates and maps the custom system into its CCF.
+  const loc = placement || {};
+  b.inventory[k] = { label, func:fkey, status:'', software:[],
+    ccf_group:loc.type || (['hr','mgmt'].includes(fkey)?'business':'unassigned'),
+    ccf_stage:loc.type==='stage'?String(loc.stage||''):'' };
+  invalidateReview(fkey);
+  INVENTORY_SYSTEM_OPEN[k]=true;
+  if(loc.type==='stage'){
+    INVENTORY_FUNCTION_OPEN['flow-single']=true;
+    INVENTORY_FUNCTION_OPEN['stage-'+String(loc.stage||'s1').replace(/^s/,'')]=true;
+  }else if(loc.type==='cross'){
+    INVENTORY_FUNCTION_OPEN['flow-cross']=true;
+    INVENTORY_FUNCTION_OPEN['cross-'+fkey]=true;
+  }else if(loc.type==='business') INVENTORY_FUNCTION_OPEN['support-'+fkey]=true;
+  render();
+}
+function setReviewed(fkey, on) {
+  const b = s2buf(); b.coverage = b.coverage || {}; b.coverage[fkey] = b.coverage[fkey] || {}; b.coverage[fkey].reviewed = !!on; render();
+}
+function setAllReviewed(on) {
+  const b=s2buf(); b.coverage=b.coverage||{};
+  DEPT_SYSTEMS.forEach(d=>{b.coverage[d.key]=b.coverage[d.key]||{};b.coverage[d.key].reviewed=!!on;});
+  render();
+}
+const sec = (s, sys) => D && D.sections.find(x => x.section === s && (x.system_id || '') === (sys || ''));
+const deal = () => D && D.authoritative && D.authoritative.deals && D.authoritative.deals[0];
+const person = id => (D.authoritative.participants || []).find(p => p.participant_id === id);
+
+// ---------------- sign-in ----------------
+function signinView() {
+  if (!SLUG) return '<div class="signin"><div class="doc-title">no engagement selected<small>open the link from your email.</small></div></div>';
+  if (SIGN.stage === 'email') return `<div class="signin"><div class="doc-title">sign in to your engagement document<small>enter the email address the link was sent to. we'll send you a 6-digit code.</small></div>
+    <div class="fr" style="margin-top:16px"><div class="fl">email</div><input class="fi" id="si-email" type="email" autocomplete="email"></div>
+    <button class="btn" data-act="si-send">send me a code</button></div>`;
+  return `<div class="signin"><div class="doc-title">enter your code<small>if ${esc(SIGN.email)} is on this engagement, a code is on its way. it works for 10 minutes.</small></div>
+    <div class="fr" style="margin-top:16px"><div class="fl">6-digit code</div><input class="fi" id="si-code" inputmode="numeric" maxlength="6"></div>
+    <div class="row"><button class="btn" data-act="si-verify">sign in</button><button class="btn arin" data-act="si-back">use another email</button></div></div>`;
+}
+
+// ---------------- document ----------------
+function header() {
+  const e = D.engagement, me = D.me;
+  return `<div class="doc-header"><div class="spread"><div class="doc-title">${esc(e.name)}<small>client engagement document · shared working document from consultation to run</small></div>
+  <div class="muted" style="text-align:right">signed in as ${esc(me.name)}<br>${esc(me.role.replace('_', ' '))}<br><button class="btn small arin" data-act="sign-out" style="margin-top:6px">sign out</button></div></div></div>`;
+}
+function band() {
+  const d = deal();
+  if (!d) return `<div class="band"><span class="muted">no deal yet. ar|in opens one after the consultation.</span></div>`;
+  const p = d.pipeline || {};
+  const acts = (d.open_actions || []).map(a => `<span class="chip warn">${esc(ACTION_LABEL[a.type] || a.type)}${a.system_id ? ' · ' + esc(a.system_id) : ''}${a.due_on ? ' · due ' + esc(a.due_on) : ''}</span>`).join('');
+  return `<div class="band"><div class="fl">progress</div>${PIPE.map(([k, l]) => `<span class="chip ${p[k] ? 'done' : ''}">${p[k] ? '✓ ' : ''}${esc(l)}</span>`).join('')}
+    ${acts ? `<div class="fl" style="margin-top:10px">waiting on</div>${acts}` : ''}</div>`;
+}
+// ---------------- s3: ar|in's review before the consultation (ar|in only, never blocks anything) ----------------
+// readiness comes from what the client SAVED (not from unsaved edits on this screen). the review record and
+// who-saved-what come from the server (engagement_versions, preconsult_reviews). nothing here is invented.
+function s3Readiness(content) {
+  const inv = (content && content.inventory) || {};
+  let notSure = 0, unclassified = 0;
+  const keys = DEPT_SYSTEMS.flatMap(d => d.systems.map(s => s.label)).concat(Object.keys(inv).filter(k => k.indexOf('custom:') === 0));
+  keys.forEach(k => { const st = invState(inv[k]); if (st === 'uns') notSure++; else if (st === 'todo') unclassified++; });
+  return { notSure, unclassified, owners: s2OwnerAreas(content || {}) };
+}
+function s3Who(name, role) { return `${esc(name || 'someone')} (${role === 'arin_admin' ? 'ar|in' : 'client'})`; }
+function s3SectionLine(n) {
+  const st = S3R && S3R.sections ? S3R.sections[n] : null, s = sec(n), cf = (S3R && S3R.confirmations) || {};
+  const at = cf['s' + n + '_confirmed_at'] || ((D.authoritative.confirmations || {})['s' + n + '_confirmed_at']);
+  const conf = at ? `confirmed ${esc(fmt(at))}${cf['s' + n + '_confirmed_by_name'] ? ' by ' + s3Who(cf['s' + n + '_confirmed_by_name'], cf['s' + n + '_confirmed_by_role']) : ''}` : '<span class="gap">not confirmed</span>';
+  const saved = st ? `version ${st.version}, saved ${esc(fmt(st.saved_at))} by ${s3Who(st.saved_by_name, st.saved_by_role)}` : (s ? `version ${s.version}` : 'not saved yet');
+  return `${conf} · ${saved}`;
+}
+function s3ReviewPanel() {
+  if (!D || !isAdmin()) return '';
+  const s1s = sec('1'), s2s = sec('2');
+  const empty = !s1s && !s2s;
+  const rd = s3Readiness(s2s && s2s.content);
+  const owners = rd.owners.map(a => `<li><b>${esc(a.label)}</b> · ${a.answer === 'named' ? esc(a.name) + ' · ' + esc(a.role) : (a.answer === 'incomplete' ? esc(a.name || a.role) + ' · <span class="gap">' + (a.name ? 'role' : 'name') + ' still needed</span>' : '<span class="gap">not answered yet</span>')}</li>`).join('');
+  const lr = S3R && S3R.latest_review, ch = (S3R && S3R.changed_since_review) || {};
+  const changed = !!(lr && (ch['1'] || ch['2']));
+  const cf = (S3R && S3R.confirmations) || {};
+  const confMoved = lr ? ['1', '2'].filter(n => (lr['s' + n + '_confirmed_at'] || null) !== (cf['s' + n + '_confirmed_at'] || null)) : [];
+  let state;
+  if (S3R_ERR) state = '<p class="gap s3r-state">the review record could not be loaded. reload the page to try again.</p>';
+  else if (!S3R) state = '<p class="muted s3r-state">loading the review record...</p>';
+  else if (!lr) state = '<p class="s3r-state">not reviewed yet.</p>';
+  else {
+    const ver = `section 1 ${lr.s1_version == null ? 'not saved' : 'version ' + lr.s1_version}, section 2 ${lr.s2_version == null ? 'not saved' : 'version ' + lr.s2_version}`;
+    state = changed || confMoved.length
+      ? `<p class="gap s3r-state">changed since your review on ${esc(fmt(lr.reviewed_at))} (${esc(ver)}).</p><ul class="s3r-changes">${(S3R.changes_since_review || []).map(c => `<li>section ${esc(c.section)} · version ${c.version} saved ${esc(fmt(c.saved_at))} by ${s3Who(c.saved_by_name, c.saved_by_role)}</li>`).join('')}${confMoved.map(n => `<li>section ${n} ${cf['s' + n + '_confirmed_at'] ? 'was confirmed after your review' : 'is no longer confirmed'}</li>`).join('')}</ul>`
+      : `<p class="ok s3r-state">reviewed ${esc(fmt(lr.reviewed_at))} by ${esc(lr.reviewed_by_name || '')} (${esc(ver)}). nothing has changed since.</p>`;
+  }
+  const unsaved = !!EDIT.s1 || s2Dirty();
+  // amendment 2 (2026-11-18): a review can only be marked once the client has confirmed BOTH sections (the server enforces it too)
+  const bothConfirmed = !!(cf.s1_confirmed_at && cf.s2_confirmed_at);
+  const waiting = !!S3R && !bothConfirmed;
+  const badge = !S3R ? '' : (!lr ? 'not reviewed' : (changed || confMoved.length ? 'changed since review' : 'reviewed'));
+  const body = `<div class="sec-body">
+    ${empty ? '<p class="note">the client has not filled in the document yet.</p>' : ''}
+    <dl class="s3r-list">
+      <dt>section 1 · client flow</dt><dd>${s3SectionLine('1')}</dd>
+      <dt>section 2 · systems inventory</dt><dd>${s3SectionLine('2')}</dd>
+      <dt>activities marked "not sure"</dt><dd>${s2s ? rd.notSure : '-'}</dd>
+      <dt>activities not classified yet</dt><dd>${s2s ? rd.unclassified : '-'}</dd>
+      <dt>last client save</dt><dd>${S3R && S3R.last_client_save_at ? esc(fmt(S3R.last_client_save_at)) : (S3R ? 'none yet' : '-')}</dd>
+    </dl>
+    <div class="fl">who looks after each area, as the client answered</div>
+    ${s2s ? `<ul class="s3r-owners">${owners}</ul>` : '<p class="muted" style="margin-bottom:12px">section 2 not saved yet.</p>'}
+    ${state}
+    <div class="row"><button class="btn arin" data-act="s3-mark" ${unsaved || !S3R || waiting ? 'disabled' : ''}>${waiting ? 'waiting for the client to confirm sections 1 and 2' : 'mark as reviewed before the consultation'}</button>
+      ${unsaved ? '<span class="muted">save your changes first, so the review records what is saved.</span>' : ''}</div>
+    <p class="muted" style="margin-top:8px">the operating picture below is the same one the client sees. this review is recorded for ar|in only and never blocks the consultation. it can only be recorded once the client has confirmed sections 1 and 2.</p></div>`;
+  return sectionShell('s3-review', '·', 'before the consultation <span class="arin-tag">ar|in only</span>', 'what the client reported, and your review of it', badge, badge === 'reviewed' ? 'so' : 'ip', body).replace('class="section ', 'class="section arin-only ');
+}
+function sectionShell(id, num, title, sub, badge, badgeCls, body, locked) {
+  return `<div class="section ${locked ? 'locked' : ''}" id="${id}"><div class="sec-header"><div class="sec-left"><div class="sec-num">${num}</div><div><div class="sec-title">${title}</div><div class="sec-sub">${sub}</div></div></div><span class="badge ${badgeCls || ''}">${esc(badge)}</span></div>${body}</div>`;
+}
+function savedLine(s) { return s ? `<span class="muted">version ${s.version} · saved by ${esc(s.updated_by || '')} · ${fmt(s.updated_at)}</span>` : '<span class="muted">not saved yet</span>'; }
+
+function s1() {
+  const s = sec('1'); const c = EDIT.s1 || (s && s.content) || {};
+  const conf = D.authoritative.confirmations || {};
+  const edit = can('save_section:1');
+  const body = `<div class="sec-body"><p class="note">how your business goes from attracting a client to delivering and keeping them. a high-level picture.</p>
+    <div class="grid2"><div class="fr"><div class="fl">who is your target client?</div><textarea class="fi" data-bind="s1.target" ${edit ? '' : 'readonly'}>${esc(c.target)}</textarea></div>
+    <div class="fr"><div class="fl">what is the main product or solution?</div><textarea class="fi" data-bind="s1.product" ${edit ? '' : 'readonly'}>${esc(c.product)}</textarea></div></div>
+    ${CCF.map(([id, q, h]) => `<div class="fr"><div class="fl">${esc(q)}</div><textarea class="fi" data-bind="s1.${id}" placeholder="${esc(h)}" ${edit ? '' : 'readonly'}>${esc(c[id])}</textarea></div>`).join('')}
+    <div class="row">${edit ? '<button class="btn" data-act="save-s1">save section 1</button>' : ''}${savedLine(s)}</div></div>
+    <div class="sec-foot"><div class="fl">confirmation</div>${conf.s1_confirmed_at ? `<span class="ok">confirmed ${fmt(conf.s1_confirmed_at)}${conf.s1_confirmed_name ? ' by ' + esc(conf.s1_confirmed_name) : ''}</span>` :
+      (can('section_confirm') && s ? '<input class="fi" id="confirm-name-1" placeholder="type your name to confirm" style="max-width:260px;display:inline-block;margin-right:8px"><button class="btn" data-act="confirm-1">confirm section 1 is accurate</button>' : '<span class="muted">not confirmed yet</span>')}</div>`;
+  return sectionShell('section-1', 1, 'critical client flow', 'filled by the client before the consultation', conf.s1_confirmed_at ? 'confirmed' : (s ? 'in progress' : 'not started'), conf.s1_confirmed_at ? 'so' : (s ? 'ip' : ''), body);
+}
+// a system is in one of three states: 'ok' (a status is set), 'uns' (marked not sure yet),
+// 'todo' (neither). confirming section 2 needs every item in 'ok' or 'uns' — never 'todo'.
+function invState(it) { it = it || {}; return it.status ? 'ok' : (it.unresolved ? 'uns' : 'todo'); }
+// render a status/unresolved control + a software control for one inventory row (standard or custom)
+function invRow(name, it, edit, opts) {
+  const st = it.status || '', uns = !!it.unresolved, custom = !!opts.custom;
+  // stored status VALUES are unchanged; only the client-facing LABELS change (migration keeps the values).
+  const stBtn = (v, lbl) => `<button type="button" class="inv-stat ${st === v ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-status" data-k="${esc(name)}" data-v="${esc(v)}">${lbl}</button>`;
+  const unsBtn = `<button type="button" class="inv-stat uns ${uns ? 'on' : ''}" ${edit ? '' : 'disabled'} data-act="inv-unresolved" data-k="${esc(name)}">not sure</button>`;
+  const swArr = Array.isArray(it.software) ? it.software : [];
+  const otherVal = it.other || (typeof it.software === 'string' ? it.software : '');
+  const named = swArr.filter(x => SW_SENTINELS.indexOf(x) < 0);
+  const sentinels = swArr.filter(x => SW_SENTINELS.indexOf(x) >= 0);
+  // no point asking for tools on an activity that is not happening
+  const hideSw = (st === 'not yet implemented' || st === 'not applicable');
+  const chipItems = [...sentinels.map(swLabel), ...named, otherVal].filter(Boolean);
+  const chips = chipItems.length ? chipItems.map(x => `<span class="sw-chip">${esc(x)}</span>`).join('') : '<span class="muted">no tools chosen yet</span>';
+  let sw = '';
+  if (hideSw) {
+    sw = edit ? '<span class="muted">tools not needed for this status</span>' : '';
+  } else if (custom) {
+    sw = edit ? `<input class="fi sw-other" style="max-width:220px" placeholder="software (optional)" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other">`
+              : (otherVal ? `<span class="sw-chip">${esc(otherVal)}</span>` : '<span class="muted">no software</span>');
+  } else {
+    const swBase = SW_MAP[opts.sysName] || SW_FALLBACK;
+    const swOpts = [...swBase, ...UNIVERSAL_TOOLS.filter(t => !swBase.includes(t))];
+    const open = !!SWOPEN[name];
+    if (!edit) sw = chips;
+    else if (!open) sw = `<div class="sw-chips">${chips} <button class="lnk" data-act="sw-open" data-k="${esc(name)}">which tools?</button></div>`;
+    else {
+      // "no software used" / "not sure" / the legacy token suppress the named-tool list; "paper" and
+      // "outside provider" may combine with named tools (mixed internal/outsourced).
+      const noneLike = swArr.includes('__none__') || swArr.includes('__unsure_tools__') || swArr.includes('no software / paper-based');
+      const special = ['__none__', '__paper__', '__outsourced__', '__unsure_tools__']
+        .map(tok => `<label class="sw-item${swArr.includes(tok) ? ' on' : ''}"><input type="checkbox" ${swArr.includes(tok) ? 'checked' : ''} data-act="sw-token" data-k="${esc(name)}" data-sw="${tok}">${esc(swLabel(tok))}</label>`).join('');
+      const legacy = swArr.includes('no software / paper-based')
+        ? `<label class="sw-item on"><input type="checkbox" checked data-act="sw-token" data-k="${esc(name)}" data-sw="no software / paper-based">${esc(swLabel('no software / paper-based'))}</label>` : '';
+      const tools = noneLike ? '' : (swOpts.map(o => `<label class="sw-item${named.includes(o) ? ' on' : ''}"><input type="checkbox" ${named.includes(o) ? 'checked' : ''} data-act="sw-token" data-k="${esc(name)}" data-sw="${esc(o)}">${esc(o)}</label>`).join('')
+        + `<input class="fi sw-other" placeholder="other tool" value="${esc(otherVal)}" data-bind="s2.inventory.${esc(name)}.other">`);
+      sw = `<div class="sw-prompt">which tools do you use for this activity? select all that apply.</div>${special}${legacy}${tools} <button class="lnk" data-act="sw-open" data-k="${esc(name)}">done</button>`;
+    }
+  }
+  // The collapsed summary contains exactly the system name and its reported status.
+  // All explanation, model-specific examples, software and status controls stay inside.
+  const visibleStatus =
+    uns ? 'not sure' :
+    st === 'documented' ? 'documented' :
+    st === 'not documented' ? 'not documented' :
+    st === 'not yet implemented' ? 'needed, not doing yet' :
+    st === 'not applicable' ? "doesn't apply" :
+    'choose status';
+  const visibleClass =
+    uns ? 'unsure' :
+    st === 'documented' ? 'documented' :
+    st === 'not documented' ? 'undocumented' :
+    st === 'not yet implemented' ? 'unimplemented' :
+    st === 'not applicable' ? 'na' : 'empty';
+// Render cross-business examples as a short bullet list, one business model per item.
+// Source remains the existing 61-guide; no copy or system names are regenerated.
+function splitBusinessExamples(source) {
+  const text = String(source || '').trim();
+  const pattern = /(?:^|[.!?]\s+)(service(?:\/b2b)?|retail(?:\/(?:online|hospitality|wholesale))?|all models|online|hospitality):\s*/gi;
+  const markers = Array.from(text.matchAll(pattern));
+  if (!markers.length) return text ? [{label:'example',text}] : [];
+  return markers.map((match, index) => {
+    const from = match.index + match[0].length;
+    const to = index+1 < markers.length ? markers[index+1].index : text.length;
+    return {label:match[1].toLowerCase(),text:text.slice(from,to).trim()};
+  }).filter(item=>item.text);
+}
+
+  const guide = !custom ? SYSTEM_GUIDE[opts.sysName] : null;
+  const help = guide
+    ? `<div class="inv-guide">
+        <div class="inv-guide-label">what this activity means</div>
+        <p>${esc(guide.definition)}</p>
+        <div class="inv-guide-label">examples across businesses</div>
+        <ul class="inv-examples">${splitBusinessExamples(guide.examples).map(item =>
+          `<li><strong>${esc(item.label)}:</strong> ${esc(item.text)}</li>`).join('')}</ul>
+      </div>`
+    : '<div class="inv-guide"><p>this is a business activity you added to the inventory.</p></div>';
+  const rowUnsaved = edit && s2RowDirty(name);
+  const trail = s2Trail(it);
+  const controls = `${stBtn('documented', 'documented')}${stBtn('not documented', 'not documented')}${stBtn('not yet implemented', 'not doing this yet')}${stBtn('not applicable', "doesn't apply")}${edit ? unsBtn : ''}`;
+  return `<details class="inv-row" id="${rowSlug(name)}" ${INVENTORY_SYSTEM_OPEN[name] ? 'open' : ''}>
+    <summary class="inv-sys" data-inv-toggle="system" data-inv-key="${esc(name)}">
+      <span class="inv-sys-name">${esc(custom ? opts.label : opts.sysName)}</span>
+      ${rowUnsaved ? '<span class="inv-unsaved">not saved yet</span>' : ''}
+      <span class="inv-status-badge ${visibleClass}">${esc(visibleStatus)}</span>
+      <span class="inv-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="inv-row-body">
+      ${help}
+      <div class="inv-stats">${controls}</div>
+      <div class="inv-sw">${sw}</div>
+      ${trail}
+      ${custom && edit ? `<button type="button" class="lnk" data-act="cust-remove" data-k="${esc(name)}">remove this added activity</button>` : ''}
+    </div>
+  </details>`;
+}
+
+
+// Shared presentation taxonomy. The saved system status is never moved, renamed or edited here.
+// The report owns the stage/cross-stage associations for active items. The 61-item guide
+// supplies provisional placement for entries the report does not list (including 'not applicable').
+// Reference placement of every catalogue system in the client flow, generated from reference_data.json
+// by acceptance/sync_page_placement.cjs. It does not depend on a system's saved status, so a row never moves
+// between groups when it is marked not applicable, and it matches the diagnosis the workflow returns.
+/*REF_PLACEMENT:begin*/const REF_PLACEMENT = {"lead generation":"s1","content creation and publishing":"s1","social media management":"s1","email marketing and newsletters":"s1","advertising and paid media":"s1","seo and website management":"s1","brand and messaging":"cross","referral and partnership programme":"s1","pr and media relations":"s1","events and webinars":"s1","customer reviews and testimonials":"s7","lead qualification":"s3","sales calls and discovery":"s3","proposal and quote creation":"s3","follow-up and nurture":"s3","contract and agreement":"s3","crm management":"s2","sales reporting":"cross","account management":"s7","upselling and cross-selling":"s7","lost deal analysis":"cross","client onboarding":"s5","project or job management":"s6","service delivery":"s6","quality control and review":"s6","supplier and vendor management":"s6","inventory and stock management":"s6","client communication and updates":"s6","facilities and equipment management":"cross","it and technology management":"cross","health and safety compliance":"cross","knowledge management":"cross","invoicing and billing":"s4","accounts receivable and collections":"s4","accounts payable and payments":"cross","expense tracking and approvals":"cross","payroll":"cross","cash flow forecasting":"cross","financial reporting":"cross","budget planning":"cross","banking and treasury management":"cross","tax and compliance":"cross"};/*REF_PLACEMENT:end*/
+function ccfName(s) { return String(s||'').trim().toLowerCase().replace(/\s+/g,' '); }
+function ccfBuildPresentationMap(sourceA) {
+  if (!sourceA) return null;
+  const byName = {};
+  const present = new Set();
+  (sourceA.stage_coverage||[]).forEach((stage,index) => {
+    const sid=String(stage.stage||'s'+(index+1));
+    (stage.items||[]).forEach(item => {
+      const name=ccfName(item.name||item.label||item.system_name);
+      if (!name) return;
+      present.add(name);
+      // The named cross-stage list below always has precedence.
+      if (!byName[name]) byName[name]={type:'stage',stage:sid};
+    });
+  });
+  (sourceA.ccf_supporting_functions||[]).forEach(group => {
+    (group.items||[]).forEach(item => {
+      const name=ccfName(item.name||item.label||item.system_name);
+      if (!name) return;
+      present.add(name);
+      byName[name]={type:'cross'};
+    });
+  });
+  return {byName,present};
+}
+function ccfPlacement(dept,sys) {
+  if (dept.key==='hr'||dept.key==='mgmt') return {type:'business',function:dept.key};
+  // The reference placement does not depend on the saved status, so a row stays in its group when
+  // marked not applicable and the first render already matches the diagnosis.
+  const ref=REF_PLACEMENT[ccfName(sys.label)];
+  if(ref) return ref==='cross'?{type:'cross'}:{type:'stage',stage:ref};
+  const fromReport=CCF_PRESENTATION_MAP && CCF_PRESENTATION_MAP.byName[ccfName(sys.label)];
+  if(fromReport) return fromReport;
+  return sys.stages && sys.stages.length>1 ? {type:'cross'} : {type:'stage',stage:'s'+((sys.stages&&sys.stages[0])||1)};
+}
+function ccfIncluded(item) { return !!(item && (item.unresolved || (item.status && item.status!=='not applicable'))); }
+function ccfGroupNumber(entries,inv) {return entries.filter(e=>ccfIncluded(inv[e.name])).length;}
+function ccfGroupRows(entries,inv,edit) {
+  return entries.map(e=>{
+    const obj=inv[e.name]||{};
+    return invRow(e.name,obj,edit,e.custom?{custom:true,label:obj.label||e.name.slice(7)}:{sysName:e.name});
+  }).join('');
+}
+function ccfInlineAdd(id,edit,dept,kind,stage) {
+  if(!edit) return '';
+  const select = dept ? '' : `<select class="fi" id="ccf-add-func-${esc(id)}" aria-label="business function">
+    ${DEPT_SYSTEMS.filter(d=>!['hr','mgmt'].includes(d.key)).map(d=>`<option value="${esc(d.key)}">${esc(d.label.toLowerCase())}</option>`).join('')}</select>`;
+  return `<div class="ccf-add-system">
+    <label for="ccf-add-name-${esc(id)}">missing a system?</label>
+    <input class="fi" id="ccf-add-name-${esc(id)}" placeholder="enter another system" aria-label="new system name">
+    ${select}<button type="button" class="btn small arin" data-act="cust-add-inline" data-id="${esc(id)}" data-fk="${esc(dept||'')}" data-placement="${esc(kind)}" data-stage="${esc(stage||'')}">+ add system</button>
+    ${s2Dirty() ? '<button type="button" class="btn small" data-act="save-s2">save section 2</button><span class="s2-unsaved-note">not saved yet</span>' : ''}
+  </div>`;
+}
+function ccfInventoryGroup(key,title,entries,inv,edit,inside) {
+  const included=ccfGroupNumber(entries,inv);
+  const total=entries.length;
+  return `<details class="ccf-group" ${INVENTORY_FUNCTION_OPEN[key]?'open':''}>
+    <summary data-inv-toggle="function" data-inv-key="${esc(key)}">
+      <span class="ccf-group-name">${esc(title)}</span>
+      <span class="ccf-group-count">${included} applicable · ${total} listed</span>
+    </summary><div class="ccf-group-body">${inside===undefined?ccfGroupRows(entries,inv,edit):inside}</div></details>`;
+}
+function ccfInputHierarchy(inv,edit,customKeys) {
+  const stages=Array.from({length:7},()=>[]),cross=[],supporting={hr:[],mgmt:[]},legacy=[];
+  DEPT_SYSTEMS.forEach(dept=>dept.systems.forEach(sys=>{
+    const entry={name:sys.label,dept:dept.key};
+    const loc=ccfPlacement(dept,sys);
+    if(loc.type==='business')supporting[dept.key].push(entry);
+    else if(loc.type==='cross')cross.push(entry);
+    else{
+      const idx=Math.max(0,Math.min(6,Number(String(loc.stage||'s1').replace(/^s/,''))-1||0));
+      stages[idx].push(entry);
+    }
+  }));
+  // A user-created entry stays in the group where it was added. Legacy custom
+  // entries with no location remain visible in the same status input, for mapping.
+  customKeys.forEach(key=>{
+    const item=inv[key]||{}, entry={name:key,dept:item.func,custom:true};
+    if(['hr','mgmt'].includes(item.func)||item.ccf_group==='business'){
+      if(supporting[item.func])supporting[item.func].push(entry);else legacy.push(entry);
+    }else if(item.ccf_group==='stage'&&/^s[1-7]$/.test(item.ccf_stage||'')){
+      stages[Number(item.ccf_stage.slice(1))-1].push(entry);
+    }else if(item.ccf_group==='cross')cross.push(entry);
+    else legacy.push(entry);
+  });
+  const singleEntries=stages.flat(), ccfEntries=singleEntries.concat(cross), businessEntries=supporting.hr.concat(supporting.mgmt);
+  const oneNum=ccfGroupNumber(singleEntries,inv),crossNum=ccfGroupNumber(cross,inv),businessNum=ccfGroupNumber(businessEntries,inv),legacyNum=ccfGroupNumber(legacy,inv);
+  const allNum=oneNum+crossNum+businessNum+legacyNum;
+  const stageHtml=stages.map((entries,i)=>{
+    const id='stage-'+(i+1),sid='s'+(i+1);
+    const body=ccfGroupRows(entries,inv,edit)+ccfInlineAdd(id,edit,'','stage',sid);
+    return ccfInventoryGroup(id,(i+1)+'. '+CCF[i][1],entries,inv,edit,body);
+  }).join('');
+  const crossDepts=DEPT_SYSTEMS.filter(d=>['mkt','sls','ops','fin'].includes(d.key));
+  const crossHtml=crossDepts.map(dept=>{
+    const items=cross.filter(e=>e.dept===dept.key), id='cross-'+dept.key;
+    return ccfInventoryGroup(id,dept.label.toLowerCase(),items,inv,edit,
+      ccfGroupRows(items,inv,edit)+ccfInlineAdd(id,edit,dept.key,'cross',''));
+  }).join('');
+  const supportHtml=['hr','mgmt'].map(key=>{
+    const title=key==='hr'?'human resources':'management',id='support-'+key,items=supporting[key];
+    return ccfInventoryGroup(id,title,items,inv,edit,
+      ccfGroupRows(items,inv,edit)+ccfInlineAdd(id,edit,key,'business',''));
+  }).join('');
+  const legacyHtml=legacy.length?ccfInventoryGroup('legacy-custom','additional systems awaiting flow placement',legacy,inv,edit,
+    ccfGroupRows(legacy,inv,edit)+'<p class="ccf-diagnosis-notes">these older added activities still need a confirmed stage association during consultation.</p>'):'';
+  const listedTotal=DEPT_SYSTEMS.reduce((n,d)=>n+d.systems.length,0)+customKeys.length;
+  return `<div class="ccf-hierarchy">
+    <div class="ccf-hierarchy-head"><h3 class="ccf-hierarchy-title">systems status across your business</h3><span class="ccf-hierarchy-count">${allNum} applicable systems</span></div>
+    <p class="ccf-hierarchy-desc">review the ${listedTotal} listed activities. mark each status once. you can add a missing system directly in the group where it belongs. added systems are saved with their group and must be validated in the client-flow mapping before the diagnosis can account for them.</p>
+    <div class="ccf-hierarchy" style="margin:0 0 12px">
+      <div class="ccf-hierarchy-head"><h4 class="ccf-hierarchy-title">critical client flow</h4><span class="ccf-hierarchy-count">${oneNum+crossNum}</span></div>
+      ${ccfInventoryGroup('flow-single','systems supporting one stage',singleEntries,inv,edit,stageHtml)}
+      ${ccfInventoryGroup('flow-cross','systems supporting multiple stages',cross,inv,edit,crossHtml)}
+    </div>
+    <div class="ccf-hierarchy" style="margin:0">
+      <div class="ccf-hierarchy-head"><h4 class="ccf-hierarchy-title">business-wide supporting systems</h4><span class="ccf-hierarchy-count">${businessNum}</span></div>
+      <p class="ccf-hierarchy-sub">people, management and decision-making support the same business, including your response to market disruptions.</p>
+      ${supportHtml}
+    </div>${legacyHtml}
+  </div>`;
+}
+
+// ---- section 2 unsaved changes and attribution ----
+// "+ add system", status and tool choices only change the screen until "save section 2" stores them.
+// these helpers compare the working copy with the saved version so the page can say what is not saved yet.
+function s2Norm(c) {
+  const x = JSON.parse(JSON.stringify(c || {}));
+  x.inventory = x.inventory || {}; x.owners = x.owners || {}; x.coverage = x.coverage || {};
+  return x;
+}
+function s2ItemKey(it) {
+  if (!it || typeof it !== 'object') return '';
+  const c = Object.assign({}, it); delete c.added_by; delete c.changed_by;
+  // an empty entry (opened, then cleared) is the same as no entry
+  const meaningful = Object.keys(c).some(k => { const v = c[k]; return Array.isArray(v) ? v.length : !!v; });
+  return meaningful ? JSON.stringify(Object.keys(c).sort().reduce((o, k) => (o[k] = c[k], o), {})) : '';
+}
+function s2Dirty() {
+  if (!EDIT.s2) return false;
+  const a = s2Norm(EDIT.s2), b = s2Norm((sec('2') || {}).content);
+  const keys = new Set([...Object.keys(a.inventory), ...Object.keys(b.inventory)]);
+  for (const k of keys) if (s2ItemKey(a.inventory[k]) !== s2ItemKey(b.inventory[k])) return true;
+  return JSON.stringify(a.owners) !== JSON.stringify(b.owners) || JSON.stringify(a.coverage) !== JSON.stringify(b.coverage);
+}
+function s2RowDirty(name) {
+  if (!EDIT.s2) return false;
+  const saved = (((sec('2') || {}).content || {}).inventory || {})[name];
+  return s2ItemKey((EDIT.s2.inventory || {})[name]) !== s2ItemKey(saved);
+}
+// "added by" / "last changed by" line inside an open system. the stamp is written when section 2 is saved.
+function s2Trail(it) {
+  const who = p => p && (p.name || p.email) ? `${esc(p.name || '')}${p.email ? ' (' + esc(p.email) + ')' : ''} · ${esc(fmt(p.at))}` : '';
+  const added = who(it && it.added_by), changed = who(it && it.changed_by);
+  if (!added && !changed) return '';
+  return `<div class="inv-trail">${added ? `<div>added by ${added}</div>` : ''}${changed ? `<div>last changed by ${changed}</div>` : ''}</div>`;
+}
+// before saving: stamp each new or changed system with the signed-in person and the time.
+// the authoritative record stays the saved version itself (engagement_versions keeps saved_by per version).
+function s2Stamp(content, who) {
+  const saved = (((sec('2') || {}).content || {}).inventory || {});
+  Object.keys(content.inventory || {}).forEach(k => {
+    const it = content.inventory[k];
+    if (!it || typeof it !== 'object') return;
+    if (s2ItemKey(it) === s2ItemKey(saved[k])) {
+      // unchanged: keep whatever stamps the saved version carries
+      if (saved[k] && saved[k].added_by) it.added_by = saved[k].added_by; else delete it.added_by;
+      if (saved[k] && saved[k].changed_by) it.changed_by = saved[k].changed_by; else delete it.changed_by;
+      return;
+    }
+    if (!saved[k] && k.indexOf('custom:') === 0) { it.added_by = who; delete it.changed_by; }
+    else it.changed_by = who;
+  });
+  return content;
+}
+// who looks after each area (function). amendment 2026-11-18 (amends O-1 to O-4): saving section 2 is allowed with
+// gaps, but CONFIRMING it needs a name AND a role for every area. each area's answer is exactly one of 'named' (name and
+// role both present), 'incomplete' (only one of them) or 'unanswered'. blank or spaces-only does not count. there is no
+// "nobody assigned yet" option and no reason field; an old saved none flag is ignored (counts as unanswered). nothing is
+// filled in or guessed. an area's owner is never assigned to individual systems (O-5, that is s7).
+function s2OwnerAreas(c) {
+  c = c || {}; const owners = c.owners || {};
+  return DEPT_SYSTEMS.map(dept => {
+    const ow = owners[dept.key] || {};
+    const name = String(ow.name || '').trim(), role = String(ow.role || '').trim();
+    const answer = name && role ? 'named' : (name || role ? 'incomplete' : 'unanswered');
+    return { key: dept.key, label: dept.key === 'hr' ? 'human resources' : dept.label.toLowerCase(), answer, name, role };
+  });
+}
+function s2OwnerMarker(a) {
+  if (a.answer === 'named') return '';
+  if (a.answer === 'incomplete') return (a.name ? 'role' : 'name') + ' still needed';
+  return 'name and role needed';
+}
+// the areas still missing a name or a role (what blocks confirming section 2)
+function s2OwnersMissing(c) { return s2OwnerAreas(c).filter(a => a.answer !== 'named').map(a => a.label); }
+// keep the owner markers current while someone types, without redrawing the page
+function refreshS2Owners() {
+  const c = EDIT.s2 || ((sec('2') || {}).content) || {};
+  s2OwnerAreas(c).forEach(a => {
+    const el = document.querySelector(`[data-owner-need="${a.key}"]`);
+    if (el) el.textContent = s2OwnerMarker(a);
+  });
+}
+function refreshS2Dirty() {
+  const dirty = s2Dirty();
+  document.querySelectorAll('[data-s2-dirty]').forEach(el => { el.hidden = !dirty; });
+  refreshS2Owners();
+}
+
+function s2() {
+  const s = sec('2'); const c = EDIT.s2 || (s && s.content) || {};
+  const inv = c.inventory || {}, owners = c.owners || {}, coverage = c.coverage || {};
+  const conf = D.authoritative.confirmations || {};
+  const edit = can('save_section:2');
+  const customKeys = Object.keys(inv).filter(k => k.indexOf('custom:') === 0);
+  let sysTodo = 0, funcsUnreviewed = 0;
+  DEPT_SYSTEMS.forEach(d => {
+    d.systems.forEach(sys => { if (invState(inv[sys.label]) === 'todo') sysTodo++; });
+    if (!(coverage[d.key] && coverage[d.key].reviewed)) funcsUnreviewed++;
+  });
+  customKeys.forEach(k => { if (invState(inv[k]) === 'todo') sysTodo++; });
+  const coverageComplete = sysTodo === 0 && funcsUnreviewed === 0;
+
+  // approved intro + status legend + "what counts as documented?" expander
+  const intro = `<div class="s2-intro">
+    <p class="note">you've described how customers move through your business. now review the systems supporting each stage, those supporting several stages, and the business-wide systems. for each activity, tell us its status and which tools are used.</p>
+    <p class="note">an activity counts whether you do it yourself, your team does it, or an outside provider handles it. add missing systems directly in the relevant group. when the list is complete, confirm it once below.</p>
+    <p class="note muted">you don't need to write new procedures or change anything before the consultation. just show us how things work today.</p>
+    <ul class="legend">
+      <li><b>documented</b> — we do this, and the main steps are recorded clearly enough for someone else to follow.</li>
+      <li><b>not documented</b> — we do this, but how it's done is mostly in someone's head.</li>
+      <li><b>not doing this yet</b> — our business needs this activity, but we haven't started doing it.</li>
+      <li><b>doesn't apply</b> — our business doesn't need this activity.</li>
+      <li><b>not sure</b> — we're unsure which answer fits.</li>
+    </ul>
+    <div class="wdtm"><button type="button" class="lnk" data-act="explain-toggle" data-k="__documented__">what counts as documented?</button>${EXPAND['__documented__'] ? `<div class="wdtm-body muted">documentation can be written instructions, a checklist, a video, a screen recording, a diagram or steps saved in your software. the format doesn't matter. what matters is whether the main steps are recorded clearly enough for someone else to follow. a process can be documented even if people don't always follow it. if the steps are only in someone's head, choose "not documented".</div>` : ''}</div>
+  </div>`;
+
+  // A single user confirmation writes the original six per-function review flags.
+  // This preserves the persisted contract and does not bypass the sign-off gate.
+  const allReviewed=DEPT_SYSTEMS.every(d=>!!(coverage[d.key]&&coverage[d.key].reviewed));
+  const ownerAreas=s2OwnerAreas(c);
+  const ownersHtml=`<div class="ccf-owners" id="s2-owners"><div class="ccf-owners-head">who looks after each area</div>
+    <p class="note muted" style="padding:0 13px">enter a name and a role for every area. if you look after an area yourself, enter your own name and role. you can save this section before every area is filled in, but you can only confirm it when every area has a name and a role. the person who knows each system best is asked later, when we plan the detailed mapping.</p>
+    <div class="ccf-owner-list">
+    ${ownerAreas.map(a=>{
+      const ow=owners[a.key]||{};
+      const need=`<span class="owner-need muted" data-owner-need="${a.key}">${esc(s2OwnerMarker(a))}</span>`;
+      return `<div class="ccf-owner-line"><strong>${esc(a.label)}</strong>${edit?
+        `<input class="fi" placeholder="name" aria-label="who looks after ${esc(a.label)}" value="${esc(ow.name||'')}" data-bind="s2.owners.${a.key}.name"><input class="fi" placeholder="role (for example owner, manager)" aria-label="their role" value="${esc(ow.role||'')}" data-bind="s2.owners.${a.key}.role">`:
+        `<span class="muted">${a.answer==='named'?esc(a.name)+' · '+esc(a.role):(a.answer==='incomplete'?esc(a.name||a.role):'not answered')}</span>`}${need}</div>`;
+    }).join('')}</div></div>`;
+  const confirmHtml=`<div class="ccf-confirm-line"><label><input type="checkbox" data-act="coverage-all" ${allReviewed?'checked':''} ${edit?'':'disabled'} ${sysTodo>0?'disabled':''}>
+    i've reviewed the entire systems list and added any missing activities.</label>
+    ${sysTodo>0?`<p class="muted" style="margin-top:6px">classify the remaining ${sysTodo} activities before confirming the list.</p>`:''}
+  </div>`;
+  const hierarchy=ccfInputHierarchy(inv,edit,customKeys);
+
+  // the OPTIONAL review — available only when the inventory is coverage-complete and saved (no unsaved edits)
+  const saved = !!s, dirty = !!EDIT.s2;
+  const openFindings = FINDINGS.findings.filter(f => f.status === 'open');
+  const consultFindings = FINDINGS.findings.filter(f => f.status === 'for_consultation');
+  // ced-002 client-facing reviewer retired in this staged page; historical findings remain stored.
+  const assess = '';
+
+  // confirm gating: coverage complete AND no CURRENT open findings (stale/failed never block)
+  const savedOwnersMissing = s2OwnersMissing((s && s.content) || {});
+  const ownersComplete = savedOwnersMissing.length === 0;
+  const complete = coverageComplete && ownersComplete;
+  let gap = '';
+  if (edit && sysTodo > 0) gap += `${sysTodo} activit${sysTodo > 1 ? 'ies' : 'y'} still need a status or a "not sure" flag. `;
+  if (edit && funcsUnreviewed > 0) gap += 'confirm that you have reviewed the systems list. ';
+
+  // confirmed-inventory banners: "not sure" items carried to the consultation; and (correction 6) an
+  // accurate distinction if an older confirmation coexists with activities now unclassified under the checklist.
+  const savedInv = (s && s.content && s.content.inventory) || {};
+  const openItems = Object.keys(savedInv).filter(k => savedInv[k] && savedInv[k].unresolved).length;
+  let savedTodo = 0;
+  if (conf.s2_confirmed_at) DEPT_SYSTEMS.forEach(d => d.systems.forEach(sys => { if (invState(savedInv[sys.label]) === 'todo') savedTodo++; }));
+
+  // the pre-consultation brief ar|in reviews (for-consultation findings the client kept). read-only; no section-3 write.
+  const brief = isAdmin() ? `<div class="sub arin-only" style="margin-top:14px"><h4>pre-consultation brief<span class="arin-tag">ar|in only</span></h4>
+    ${(BRIEF.consultation_findings || []).length
+      ? `<p class="muted">the client kept these questions for the consultation:</p>` + BRIEF.consultation_findings.map(f => `<div class="finding"><b>${esc(f.finding_type)}</b> — ${esc(f.summary)}${f.system_name ? ` <span class="muted">(${esc(f.system_name)})</span>` : ''}${(f.evidence && f.evidence[0]) ? `<div class="why">they said: &ldquo;${esc(f.evidence[0].excerpt)}&rdquo;</div>` : ''}</div>`).join('')
+      : '<p class="muted">no questions kept for the consultation.</p>'}</div>` : '';
+
+  const unsavedBar = edit ? `<div class="s2-unsaved-bar" data-s2-dirty ${s2Dirty() ? '' : 'hidden'}><span>you have changes in section 2 that are not saved yet.</span><button type="button" class="btn small" data-act="save-s2">save section 2</button></div>` : '';
+  const body = `<div class="sec-body">${intro}${hierarchy}${ownersHtml}${confirmHtml}
+    <div class="row" style="margin-top:10px">${edit ? '<button class="btn" data-act="save-s2">save section 2</button>' : ''}${savedLine(s)}${edit ? `<span class="s2-unsaved-note" data-s2-dirty ${s2Dirty() ? '' : 'hidden'}>changes not saved yet</span>` : ''}</div>
+    ${unsavedBar}
+    ${assess}
+    ${gap ? `<p class="gap" style="margin-top:6px">${gap} then you can confirm.</p>` : ''}</div>
+    <div class="sec-foot"><div class="fl">confirmation</div>${conf.s2_confirmed_at ? `<span class="ok">confirmed ${fmt(conf.s2_confirmed_at)}${conf.s2_confirmed_name ? ' by ' + esc(conf.s2_confirmed_name) : ''}${openItems ? ` · ${openItems} open item${openItems > 1 ? 's' : ''} carried to the consultation` : ''}</span>${openItems ? '<div class="muted" style="margin-top:4px">confirmed as a coverage list with open items — not a full assessment. the open items are resolved with ar|in.</div>' : ''}${savedTodo ? `<div class="gap" style="margin-top:4px">confirmed ${fmt(conf.s2_confirmed_at)} · ${savedTodo} activit${savedTodo > 1 ? 'ies are' : 'y is'} not classified under the current checklist.${edit ? ' open the activity and give it a status.' : ''}</div>` : ''}` :
+      (can('section_confirm') && s ? `${conf.s1_confirmed_at ? '<input class="fi" id="confirm-name-2" placeholder="type your name to confirm" style="max-width:260px;display:inline-block;margin-right:8px">' : ''}<button class="btn" id="confirm-2-btn" data-act="confirm-2" data-base-ok="${conf.s1_confirmed_at && complete ? '1' : '0'}" ${conf.s1_confirmed_at && complete ? '' : 'disabled'}>confirm your business is fully covered</button> ${!conf.s1_confirmed_at ? '<span class="muted">confirm section 1 first</span>' : (!coverageComplete ? '<span class="muted">classify every activity and confirm the complete list first</span>' : (!ownersComplete ? '<span class="muted">save a name and a role for every area first. still needed for: ' + esc(savedOwnersMissing.join(', ')) + '</span>' : ''))}` : '<span class="muted">not confirmed yet</span>')}
+    ${brief}
+    ${can('consultation_complete') && !deal() ? `<div class="sub arin-only" style="margin-top:14px"><h4>after the consultation<span class="arin-tag">ar|in only</span></h4>
+      <div class="row"><input class="fi" style="max-width:220px" id="deal-id" placeholder="HubSpot deal number (the number at the end of the deal's web address)"><button class="btn arin" data-act="consult-done">consultation completed, open section 3</button></div></div>` : ''}</div>`;
+  return sectionShell('section-2', 2, 'systems inventory', 'a complete coverage list of what your business does, before the consultation', conf.s2_confirmed_at ? 'confirmed' : (s ? 'in progress' : 'not started'), conf.s2_confirmed_at ? 'so' : (s ? 'ip' : ''), body);
+}
+const S3_STATUS = ['', 'documented', 'not documented', 'needs improvement', 'not yet implemented'];
+const S3_TIER = ['', 'prepared', 'moderate failure risk', 'high failure risk', 'critical failure risk', 'failure'];
+const s3Opts = (list, sel) => list.map(o => `<option value="${esc(o)}" ${o === sel ? 'selected' : ''}>${esc(o || 'choose')}</option>`).join('');
+const s3SwText = sw => Array.isArray(sw) ? sw.join(', ') : (typeof sw === 'string' ? sw : '');
+function s3Row(x, i, edit) {
+  const ro = edit ? '' : 'disabled';
+  return `<tr>
+    <td><input class="fi" style="min-width:110px" data-bind="s3.systems.${i}.key" value="${esc(x.key)}" placeholder="short label, for example crm" ${edit ? '' : 'readonly'}></td>
+    <td><input class="fi" style="min-width:160px" data-bind="s3.systems.${i}.name" value="${esc(x.name)}" placeholder="system name" ${edit ? '' : 'readonly'}></td>
+    <td><select class="fi" data-bind="s3.systems.${i}.status" ${ro}>${s3Opts(S3_STATUS, String(x.status || '').toLowerCase())}</select></td>
+    <td><input class="fi" style="min-width:180px" data-bind="s3.systems.${i}.software" value="${esc(s3SwText(x.software))}" placeholder="software used, separated by commas, or write none" ${edit ? '' : 'readonly'}></td>
+    <td>${edit ? `<button class="btn small" data-act="rm-sys3" data-i="${i}">remove</button>` : ''}</td></tr>`;
+}
+function s3() {
+  const d = deal();
+  if (!d) return sectionShell('section-3', 3, 'what we agreed in the consultation', 'the systems in your project and the assumptions behind your quote', 'locked', '', '<div class="lock-notice">this section opens after your consultation with ar|in. ar|in will tell you when it is ready.</div>', true);
+  const s = sec('3'); const c = EDIT.s3 || (s && s.content) || {};
+  const s3 = d.section3 || {};
+  const edit = can('save_section:3');
+  const systems = Array.isArray(c.systems) ? c.systems : [];
+  const status = s3.reviewed_at && !s3.changed_since_confirmation ? 'confirmed. ar|in is preparing your proposal.' : (s3.confirmed_at && !s3.changed_since_confirmation ? 'you confirmed. ar|in is checking it before it prepares your proposal.' : (s3.changed_since_confirmation ? 'this section changed after you confirmed. please confirm again.' : (s ? 'saved, not confirmed yet' : 'ar|in has not started this section')));
+  const noSys = edit ? 'no systems yet. press the fill button below, or add one.' : 'ar|in has not added systems yet.';
+  const body = `<div class="sec-body"><p class="note">ar|in writes down the systems in your project and the assumptions behind your quote. read them. if anything is wrong, tell ar|in before you confirm. your quote is based only on what you confirm.</p>
+    <div class="fr"><div class="fl">systems in your project <span class="muted">(each system needs a short label, a name, a status and the software it uses. write none if it uses no software.)</span></div>
+      <table class="t"><tr><th>short label</th><th>system</th><th>status</th><th>software</th><th></th></tr>${systems.map((x, i) => s3Row(x, i, edit)).join('') || `<tr><td colspan="5" class="muted">${noSys}</td></tr>`}</table>
+      ${edit ? '<div class="row" style="margin-top:8px"><button class="btn small" data-act="add-sys3">add a system</button><button class="btn small arin" data-act="prefill-3">fill from your section 2 list</button></div>' : ''}</div>
+    <div class="fr"><div class="fl">how ready your business is today</div><select class="fi" style="max-width:280px" data-bind="s3.assessment_tier" ${edit ? '' : 'disabled'}>${s3Opts(S3_TIER, String(c.assessment_tier || '').toLowerCase())}</select></div>
+    <div class="fr"><div class="fl">pricing assumptions</div><textarea class="fi" data-bind="s3.assumptions_text" ${edit ? '' : 'readonly'}>${esc(c.assumptions_text)}</textarea></div>
+    <div class="row">${edit ? '<button class="btn arin" data-act="save-s3">save section 3</button>' : ''}${savedLine(s)}</div></div>
+    <div class="sec-foot"><div class="fl">status: ${esc(status)}</div>
+      ${can('section3_confirm') && s && (!s3.confirmed_at || s3.changed_since_confirmation) ? '<button class="btn" data-act="confirm-3">confirm scope and assumptions</button>' : ''}
+      ${can('section3_review') && s3.confirmed_at && !s3.changed_since_confirmation && !s3.reviewed_at ? '<button class="btn arin" data-act="review-3">checked, ready for the proposal</button>' : ''}
+      ${s3.confirmed_at ? `<div class="muted" style="margin-top:6px">confirmed ${fmt(s3.confirmed_at)}${s3.reviewed_at ? ' · reviewed by ar|in ' + fmt(s3.reviewed_at) : ''}</div>` : ''}</div>`;
+  return sectionShell('section-3', 3, 'what we agreed in the consultation', 'the systems in your project and the assumptions behind your quote', status, s3.reviewed_at ? 'so' : 'ip', body);
+}
+function planSection() {
+  const d = deal();
+  if (!d || !d.signed_at) return sectionShell('section-plan', '·', 'contract and mapping plan', 'from the signed contract and the first payment', 'waiting for the contract', '', '<div class="lock-notice">shows once the contract is signed. the 50% first payment unlocks detailed mapping.</div>', true);
+  const parts = D.authoritative.participants || [];
+  const appr = D.authoritative.approvers || [];
+  const apprName = (party) => { const a = appr.find(x => x.party === party && x.kind === 'approver'); const p = a && person(a.participant_id); return p ? p.name : 'not named yet'; };
+  const opts = (role, sel) => parts.filter(p => p.status === 'active' && (!role || p.role === role)).map(p => `<option value="${p.participant_id}" ${p.participant_id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
+  const body = `<div class="sec-body">
+    <table class="t"><tr><th>contract signed</th><th>first payment</th><th>mapping started</th><th>kickoff</th><th>mapping plan</th></tr>
+    <tr><td>${fmt(d.signed_at)}</td><td>${d.deposit_verified ? '<span class="ok">verified</span>' : 'waiting'}</td><td>${fmt(d.mapping_started_at) || '-'}</td><td>${fmt(d.kickoff_held_at) || '-'}</td><td>${d.mapping_plan_agreed_at ? '<span class="ok">agreed ' + fmt(d.mapping_plan_agreed_at) + '</span>' : 'not agreed yet'}</td></tr></table>
+    <p class="muted" style="margin:8px 0 14px">contract and payment come from the contract and finance systems. approvals: ar|in ${esc(apprName('arin'))} · client ${esc(apprName('client'))}</p>
+    ${isAdmin() && d.deposit_verified ? `<div class="sub arin-only"><h4>kickoff<span class="arin-tag">ar|in only</span></h4><div class="row">
+      <select class="fi" style="max-width:150px" id="ko-day">${['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map(x => `<option>${x}</option>`).join('')}</select>
+      <input class="fi" style="max-width:100px" id="ko-time" value="10:00"><button class="btn arin" data-act="kickoff">kickoff held, weekly review slot set</button></div></div>
+    <div class="sub arin-only"><h4>people on this engagement<span class="arin-tag">ar|in only</span></h4>
+      <table class="t"><tr><th>name</th><th>role</th><th>email</th><th>systems</th></tr>${parts.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.role.replace('_', ' '))}</td><td>${esc(p.email || '')}</td><td>${esc((p.systems || []).join(', '))}</td></tr>`).join('')}</table>
+      <div class="grid3" style="margin-top:8px"><input class="fi" id="pa-name" placeholder="name"><input class="fi" id="pa-email" placeholder="email"><select class="fi" id="pa-role"><option value="client_contributor">contributor</option><option value="client_approver">approver</option><option value="client_viewer">viewer</option></select></div>
+      <div class="row" style="margin-top:6px"><input class="fi" id="pa-systems" placeholder="system ids, comma separated" style="max-width:360px"><button class="btn arin" data-act="add-person">add person</button></div></div>
+    <div class="sub arin-only"><h4>named approvers<span class="arin-tag">ar|in only</span></h4><div class="grid3">
+      <select class="fi" id="ap-arin">${opts('arin_admin')}</select><button class="btn arin" data-act="set-arin-approver">set ar|in approver</button><span></span>
+      <select class="fi" id="ap-client">${opts('client_approver')}</select><input class="fi" id="ap-notice" placeholder="contract clause naming the approver"><button class="btn arin" data-act="set-client-approver">set client approver</button></div></div>` : ''}
+    ${can('mapping_plan_confirm') && d.kickoff_held_at && !d.mapping_plan_agreed_at ? '<button class="btn" data-act="plan-confirm">confirm the mapping plan</button>' : ''}
+    ${isAdmin() && d.mapping_plan_agreed_at ? `<div class="sub arin-only"><h4>weekly joint review<span class="arin-tag">ar|in only</span></h4><div class="row"><input class="fi" style="max-width:160px" id="rv-date" type="date"><input class="fi" id="rv-dec" placeholder="what was agreed"><button class="btn arin" data-act="review-record">record review</button></div></div>` : ''}
+  </div>`;
+  return sectionShell('section-plan', '·', 'contract and mapping plan', 'who looks after each system, who knows it best, and by when', d.mapping_plan_agreed_at ? 'plan agreed' : (d.deposit_verified ? 'mapping started' : 'waiting for first payment'), d.mapping_plan_agreed_at ? 'so' : 'ip', body);
+}
+const STATUS_CLS = { 'Signed Off': 'so', 'Reviewed': 'ip', 'Documented': 'ip', 'Captured': 'ip', 'Removed': 'rm' };
+function stepsEditor(sys, doc, editable) {
+  const steps = (doc && doc.steps) || [];
+  return steps.map((st, i) => `<div class="step"><div class="spread"><b>step ${esc(st.step_id || ('s' + (i + 1)))}</b>${editable ? `<button class="btn small arin" data-act="rm-step" data-sys="${esc(sys)}" data-i="${i}">remove</button>` : ''}</div>
+    ${FIELDS.map(([f, label]) => { const v = (st.fields && st.fields[f]) || {}; const val = Array.isArray(v.value) ? v.value.join('\n') : (v.value || '');
+      return `<div class="field-row"><div class="fl" style="padding-top:8px">${label}</div><textarea class="fi" style="min-height:36px" data-bind="sys.${esc(sys)}.${i}.${f}" ${editable ? '' : 'readonly'}>${esc(val)}</textarea>
+      <label class="acc"><input type="checkbox" data-bind="sys.${esc(sys)}.${i}.${f}.accepted" ${v.accepted ? 'checked' : ''} ${editable ? '' : 'disabled'}> accepted</label></div>${v.from_draft ? `<div class="cite">from the helper draft, cited: “${esc(v.from_draft)}”</div>` : ''}`; }).join('')}
+    <div class="grid2"><div><div class="fl">decision logic (if the step branches)</div><input class="fi" data-bind="sys.${esc(sys)}.${i}.decision_logic" value="${esc(st.decision_logic || '')}" ${editable ? '' : 'readonly'}></div>
+    <label class="acc" style="padding-top:20px;font-size:12px"><input type="checkbox" data-bind="sys.${esc(sys)}.${i}.sends_message" ${st.sends_message ? 'checked' : ''} ${editable ? '' : 'disabled'}> this step sends a message</label></div></div>`).join('');
+}
+function systemCard(m) {
+  const sys = m.system_id, det = (D.authoritative.system_detail || {})[sys] || {};
+  const s = sec('4', sys);
+  const doc = EDIT['sys:' + sys] || (s && s.content) || { steps: [] };
+  const removed = m.status === 'Removed';
+  const editable = !removed && can('save_section:4') && !(s && s.locked) && (isAdmin() || (D.me && (person(D.me.participant_id) || {}).systems || []).includes(sys) || D.role === 'client_approver');
+  const owner = person(det.owner_participant_id), worker = person(det.worker_participant_id);
+  const appr = (D.authoritative.approvals || []).filter(a => a.system_id === sys);
+  const comp = det.completeness || {};
+  const parts = D.authoritative.participants || [];
+  const opt = sel => '<option value=""></option>' + parts.filter(p => p.status === 'active' && p.role !== 'arin_admin').map(p => `<option value="${p.participant_id}" ${p.participant_id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
+  const draft = DRAFT[sys] || det.latest_draft;
+  return `<div class="card" id="sys-${esc(sys)}"><div class="card-header"><div><b>${esc(sys)}</b> <span class="muted">${owner ? 'owner ' + esc(owner.name) : ''}${worker ? ' · knows it best: ' + esc(worker.name) : ''}${m.deadline ? ' · due ' + esc(m.deadline) : ''}</span></div><span class="badge ${STATUS_CLS[m.status] || ''}">${esc(m.status)}</span></div>
+  <div class="card-body">
+  ${removed ? `<p class="muted">removed from the scope by amendment ${esc(m.removed_by_change_id || '')}. its history is kept and it is read-only.</p>` : ''}
+  ${isAdmin() && !removed ? `<div class="sub arin-only"><h4>mapping plan<span class="arin-tag">ar|in only</span></h4><div class="grid3">
+    <div><div class="fl">system owner</div><select class="fi" id="mp-owner-${esc(sys)}">${opt(det.owner_participant_id)}</select></div>
+    <div><div class="fl">knowledgeable worker</div><select class="fi" id="mp-worker-${esc(sys)}">${opt(det.worker_participant_id)}</select></div>
+    <div><div class="fl">mapping deadline</div><input class="fi" type="date" id="mp-deadline-${esc(sys)}" value="${esc(m.deadline || '')}"></div></div>
+    <button class="btn small arin" style="margin-top:6px" data-act="plan-set" data-sys="${esc(sys)}">save plan for this system</button></div>` : ''}
+  <div class="sub"><h4>evidence</h4>${(det.evidence || []).length ? `<table class="t">${det.evidence.map(e => `<tr><td>${esc(e.type)}</td><td>${fmt(e.added_at)}</td><td>${e.link ? esc(e.link) : ''}</td><td class="muted">${e.chars} characters</td></tr>`).join('')}</table>` : '<p class="muted">no evidence yet. a recording transcript or a written description of how the task is done today.</p>'}
+    ${!removed && can('evidence_add') ? `<div class="grid3" style="margin-top:8px"><select class="fi" id="ev-type-${esc(sys)}"><option value="transcript">recording transcript</option><option value="description">written description</option><option value="document">document text</option></select><input class="fi" id="ev-link-${esc(sys)}" placeholder="recording link (optional)"><span></span></div>
+    <textarea class="fi" id="ev-text-${esc(sys)}" placeholder="paste the transcript or describe the task step by step" style="margin-top:6px"></textarea><button class="btn small" style="margin-top:6px" data-act="ev-add" data-sys="${esc(sys)}">add evidence</button>` : ''}</div>
+  ${(isAdmin() || draft) && !removed ? `<div class="sub ${isAdmin() ? 'arin-only' : ''}"><h4>ai mapping helper${isAdmin() ? '<span class="arin-tag">run by ar|in</span>' : ''}</h4>
+    ${false ? `<button class="btn small arin" data-act="helper" data-sys="${esc(sys)}">draft from evidence</button> <span class="muted">the draft is a suggestion. it never changes the document until someone accepts each field.</span>` : ''}
+    ${draft && draft.output ? `<div style="margin-top:8px">${(draft.output.steps || []).map(st => `<div class="step"><b>${esc(st.step_id)}</b>${FIELDS.map(([f, l]) => { const v = st.fields && st.fields[f]; if (!v) return ''; const c = (v.citations || [])[0];
+        return `<div style="font-size:12px;margin-top:3px"><span class="fl">${l}</span> ${v.value === 'unknown' ? '<span class="gap">unknown, question sent</span>' : esc(Array.isArray(v.value) ? v.value.join(' / ') : v.value)}${c ? `<div class="muted">cited: “${esc(c.excerpt)}”</div>` : ''}</div>`; }).join('')}</div>`).join('')}
+      ${(draft.validation && (draft.validation.rejected_citations || []).length) ? `<p class="gap">${draft.validation.rejected_citations.length} suggestion rejected: its citation is not in the evidence (${esc(draft.validation.rejected_citations.map(x => x.step_id + ' ' + x.field).join(', '))}). set to unknown.</p>` : ''}
+      ${editable ? `<button class="btn small arin" data-act="use-draft" data-sys="${esc(sys)}">copy the draft into the document (unaccepted)</button>` : ''}</div>` : ''}</div>` : ''}
+  ${(det.open_questions || []).length ? `<div class="sub"><h4>open questions for the person who knows this best</h4>${det.open_questions.map(q => `<div class="q"><div>${esc(q.text)} ${q.blocking ? '<span class="muted">(needed before sign-off)</span>' : ''}</div>
+    ${can('question_answer') ? `<div class="row" style="margin-top:6px"><input class="fi" id="qa-${q.question_id}" placeholder="your answer"><button class="btn small" data-act="answer" data-q="${q.question_id}">answer</button>${can('questions_manage') ? `<button class="btn small arin" data-act="dismiss" data-q="${q.question_id}">dismiss</button>` : ''}</div>` : ''}</div>`).join('')}</div>` : ''}
+  <div class="sub"><h4>system document · phase 1 (how it runs today)</h4>${s && s.locked ? '<p class="muted">locked while an approval is open.</p>' : ''}
+    ${stepsEditor(sys, doc, editable)}
+    ${editable ? `<div class="row"><button class="btn small arin" data-act="add-step" data-sys="${esc(sys)}">+ add step</button><button class="btn small" data-act="save-sys" data-sys="${esc(sys)}">save system document</button>${savedLine(s)}</div>` : savedLine(s)}
+    <div style="margin-top:8px">${comp.complete ? '<span class="ok">complete: every step has its required fields accepted and no blocking question is open.</span>' : (comp.gaps ? '<span class="gap">still needed: ' + esc(comp.gaps.join(' · ')) + '</span>' : '')}</div></div>
+  ${isAdmin() && m.status === 'Documented' ? `<div class="sub arin-only"><h4>teach-it test<span class="arin-tag">ar|in only</span></h4><div class="row"><input class="fi" style="max-width:260px" id="ti-by-${esc(sys)}" placeholder="who followed the document cold"><button class="btn small arin" data-act="teach" data-sys="${esc(sys)}" data-r="passed">passed</button><button class="btn small arin" data-act="teach" data-sys="${esc(sys)}" data-r="failed">failed</button></div></div>` : ''}
+  ${isAdmin() && m.status === 'Reviewed' && !appr.some(a => a.status === 'open') ? `<div class="sub arin-only"><h4>phase 1 approval<span class="arin-tag">ar|in only</span></h4><button class="btn small arin" data-act="request-approval" data-sys="${esc(sys)}">request phase 1 approval (ar|in first, then the client)</button></div>` : ''}
+  ${appr.length ? `<div class="sub"><h4>approvals</h4><table class="t"><tr><th>type</th><th>version</th><th>status</th><th>ar|in</th><th>client</th></tr>${appr.map(a => `<tr><td>${esc(a.type)}</td><td>${a.version_number}</td><td>${esc(a.status)}</td><td>${fmt(a.arin_at) || '-'}</td><td>${fmt(a.client_at) || '-'}</td></tr>`).join('')}</table></div>` : ''}
+  </div></div>`;
+}
+function s4() {
+  const d = deal();
+  if (!d || !d.deposit_verified) return sectionShell('section-4', 4, 'system library', 'one document per system, phase 1 signed off before anything is built', 'locked', '', '<div class="lock-notice">opens when the first payment is verified.</div>', true);
+  const systems = (D.authoritative.systems || []);
+  const signed = systems.filter(x => x.status === 'Signed Off').length, live = systems.filter(x => x.status !== 'Removed').length;
+  return sectionShell('section-4', 4, 'system library', 'one document per system, phase 1 signed off before anything is built', `${signed} of ${live} signed off`, d.library_completed_at ? 'so' : 'ip',
+    `<div class="sec-body">${d.library_completed_at ? `<p class="ok" style="margin-bottom:12px">library complete ${fmt(d.library_completed_at)}. handed to build (OPS-002).</p>` : ''}${systems.map(systemCard).join('')}</div>`);
+}
+function approvalsSection() {
+  const a = D.authoritative.approvals || [];
+  return `<div class="section" id="section-approvals"><div class="sec-header"><div class="sec-left"><div><div class="sec-title">approvals</div><div class="sec-sub">binding approvals, each against one exact version</div></div></div></div><div class="sec-body">
+    ${a.length ? `<table class="t"><tr><th>type</th><th>system</th><th>version</th><th>status</th><th>ar|in approved</th><th>client approved</th></tr>${a.map(x => `<tr><td>${esc(x.type)}</td><td>${esc(x.system_id)}</td><td>${x.version_number}</td><td>${esc(x.status)}</td><td>${fmt(x.arin_at) || '-'}</td><td>${fmt(x.client_at) || '-'}</td></tr>`).join('')}</table>` : '<p class="muted">no approvals yet.</p>'}</div></div>`;
+}
+function dots() {
+  const set = (id, cls) => { const e = document.getElementById(id); if (e) e.className = 'sdot ' + (cls || ''); };
+  if (!D) return;
+  const c = D.authoritative.confirmations || {}, d = deal();
+  set('dot1', c.s1_confirmed_at ? 'done' : 'active'); set('dot2', c.s2_confirmed_at ? 'done' : (c.s1_confirmed_at ? 'active' : ''));
+  set('dot3', d && d.section3 && d.section3.reviewed_at ? 'done' : (d ? 'active' : ''));
+  set('dotp', d && d.mapping_plan_agreed_at ? 'done' : (d && d.signed_at ? 'active' : ''));
+  set('dot4', d && d.library_completed_at ? 'done' : (d && d.deposit_verified ? 'active' : ''));
+}
+function render() {
+  const main = document.getElementById('main');
+  document.getElementById('me').textContent = D ? `${D.me.name} (${D.me.role.replace('_', ' ')})` : 'not signed in';
+  main.innerHTML = D ? header() + band() + s3ReviewPanel() + s1() + s2() + preconsultSection() + s3() + planSection() + s4() + approvalsSection() : signinView();
+  dots();
+  if (D) PreconsultUI.mount(preconsultOptions());
+}
+
+// shared factual pre-consultation report; no client-side journey checklist.
+async function fetchPreconsultPackage() {
+  const form = new URLSearchParams();
+  form.set('session_token',token()); form.set('slug',SLUG);
+  const r = await fetch(PRECONSULT_URL,{method:'POST',body:form,credentials:'omit'});
+  if (!r.ok) throw Error('report access failed');
+  const result = await r.json();
+  if (!result || result.ok!==true) throw Error('report unavailable');
+  return result;
+}
+function cachedPreconsultPackage() {
+  if (PRECONSULT_CACHE) return Promise.resolve(PRECONSULT_CACHE);
+  if (PRECONSULT_PENDING) return PRECONSULT_PENDING;
+  const generation = PRECONSULT_GENERATION;
+  PRECONSULT_PENDING = fetchPreconsultPackage().then(result => {
+    if (generation!==PRECONSULT_GENERATION || !D || !token()) throw Error('superseded session report');
+    PRECONSULT_CACHE = result;
+    CCF_PRESENTATION_MAP = ccfBuildPresentationMap(result.package.source_A);
+    PRECONSULT_PENDING = null;
+    return result;
+  }).catch(error => { PRECONSULT_PENDING = null; throw error; });
+  return PRECONSULT_PENDING;
+}
+function preconsultOptions() {
+  return {mountPackage:document.getElementById('preconsult-package'),
+    fetchPackage:cachedPreconsultPackage};
+}
+function preconsultSection() {
+  return '<section class="section" id="preconsult-section"><div class="sec-header"><div class="sec-title">pre-consultation operating picture</div></div>' +
+    '<div class="sec-body"><div id="preconsult-package"></div></div></section>';
+}
+
+// ---------------- edits ----------------
+function bindValue(path, value) {
+  const [root, ...rest] = path.split('.');
+  if (root === 's1' || root === 's2' || root === 's3') {
+    const key = root, base = EDIT[key] || JSON.parse(JSON.stringify((sec(root.slice(1)) || {}).content || (root === 's2' ? { inventory: {} } : {})));
+    if (root === 's2') { base.inventory = base.inventory || {}; base.owners = base.owners || {};
+      if (rest[0] === 'owners') { const dk = rest[1], f = rest[2]; const ow = base.owners[dk] = base.owners[dk] || {};
+        // a name and a role per area (the old "nobody assigned yet" option was removed on 2026-11-18)
+        ow[f] = value; delete ow.none; }
+      else { const field = rest[rest.length - 1]; const name = rest.slice(1, -1).join('.'); base.inventory[name] = base.inventory[name] || {}; base.inventory[name][field] = value; } }
+    else if (root === 's3' && rest[0] === 'systems') { base.systems = Array.isArray(base.systems) ? base.systems : []; const row = base.systems[+rest[1]]; if (row) { const f = rest[2]; if (f === 'software') { const v = String(value).trim(); row.software = v.toLowerCase() === 'none' ? 'none' : v.split(',').map(x => x.trim()).filter(Boolean); } else row[f] = value; } }
+    else base[rest[0]] = value;
+    EDIT[key] = base; return;
+  }
+  if (root === 'sys') {
+    const sys = rest[0], i = +rest[1], f = rest[2], sub = rest[3];
+    const key = 'sys:' + sys; const s = sec('4', sys);
+    const doc = EDIT[key] || JSON.parse(JSON.stringify((s && s.content) || { steps: [] }));
+    const st = doc.steps[i]; if (!st) return;
+    st.fields = st.fields || {};
+    if (f === 'decision_logic') st.decision_logic = value || null;
+    else if (f === 'sends_message') st.sends_message = !!value;
+    else { st.fields[f] = st.fields[f] || { value: '', accepted: false };
+      if (sub === 'accepted') st.fields[f].accepted = !!value;
+      else { const lines = String(value).split('\n').map(x => x.trim()).filter(Boolean); st.fields[f].value = (f === 'routing' && lines.length > 1) ? lines : String(value); } }
+    EDIT[key] = doc;
+  }
+}
+document.addEventListener('input', e => { const b = e.target.getAttribute && e.target.getAttribute('data-bind'); if (b) { bindValue(b, e.target.type === 'checkbox' ? e.target.checked : e.target.value); if (b.indexOf('s2.') === 0) refreshS2Dirty(); } });
+document.addEventListener('change', e => { const b = e.target.getAttribute && e.target.getAttribute('data-bind'); if (b) { bindValue(b, e.target.type === 'checkbox' ? e.target.checked : e.target.value); if (b.indexOf('s2.') === 0) refreshS2Dirty(); } });
+// warn before leaving the page with unsaved section 2 changes (the browser shows its own wording)
+window.addEventListener('beforeunload', e => { if (D && s2Dirty()) { e.preventDefault(); e.returnValue = ''; } });
+const val = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+function s2buf() { if (!EDIT.s2) EDIT.s2 = JSON.parse(JSON.stringify((sec('2') || {}).content || {})); EDIT.s2.inventory = EDIT.s2.inventory || {}; EDIT.s2.owners = EDIT.s2.owners || {}; EDIT.s2.coverage = EDIT.s2.coverage || {}; return EDIT.s2; }
+function invRemove(k) { const b = s2buf(); const f = b.inventory[k] && b.inventory[k].func; delete b.inventory[k]; invalidateReview(f); render(); }
+function invSetStatus(k, v) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; const now = (b.inventory[k].status === v ? '' : v); b.inventory[k].status = now; if (now) b.inventory[k].unresolved = false; render(); }
+function invSetUnresolved(k) { const b = s2buf(); b.inventory[k] = b.inventory[k] || {}; const on = !b.inventory[k].unresolved; b.inventory[k].unresolved = on; if (on) b.inventory[k].status = ''; render(); }
+// software selection with combination rules (correction 3):
+//  - "no software used" (__none__): exclusive with named tools / "other" / "not sure"; COMPATIBLE with paper + outside provider
+//  - "paper" (__paper__) and "outside provider" (__outsourced__): combine with named tools, each other, and "no software used"
+//      (a mixed internal/outsourced arrangement = a named tool AND "outside provider" together)
+//  - "not sure" (__unsure_tools__): exclusive, chosen alone
+//  - a named tool: clears "no software used" / "not sure" / the legacy token
+//  - the legacy 'no software / paper-based' token is preserved verbatim and only removed when the client changes something (E2)
+function invToggleSwToken(k, tok, on) {
+  const b = s2buf(); b.inventory[k] = b.inventory[k] || {};
+  let arr = Array.isArray(b.inventory[k].software) ? b.inventory[k].software.slice() : [];
+  if (on) {
+    if (tok === '__unsure_tools__') { arr = ['__unsure_tools__']; b.inventory[k].other = ''; }
+    else if (tok === '__none__') { arr = arr.filter(x => x === '__paper__' || x === '__outsourced__'); arr.push('__none__'); b.inventory[k].other = ''; }
+    else if (tok === 'no software / paper-based') { /* legacy is shown already-checked; turning it on is a no-op */ }
+    else if (tok === '__paper__' || tok === '__outsourced__') {
+      arr = arr.filter(x => x !== '__unsure_tools__' && x !== 'no software / paper-based');
+      if (!arr.includes(tok)) arr.push(tok);
+    } else { // a named tool
+      arr = arr.filter(x => x !== '__none__' && x !== '__unsure_tools__' && x !== 'no software / paper-based');
+      if (!arr.includes(tok)) arr.push(tok);
+    }
+  } else {
+    arr = arr.filter(x => x !== tok);
+  }
+  b.inventory[k].software = arr; render();
+}
+document.addEventListener('change', e => { const el = e.target, a = el.getAttribute && el.getAttribute('data-act'); if (a === 'sw-token') invToggleSwToken(el.getAttribute('data-k'), el.getAttribute('data-sw'), el.checked); else if (a === 'func-review') setReviewed(el.getAttribute('data-k'), el.checked); else if (a === 'coverage-all') setAllReviewed(el.checked); });
+
+// Verify the specific activity was corrected. For an inconsistency, a software
+// change does not qualify: the client must correct its mistaken not-done status.
+function isSavedFix(fx, savedInv) {
+  if (!fx || !fx.sys || !fx.before) return false;
+  const after = (savedInv && savedInv[fx.sys]) || {};
+  if (fx.findingType === 'inconsistency') {
+    const before = JSON.parse(fx.before);
+    return ['not applicable', 'not yet implemented'].includes(before.status)
+      && ['documented', 'not documented'].includes(after.status);
+  }
+  return JSON.stringify(after) !== fx.before;
+}
+// Resolve after successful save and before load() marks the assessment stale.
+// Retain a retryable action if the resolution request itself fails.
+async function resolveSavedFixesAfterSave(savedInv) {
+  let failures = 0;
+  for (const id of Object.keys(FIX)) {
+    const fx = FIX[id];
+    if (!fx || !['armed', 'ready'].includes(fx.state) || !isSavedFix(fx, savedInv)) continue;
+    try {
+      const r = await call2('finding_resolve', { finding_id: id, action: 'applied' });
+      if (r && r.body && r.body.ok) delete FIX[id];
+      else { fx.state = 'ready'; failures++; }
+    } catch (e) { fx.state = 'ready'; failures++; }
+  }
+  return failures;
+}
+async function saveSection(n, sys) {
+  const key = sys ? 'sys:' + sys : 's' + n; const s = sec(String(n), sys);
+  const content = EDIT[key] || (s && s.content) || {};
+  if (n === 2 && content.inventory) s2Stamp(content, { name: (D.me && D.me.name) || '', email: meEmail(), at: new Date().toISOString() });
+  const r = await call('save_section', { section: String(n), system_id: sys || '', content, base_version: s ? s.version : 0 });
+  if (r.body.ok) {
+    delete EDIT[key];
+    const failed = n === 2 ? await resolveSavedFixesAfterSave(content.inventory || {}) : 0;
+    await load();
+    toast(failed ? 'saved, but could not mark the finding fixed. please try again.' : 'saved, version ' + r.body.version, failed > 0);
+    return true;
+  }
+  toast(r.body.error === 'conflict' ? 'someone saved a newer version. reload to see it.' : (r.body.error || 'not saved'), true);
+  return false;
+}
+
+// Clicking a native summary updates only display state; the form data is untouched.
+// Retaining state in memory keeps rows open when a status change calls render().
+document.addEventListener('click', e => {
+  const summary = e.target.closest && e.target.closest('summary[data-inv-toggle]');
+  if (!summary) return;
+  const details = summary.parentElement;
+  if (!details || details.tagName !== 'DETAILS') return;
+  e.preventDefault();
+  const key = summary.getAttribute('data-inv-key');
+  const next = !details.open;
+  if (summary.getAttribute('data-inv-toggle') === 'function')
+    INVENTORY_FUNCTION_OPEN[key] = next;
+  else
+    INVENTORY_SYSTEM_OPEN[key] = next;
+  details.open = next;
+});
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.getAttribute('data-act'), sys = t.getAttribute('data-sys'), d = deal();
+  if (a === 'sw-token' || a === 'func-review' || a === 'coverage-all') return;
+  t.disabled = true;
+  try {
+    if (a === 'si-send') { SIGN.email = val('si-email'); const r = await call('request_code', { email: SIGN.email }); if (r.status === 200) { SIGN.stage = 'code'; render(); } else toast('try again', true); }
+    else if (a === 'si-back') { SIGN.stage = 'email'; render(); }
+    else if (a === 'si-verify') { const codeInput = String(val('si-code') || '').trim(); const normalizedCode = /^[0-9]{1,6}$/.test(codeInput) ? codeInput.padStart(6, '0') : codeInput; const r = await call('verify_code', { email: SIGN.email, code: normalizedCode }); if (r.body.ok) { setToken(r.body.session_token); setMeEmail(String(SIGN.email || '').trim().toLowerCase()); SIGN.stage = 'email'; await load(); } else toast('that code did not work', true); }
+    else if (a === 'sign-out') { try { await call('sign_out'); } catch (e) {} setToken(''); D = null; PRECONSULT_GENERATION++; PRECONSULT_CACHE=null; PRECONSULT_PENDING=null; CCF_PRESENTATION_MAP=null; render(); }
+    else if (a === 'save-s1') await saveSection(1);
+    else if (a === 'save-s2') await saveSection(2);
+    else if (a === 'inv-status') invSetStatus(t.getAttribute('data-k'), t.getAttribute('data-v'));
+    else if (a === 'inv-unresolved') invSetUnresolved(t.getAttribute('data-k'));
+    else if (a === 'sw-open') { const k = t.getAttribute('data-k'); SWOPEN[k] = !SWOPEN[k]; render(); }
+    else if (a === 'explain-toggle') { const k = t.getAttribute('data-k'); EXPAND[k] = !EXPAND[k]; render(); }
+    else if (a === 'find-fix') { const id = t.getAttribute('data-k'); const sysName = t.getAttribute('data-sys-name'); const savedInv = ((sec('2') || {}).content || {}).inventory || {}; FIX[id] = { state: 'armed', sys: sysName, before: JSON.stringify(savedInv[sysName] || {}), findingType: (FINDINGS.findings.find(f => f.finding_id === id) || {}).finding_type || null }; const el = document.getElementById(rowSlug(sysName)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); render(); }
+    else if (a === 'find-apply') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'applied'); delete FIX[id]; }
+    else if (a === 'find-dismiss') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'dismissed'); delete FIX[id]; }
+    else if (a === 'find-consult') { const id = t.getAttribute('data-k'); await resolveFinding(id, 'for_consultation'); delete FIX[id]; }
+    else if (a === 'find-add') await applyOmission(t.getAttribute('data-k'), t.getAttribute('data-fk'), t.getAttribute('data-label'));
+    else if (a === 'cust-add') { const fk = t.getAttribute('data-k'); const inp = document.getElementById('cust-add-' + fk); addCustom(fk, inp ? inp.value : ''); }
+    else if (a === 'cust-add-inline') {
+      const id=t.getAttribute('data-id'),name=document.getElementById('ccf-add-name-'+id);
+      const picker=document.getElementById('ccf-add-func-'+id);
+      const fk=t.getAttribute('data-fk')||(picker?picker.value:'');
+      const kind=t.getAttribute('data-placement'), stage=t.getAttribute('data-stage');
+      addCustom(fk,name?name.value:'',{type:kind,stage});
+    }
+    else if (a === 'cust-remove') invRemove(t.getAttribute('data-k'));
+    else if (a === 'add-sys3') { const base = EDIT.s3 || JSON.parse(JSON.stringify((sec('3') || {}).content || {})); base.systems = Array.isArray(base.systems) ? base.systems : []; base.systems.push({ key: '', name: '', status: '', software: [] }); EDIT.s3 = base; render(); }
+    else if (a === 'rm-sys3') { const base = EDIT.s3 || JSON.parse(JSON.stringify((sec('3') || {}).content || {})); if (Array.isArray(base.systems)) { base.systems.splice(+t.getAttribute('data-i'), 1); EDIT.s3 = base; render(); } }
+    else if (a === 'prefill-3') {
+      const had = ((EDIT.s3 || (sec('3') || {}).content || {}).systems || []).length;
+      if (had && !window.confirm('this replaces the list below with your section 2 list. continue?')) return;
+      const r = await call4('section3_prefill', '');
+      if (r.body && r.body.ok) { const base = EDIT.s3 || JSON.parse(JSON.stringify((sec('3') || {}).content || {})); base.systems = r.body.systems || []; EDIT.s3 = base; render(); toast('list filled from section 2. fill in any blank status or software. then press save.'); }
+      else if (r.status !== 401) toast('we could not fill the list. try again, or add the systems by hand.', true);
+    }
+    else if (a === 'save-s3') await saveSection(3);
+    else if (a === 's3-mark') await markReviewed();
+    else if (a === 'confirm-1') { const nm = val('confirm-name-1'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '1', name: nm }, 'section 1 confirmed'); }
+    else if (a === 'confirm-2') { const nm = val('confirm-name-2'); if (!nm) { toast('type your name to confirm', true); } else await act('section_confirm', { section: '2', name: nm }, 'section 2 confirmed'); }
+    else if (a === 'consult-done') await act4('consultation_complete', val('deal-id'), 'consultation marked complete. section 3 is now open to the client.');
+    else if (a === 'confirm-3') { if (EDIT.s3) toast('save section 3 first, so you confirm what is saved.', true); else await act4('section3_confirm', d.deal_id, 'section 3 confirmed. ar|in will check it next.'); }
+    else if (a === 'review-3') await act4('section3_review', d.deal_id, 'section 3 is ready. the proposal can now be prepared.');
+    else if (a === 'kickoff') await act('kickoff_record', { deal_id: d.deal_id, review_day: val('ko-day'), review_time: val('ko-time') }, 'kickoff recorded');
+    else if (a === 'add-person') await act('participant_add', { email: val('pa-email'), name: val('pa-name'), role: val('pa-role'), systems: val('pa-systems').split(',').map(x => x.trim()).filter(Boolean) }, 'person added');
+    else if (a === 'set-arin-approver') await act('approver_set', { participant_id: val('ap-arin'), party: 'arin', kind: 'approver', notice_ref: '' }, 'ar|in approver set');
+    else if (a === 'set-client-approver') await act('approver_set', { participant_id: val('ap-client'), party: 'client', kind: 'approver', notice_ref: val('ap-notice') }, 'client approver set');
+    else if (a === 'plan-confirm') await act('mapping_plan_confirm', { deal_id: d.deal_id }, 'mapping plan confirmed');
+    else if (a === 'review-record') await act('mapping_review_record', { deal_id: d.deal_id, review_date: val('rv-date') || new Date().toISOString().slice(0, 10), attendees: [], systems: (D.authoritative.systems || []).map(x => x.system_id), decisions: val('rv-dec') }, 'review recorded');
+    else if (a === 'plan-set') await act('mapping_plan_set', { system_id: sys, owner_id: val('mp-owner-' + sys), worker_id: val('mp-worker-' + sys), deadline: val('mp-deadline-' + sys) }, 'plan saved for ' + sys);
+    else if (a === 'ev-add') await act('evidence_add', { system_id: sys, type: val('ev-type-' + sys), text: val('ev-text-' + sys), link: val('ev-link-' + sys) }, 'evidence added');
+    else if (a === 'helper') { toast('drafting from the evidence...'); const r = await call('helper_run', { system_id: sys });
+      if (r.body.ok) { DRAFT[sys] = { output: r.body.suggestion, validation: { rejected_citations: r.body.rejected_citations } }; toast(`draft ready. ${r.body.questions_created} question(s) sent.`); await load(); } else toast(r.body.error || 'helper did not run', true); }
+    else if (a === 'use-draft') { const dr = DRAFT[sys] || ((D.authoritative.system_detail || {})[sys] || {}).latest_draft; const s = sec('4', sys);
+      const doc = EDIT['sys:' + sys] || JSON.parse(JSON.stringify((s && s.content) || { steps: [] }));
+      (dr.output.steps || []).forEach(st => { let target = doc.steps.find(x => x.step_id === st.step_id); if (!target) { target = { step_id: st.step_id, fields: {}, decision_logic: st.decision_logic, sends_message: !!st.sends_message }; doc.steps.push(target); }
+        FIELDS.forEach(([f]) => { const v = st.fields && st.fields[f]; if (v && v.value !== 'unknown' && !(target.fields[f] && target.fields[f].accepted)) target.fields[f] = { value: v.value, accepted: false, from_draft: (v.citations[0] || {}).excerpt }; }); });
+      EDIT['sys:' + sys] = doc; render(); toast('draft copied. tick accepted on each field you agree with, then save.'); }
+    else if (a === 'add-step') { const s = sec('4', sys); const doc = EDIT['sys:' + sys] || JSON.parse(JSON.stringify((s && s.content) || { steps: [] })); doc.steps.push({ step_id: 's' + (doc.steps.length + 1), fields: {}, decision_logic: null, sends_message: false }); EDIT['sys:' + sys] = doc; render(); }
+    else if (a === 'rm-step') { const doc = EDIT['sys:' + sys]; if (doc) { doc.steps.splice(+t.getAttribute('data-i'), 1); render(); } }
+    else if (a === 'save-sys') { const doc = EDIT['sys:' + sys]; if (doc) doc.steps.forEach(st => FIELDS.forEach(([f]) => { if (st.fields[f]) delete st.fields[f].from_draft; })); await saveSection(4, sys); }
+    else if (a === 'answer') await act('question_answer', { question_id: t.getAttribute('data-q'), answer: val('qa-' + t.getAttribute('data-q')) }, 'answer saved as evidence');
+    else if (a === 'dismiss') await act('question_dismiss', { question_id: t.getAttribute('data-q'), reason: 'not needed' }, 'question dismissed');
+    else if (a === 'teach') await act('teach_it_record', { system_id: sys, result: t.getAttribute('data-r'), by: val('ti-by-' + sys) }, 'teach-it test recorded');
+    else if (a === 'request-approval') await act('approval_request', { type: 'phase1', system_id: sys }, 'approval requested. ar|in approves first, by email link.');
+  } finally { t.disabled = false; }
+});
+load();
+</script>
+</body>
+</html>
